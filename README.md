@@ -2,6 +2,12 @@
 
 Field Shift starter: Next.js web app, FastAPI backend, and Turborepo task runner. The ML goal and pipeline will be designed separately.
 
+## Project areas
+
+- `apps/web` — Next.js frontend
+- `apps/api` — FastAPI endpoints and API documentation
+- `apps/api/app/ml` — Python ML work area; see its README before adding model code
+
 ## Requirements
 
 Node.js 20.9+, npm, and Python 3.11+. On Windows PowerShell, use `npm.cmd` if `npm.ps1` is blocked.
