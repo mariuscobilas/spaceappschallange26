@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.next/
+.turbo/
+*.tsbuildinfo
+apps/api/.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.local
+.env.*.local
