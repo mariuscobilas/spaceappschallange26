@@ -3,8 +3,9 @@ Pydantic schemas mirroring TypeScript contracts in shared/src/types.
 Enables end-to-end type safety between FastAPI and Next.js.
 """
 
+import math
 from typing import Any, Dict, List, Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 # ==========================================
 # API Envelope & Common Schemas
@@ -90,10 +91,39 @@ class GeoCoordinate(BaseModel):
     longitude: float
     altitudeMeters: Optional[float] = None
 
+    @model_validator(mode="after")
+    def validate_finite_coordinate(self):
+        if not math.isfinite(self.latitude) or not -90 <= self.latitude <= 90:
+            raise ValueError("latitude must be finite and between -90 and 90")
+        if not math.isfinite(self.longitude) or not -180 <= self.longitude <= 180:
+            raise ValueError("longitude must be finite and between -180 and 180")
+        if self.altitudeMeters is not None and not math.isfinite(self.altitudeMeters):
+            raise ValueError("altitudeMeters must be finite")
+        return self
+
 
 class GeoPolygon(BaseModel):
     type: Literal["Polygon"] = "Polygon"
     coordinates: List[List[List[float]]]
+
+    @model_validator(mode="after")
+    def validate_polygon_coordinates(self):
+        if not self.coordinates:
+            raise ValueError("Polygon must contain at least one linear ring")
+        for ring in self.coordinates:
+            if len(ring) < 4:
+                raise ValueError("Polygon linear rings must contain at least four positions")
+            positions = []
+            for position in ring:
+                if len(position) != 2 or not all(math.isfinite(value) for value in position):
+                    raise ValueError("Polygon positions must be finite [longitude, latitude] pairs")
+                longitude, latitude = position
+                if not -180 <= longitude <= 180 or not -90 <= latitude <= 90:
+                    raise ValueError("Polygon positions must use valid longitude and latitude ranges")
+                positions.append(position)
+            if positions[0] != positions[-1]:
+                raise ValueError("Polygon linear rings must be closed")
+        return self
 
 
 class FieldProfile(BaseModel):
@@ -107,6 +137,31 @@ class FieldProfile(BaseModel):
     soilType: SoilType
     irrigation: IrrigationType
     notes: Optional[str] = None
+
+
+class SavedField(BaseModel):
+    id: str
+    name: str
+    location: GeoCoordinate
+    boundary: Optional[GeoPolygon] = None
+    areaHectares: Optional[float] = None
+    currentCrop: CropType
+    cropSource: Literal["manual", "cdl"]
+    benchmarkId: Optional[str] = None
+    createdAt: str
+    updatedAt: str
+
+
+class LandCoverResult(BaseModel):
+    status: Literal["cropland", "non_cropland", "unavailable"]
+    code: Optional[int] = None
+    category: Optional[str] = None
+    suggestedCrop: Optional[CropType] = None
+    year: Optional[int] = None
+    requestedYear: int
+    sample: GeoCoordinate
+    source: str
+    message: str
 
 
 # ==========================================

@@ -1,0 +1,15 @@
+{
+  "id": "field-us-il-001",
+  "name": "Oak Creek Sector A",
+  "location": { "latitude": 41.8781, "longitude": -87.6298 },
+  "boundary": {
+    "type": "Polygon",
+    "coordinates": [[[-87.631, 41.879], [-87.627, 41.879], [-87.627, 41.877], [-87.631, 41.877], [-87.631, 41.879]]]
+  },
+  "areaHectares": 4.8,
+  "currentCrop": "corn",
+  "cropSource": "cdl",
+  "benchmarkId": "corn-midwest",
+  "createdAt": "2026-11-14T10:00:00.000Z",
+  "updatedAt": "2026-11-14T10:00:00.000Z"
+}

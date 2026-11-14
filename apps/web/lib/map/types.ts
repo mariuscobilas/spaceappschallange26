@@ -1,4 +1,4 @@
-import type { CropType } from "@spaceapps/shared";
+import type { CropType, GeoPolygon } from "@spaceapps/shared";
 
 export type MapMode = "field" | "atlas";
 export type TimeMode = "latest" | "past";
@@ -13,6 +13,9 @@ export interface Selection {
   name: string;
   benchmarkId?: string;
   hexId?: string;
+  fieldId?: string;
+  boundary?: GeoPolygon;
+  areaHectares?: number;
 }
 export interface MapSettings {
   mode: MapMode;
@@ -45,4 +48,13 @@ export interface MapCanvasProps extends MapSettings {
     nonce: number;
   };
   retry: number;
+  drawing?: {
+    mode: "browse" | "point" | "polygon" | "edit";
+    boundary?: GeoPolygon;
+    session: number;
+    finish: number;
+  };
+  onBoundaryChange?: (boundary: GeoPolygon) => void;
+  onDrawingStatus?: (message: string) => void;
+  onMapReady?: (ready: boolean) => void;
 }

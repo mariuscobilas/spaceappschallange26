@@ -1,0 +1,11 @@
+{
+  "status": "cropland",
+  "code": 1,
+  "category": "Corn",
+  "suggestedCrop": "corn",
+  "year": 2025,
+  "requestedYear": 2026,
+  "sample": { "latitude": 41.8781, "longitude": -87.6298 },
+  "source": "USDA NASS Cropland Data Layer (CDL)",
+  "message": "CDL classified this point as Corn."
+}

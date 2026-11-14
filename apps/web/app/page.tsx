@@ -1,5 +1,4 @@
-import MapPreview from "@/components/map/MapPreview";
-
-export default function Home() {
-  return <MapPreview />;
+export default function ExplorePage() {
+  // The shared workspace shell keeps the map mounted across navigation.
+  return null;
 }

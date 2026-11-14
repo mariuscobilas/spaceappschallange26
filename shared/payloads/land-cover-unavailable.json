@@ -1,0 +1,11 @@
+{
+  "status": "unavailable",
+  "code": null,
+  "category": null,
+  "suggestedCrop": null,
+  "year": null,
+  "requestedYear": 2025,
+  "sample": { "latitude": 41.8781, "longitude": -87.6298 },
+  "source": "USDA NASS Cropland Data Layer (CDL)",
+  "message": "USDA CDL data is temporarily unavailable. You can continue with a manually selected crop."
+}

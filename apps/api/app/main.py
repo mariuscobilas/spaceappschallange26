@@ -30,6 +30,8 @@ except ImportError:
         MockResponse,
     )
 
+from app.routers.land_cover import router as land_cover_router
+
 app = FastAPI(
     title="Field Shift API",
     version="0.1.0",
@@ -44,6 +46,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(land_cover_router)
 
 
 @app.get("/health", response_model=HealthResponse)

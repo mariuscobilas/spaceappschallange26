@@ -1,38 +1,67 @@
-# Meridian — modern hex workspace
+# Meridian — shadcn application workspace
 
-One modern, restrained interface: system sans-serif, neutral offwhite surfaces,
-dark text, crisp dividers, one dark green accent and very light shadows. UI UX Pro
-Max's verified Minimalism & Swiss Style guidance informs typography, spacing and
-interaction. Avoid marketing slogans, decorative badges and invented telemetry.
+## Foundation
 
-## Layout
+Use official shadcn/ui Base UI components (Nova), Tailwind v4 and semantic tokens.
+The installed skill is `.agents/skills/shadcn/SKILL.md`; inspect `components.json`
+and fetch official component docs through the CLI before changing components.
+Warm neutral surfaces, dark forest accent, system sans-serif, restrained dividers.
+No decorative scores, marketing hero, fake telemetry, or simulated model responses.
 
-One integrated header: brand, modes, fully clickable crop selector, layers, then
-Latest conditions / Past conditions at the far right. Past reveals a date picker.
-No duplicated location readout on the right or a second header strip. One compact,
-collapsible left location panel; one responsive header surface on phones.
+## Navigation and layout
 
-## Map
+A full-height application navigation sidebar contains four stacked destinations:
+Explore `/`, Field Planner `/planner`, Economics `/economics`, Ask Meridian `/intel`.
+Use shadcn Sidebar components; collapse to icons on desktop, Sheet navigation on
+phones. The sidebar contains navigation only, not map filters or field details.
 
-Translucent geographic H3 cells over a light basemap with roads and place labels. Four detail levels:
-resolution 2 below zoom 4, 3 below zoom 6, 4 below zoom 9, then viewport-scoped 5.
-Neutral cell variations have no metric meaning. Selection has a strong outline.
-Both modes retain crop, location and observation settings.
+Explore has one horizontal toolbar above the map: location, crop, Field / Atlas
+mode, Conditions, Latest / Past date, and on-demand details. No second header strip.
+The map remains mounted across workspace navigation; other pages have their own
+main content and one compact page header. Controls wrap within one toolbar surface
+on small viewports. Details open in an accessible Sheet after a selection or Info.
+Field mode selects exact points and supports named polygon fields; Atlas selects
+regional hexagons. Keep drawing instructions and Finish/Cancel actions visible.
 
-## Useful information
+## Map and observations
 
-Panel shows location, coordinates, crop context, regional cell area, observation
-period, and actual satellite provenance when enabled. No ML assessment, invented
-risk, yield or moisture values. Ask Meridian Intel opens a question/request view
-with selected context and an honest unavailable-analysis notice; Copy request is
-functional. No simulated chat response.
+Keep roads, place names, boundaries and rivers under translucent geographic H3
+cells. Four levels: res2 below zoom4, res3 below6, res4 below9, scoped res5 thereafter.
+Neutral cell variations carry no assessment. Selection has a strong outline.
 
-Historical imagery resolves to the last available advertised observation on or
-before the chosen date. Preserve its actual date and native legend. Keep map
-interaction available through loading or external-service failure.
+NASA imagery is opt-in. Latest means the advertised available date, and Past
+resolves the latest advertised observation on or before the requested date. Preserve
+actual dates, source units, native legends, opacity and Retry. Loading/failure must
+leave map navigation available. IMERG is precipitation rate, not accumulated rain.
 
-## Interaction quality
+## Farmer workflows
 
-Native select covers its entire visual wrapper, including icons and padding.
-44px controls, 12px minimum helper text, visible focus and reduced motion. Keep
-panels, popovers and attribution usable on phone and landscape viewports.
+Field Planner saves cover-crop species, 0–60 day termination lead time, optional
+planting date, entered field area and notes per selected location/crop. Calendar
+termination dates are simple date arithmetic, not a model result. Regional hex
+area is never substituted for managed field area. Saved polygon hectares are
+authoritative; point-based fields use manual hectares. Predictions remain unavailable.
+
+Field details show name, crop, geodesic hectares and centroid. Boundary edits require
+Finish then Save or Cancel. Protect dirty drafts on navigation. Oversized boundaries
+show their area, the 5,000 ha limit and an Atlas action. USDA CDL suggestions display
+their source year and require explicit acceptance; keep manual crop choice available.
+
+Economics starts with blank, explicitly entered assumptions: USD/tonne, tonnes/ha,
+assumed yield change %, costs/payment USD/ha, and managed hectares. Calculate net
+change and break-even arithmetically; no live price or yield forecast is implied.
+Blank values are not zero. Preserve inputs per location/crop across navigation.
+
+Ask Meridian prepares/copies a real question with selected map and saved-plan
+context. Show disconnected analysis honestly. No fabricated conversation history.
+
+## Interaction and implementation
+
+Use FieldGroup/Field, NativeSelect, Input, Slider, ToggleGroup, Popover, Sheet,
+Button, Card, Alert, Empty and Separator primitives. Semantic theme colors and
+built-in variants; className primarily for layout. Sheet titles and visible form
+labels are required. Crop control is clickable across its complete visible area.
+
+Validate phone/landscape layout, keyboard navigation/focus, reduced motion and
+fallback behavior. Generated Slider was corrected for one scalar thumb and ARIA
+labels on its range input. MapCanvas ResizeObserver tracks container changes.

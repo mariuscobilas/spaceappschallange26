@@ -2,9 +2,13 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
-import type { FeatureCollection } from "geojson";
+import type { Feature, FeatureCollection, Polygon } from "geojson";
+import type { GeoPolygon } from "@spaceapps/shared";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { point } from "@turf/helpers";
 import type { GeoJSONSource, Map as MlMap, MapMouseEvent } from "maplibre-gl";
 import { cellToChildren } from "h3-js";
+import { analyzeBoundary } from "../../lib/fields/geometry";
 import {
   buildH3Collection,
   DEFAULT_CAMERA,
@@ -39,6 +43,15 @@ export default function MapCanvas(props: MapCanvasProps) {
   const propsRef = useRef(props);
   propsRef.current = props;
   const grids = useRef<Partial<Record<2 | 3 | 4, FeatureCollection>>>({});
+  const conusBoundary = useRef<FeatureCollection | null>(null);
+  const terraDraw = useRef<any>(null);
+  const terraSelectMode = useRef<any>(null);
+  const activeDrawMode = useRef("");
+  const drawingSession = useRef<number | undefined>(undefined);
+  const drawingSnapshotSession = useRef<number | undefined>(undefined);
+  const drawingBuildGeneration = useRef(0);
+  const drawingSnapshot = useRef<any[]>([]);
+  const finishRequest = useRef(0);
   const fallbackActive = useRef(false);
   const resolution = useRef<2 | 3 | 4 | 5>(4);
   const cameras = useRef({ field: DEFAULT_CAMERA, atlas: ATLAS_CAMERA });
@@ -49,6 +62,14 @@ export default function MapCanvas(props: MapCanvasProps) {
   const timeout = useRef<number | undefined>(undefined);
   const overlayCleanup = useRef<(() => void) | undefined>(undefined);
   const layerInfo = useRef<LayerInfo | undefined>(undefined);
+  const initialFieldFocusApplied = useRef(false);
+
+  useEffect(() => {
+    if (!element.current) return;
+    const observer = new ResizeObserver(() => mapRef.current?.resize());
+    observer.observe(element.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,6 +88,7 @@ export default function MapCanvas(props: MapCanvasProps) {
         }),
       ]);
       if (cancelled || !element.current) return;
+      conusBoundary.current = boundary;
       grids.current = {
         2: await buildH3Collection(boundary, 2),
         3: await buildH3Collection(boundary, 3),
@@ -91,21 +113,42 @@ export default function MapCanvas(props: MapCanvasProps) {
       mapRef.current = map;
       map.on("style.load", () => {
         attached.current = false;
+        terraDraw.current = null;
+        terraSelectMode.current = null;
+        activeDrawMode.current = "";
+        drawingBuildGeneration.current++;
         addLayers(map!);
         syncData();
+        syncSelectionLayers();
+        void syncDrawing();
         void syncOverlay();
+        if (!initialFieldFocusApplied.current) {
+          initialFieldFocusApplied.current = true;
+          focusFieldSelection(map!);
+        }
+        propsRef.current.onMapReady?.(true);
       });
       map.on("error", (event) => {
         const sourceId = (event as typeof event & { sourceId?: string })
           .sourceId;
         const isBasemap = sourceId
-          ? !["field-h3", "nasa-raster"].includes(sourceId)
+          ? !["field-h3", "nasa-raster", "field-selection", "field-point"].includes(sourceId) && !sourceId.startsWith("field-draw")
           : /openfreemap|Failed to fetch|NetworkError/i.test(
               event.error?.message ?? "",
             );
         if (fallbackActive.current || !isBasemap) return;
         fallbackActive.current = true;
         attached.current = false;
+        propsRef.current.onMapReady?.(false);
+        if (terraDraw.current) {
+          drawingSnapshot.current = terraDraw.current.getSnapshot();
+          drawingSnapshotSession.current = propsRef.current.drawing?.session;
+        }
+        terraDraw.current?.stop();
+        terraDraw.current = null;
+        terraSelectMode.current = null;
+        activeDrawMode.current = "";
+        drawingBuildGeneration.current++;
         generation.current++;
         window.clearTimeout(timeout.current);
         overlayCleanup.current?.();
@@ -140,6 +183,11 @@ export default function MapCanvas(props: MapCanvasProps) {
       generation.current++;
       window.clearTimeout(timeout.current);
       overlayCleanup.current?.();
+      terraDraw.current?.stop();
+      terraDraw.current = null;
+      terraSelectMode.current = null;
+      activeDrawMode.current = "";
+      propsRef.current.onMapReady?.(false);
       map?.remove();
       mapRef.current = null;
     };
@@ -201,6 +249,37 @@ export default function MapCanvas(props: MapCanvasProps) {
       },
       before,
     );
+    map.addSource("field-selection", {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+    map.addLayer({
+      id: "field-selection-fill",
+      type: "fill",
+      source: "field-selection",
+      paint: { "fill-color": "#315b3c", "fill-opacity": 0.2 },
+    });
+    map.addLayer({
+      id: "field-selection-line",
+      type: "line",
+      source: "field-selection",
+      paint: { "line-color": "#163d25", "line-width": 2.5 },
+    });
+    map.addSource("field-point", {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+    map.addLayer({
+      id: "field-point-dot",
+      type: "circle",
+      source: "field-point",
+      paint: {
+        "circle-radius": 7,
+        "circle-color": "#315b3c",
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+      },
+    });
     map.on("sourcedata", (event) => {
       if (event.sourceId === "field-h3" && event.isSourceLoaded) {
         gridReady.current = true;
@@ -286,9 +365,194 @@ export default function MapCanvas(props: MapCanvasProps) {
       element.current.dataset.hexCount = String(features.length);
     }
   }
+  function syncSelectionLayers() {
+    const map = mapRef.current;
+    if (!map || !attached.current) return;
+    const selected = propsRef.current.selection;
+    const polygonSource = map.getSource("field-selection") as GeoJSONSource;
+    const pointSource = map.getSource("field-point") as GeoJSONSource;
+    const features: Feature<Polygon>[] = selected.boundary
+      ? [{ type: "Feature", properties: {}, geometry: selected.boundary }]
+      : [];
+    polygonSource.setData({ type: "FeatureCollection", features });
+    pointSource.setData({
+      type: "FeatureCollection",
+      features: [{
+        type: "Feature",
+        properties: {},
+        geometry: { type: "Point", coordinates: [selected.longitude, selected.latitude] },
+      }],
+    });
+  }
+
+  function focusFieldSelection(map: MlMap) {
+    const selection = propsRef.current.selection;
+    if (selection.fieldId && selection.boundary && propsRef.current.mode === "field") {
+      const positions = selection.boundary.coordinates.flat();
+      if (!positions.length) return;
+      const west = Math.min(...positions.map(([longitude]) => longitude));
+      const east = Math.max(...positions.map(([longitude]) => longitude));
+      const south = Math.min(...positions.map(([, latitude]) => latitude));
+      const north = Math.max(...positions.map(([, latitude]) => latitude));
+      map.fitBounds([[west, south], [east, north]], {
+        padding: 64,
+        maxZoom: 16,
+        duration: motionDuration(500),
+      });
+    } else if (selection.fieldId) {
+      map.flyTo({
+        center: [selection.longitude, selection.latitude],
+        zoom: Math.max(propsRef.current.mode === "field" ? 13 : 9, map.getZoom()),
+        duration: motionDuration(500),
+      });
+    }
+  }
+
+  async function syncDrawing() {
+    const map = mapRef.current;
+    if (!map || !attached.current) return;
+    const drawing = propsRef.current.drawing;
+    if (!drawing) return;
+    if (drawing.mode !== "polygon" && drawing.mode !== "edit") {
+      terraDraw.current?.stop();
+      terraDraw.current = null;
+      terraSelectMode.current = null;
+      activeDrawMode.current = "";
+      drawingSnapshot.current = [];
+      return;
+    }
+    if (drawingSnapshotSession.current !== undefined && drawingSnapshotSession.current !== drawing.session) {
+      drawingSnapshot.current = [];
+    }
+    if (drawingSession.current !== drawing.session || !terraDraw.current) {
+      terraDraw.current?.stop();
+      terraDraw.current = null;
+      drawingSession.current = drawing.session;
+      drawingSnapshotSession.current = drawing.session;
+      const buildGeneration = ++drawingBuildGeneration.current;
+      const requestedMode = drawing.mode;
+      const requestedSession = drawing.session;
+      const [td, adapter] = await Promise.all([
+        import("terra-draw"),
+        import("terra-draw-maplibre-gl-adapter"),
+      ]);
+      const latestDrawing = propsRef.current.drawing;
+      if (
+        map !== mapRef.current ||
+        !attached.current ||
+        buildGeneration !== drawingBuildGeneration.current ||
+        latestDrawing?.session !== requestedSession ||
+        latestDrawing?.mode !== requestedMode
+      ) return;
+      const modes: any[] = [new td.TerraDrawPolygonMode({ keyEvents: { finish: "Enter" } })];
+      const selectMode = drawing.mode === "edit" ? new td.TerraDrawSelectMode({
+        flags: {
+          polygon: {
+            feature: {
+              draggable: true,
+              rotateable: false,
+              scaleable: false,
+              coordinates: {
+                draggable: true,
+                midpoints: { draggable: true },
+                deletable: false,
+              },
+            },
+          },
+        },
+      }) : null;
+      if (selectMode) modes.push(selectMode);
+      const draw = new td.TerraDraw({
+        adapter: new adapter.TerraDrawMapLibreGLAdapter({ map, prefixId: "field-draw" }),
+        modes,
+      });
+      draw.start();
+      terraDraw.current = draw;
+      terraSelectMode.current = selectMode;
+      draw.on("finish", (id: string | number, context: { action: string }) => {
+        if (terraDraw.current !== draw) return;
+        if (context.action !== "draw" && context.action !== "dragCoordinate" && context.action !== "dragFeature") return;
+        const feature = draw.getSnapshot().find((item: Feature) => String(item.id) === String(id));
+        if (feature?.geometry.type !== "Polygon") return;
+        const boundary: GeoPolygon = {
+          type: "Polygon",
+          coordinates: feature.geometry.coordinates.map((ring: number[][]) =>
+            ring.map(([longitude, latitude]) => [longitude, latitude]),
+          ) as [number, number][][],
+        };
+        drawingSnapshot.current = [feature];
+        drawingSnapshotSession.current = requestedSession;
+        const analysis = analyzeBoundary(boundary);
+        propsRef.current.onDrawingStatus?.(
+          analysis?.error ??
+            (analysis ? "Field boundary updated." : "The boundary is invalid."),
+        );
+        propsRef.current.onBoundaryChange?.(boundary);
+      });
+      draw.on("change", () => {
+        if (terraDraw.current !== draw) return;
+        drawingSnapshot.current = draw.getSnapshot() as Feature[];
+        drawingSnapshotSession.current = requestedSession;
+        const feature = [...drawingSnapshot.current].reverse().find((item: Feature) => item.geometry.type === "Polygon");
+        if (feature?.geometry.type !== "Polygon") return;
+        const analysis = analyzeBoundary({ type: "Polygon", coordinates: feature.geometry.coordinates as [number, number][][] });
+        if (analysis?.error) propsRef.current.onDrawingStatus?.(analysis.error);
+      });
+      const restoreSnapshot = drawingSnapshot.current;
+      let selectedFeatureId: string | number | undefined;
+      if (restoreSnapshot.length) {
+        const results = draw.addFeatures(restoreSnapshot);
+        selectedFeatureId = [...results].reverse().find((item: { valid: boolean }) => item.valid)?.id;
+      } else if (drawing.boundary && drawing.mode === "edit") {
+        const [result] = draw.addFeatures([{ type: "Feature", geometry: drawing.boundary, properties: { mode: "polygon" } }]);
+        if (result?.valid) selectedFeatureId = result.id;
+      }
+      activeDrawMode.current = "";
+      if (drawing.mode === "polygon") {
+        draw.setMode("polygon");
+        activeDrawMode.current = "polygon";
+      } else {
+        draw.setMode("select");
+        activeDrawMode.current = "select";
+        if (selectedFeatureId !== undefined) selectMode?.selectFeature(selectedFeatureId);
+      }
+    }
+    const draw = terraDraw.current;
+    const desiredMode = drawing.mode === "polygon" ? "polygon" : "select";
+    if (activeDrawMode.current !== desiredMode) {
+      draw.setMode(desiredMode);
+      activeDrawMode.current = desiredMode;
+      if (desiredMode === "select") {
+        const feature = [...draw.getSnapshot()].reverse().find((item: Feature) => item.geometry.type === "Polygon");
+        if (feature?.id !== undefined) terraSelectMode.current?.selectFeature(feature.id);
+      }
+    }
+    if (drawing.finish !== finishRequest.current) {
+      finishRequest.current = drawing.finish;
+      map.getCanvas().dispatchEvent(
+        new KeyboardEvent("keyup", { key: "Enter", bubbles: true }),
+      );
+    }
+  }
   function selectAt(e: MapMouseEvent) {
     const map = mapRef.current;
     if (!map) return;
+    const drawingMode = propsRef.current.drawing?.mode;
+    if (drawingMode === "polygon" || drawingMode === "edit") return;
+    if (propsRef.current.mode === "field") {
+      const { lng, lat } = e.lngLat;
+      const withinConus = conusBoundary.current?.features.some((feature) =>
+        feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"
+          ? booleanPointInPolygon(point([lng, lat]), feature.geometry)
+          : false,
+      ) ?? false;
+      if (!withinConus) {
+        propsRef.current.onDrawingStatus?.("Choose a point within the contiguous United States.");
+        return;
+      }
+      propsRef.current.onSelect({ latitude: lat, longitude: lng, name: "Selected point" });
+      return;
+    }
     const hit = map.queryRenderedFeatures(e.point, {
       layers: ["field-h3-fill"],
     })[0];
@@ -462,7 +726,9 @@ export default function MapCanvas(props: MapCanvasProps) {
       });
     }
     syncData();
-  }, [props.mode, props.selection]);
+    syncSelectionLayers();
+    void syncDrawing();
+  }, [props.mode, props.selection, props.drawing]);
   useEffect(() => {
     void syncOverlay();
   }, [props.overlay, props.retry, props.timeMode, props.observationDate]);
@@ -491,12 +757,17 @@ export default function MapCanvas(props: MapCanvasProps) {
         ...(props.mode === "field" ? DEFAULT_CAMERA : ATLAS_CAMERA),
         duration: motionDuration(500),
       });
-    else if (n.action === "selection")
-      m.flyTo({
-        center: [props.selection.longitude, props.selection.latitude],
-        zoom: Math.max(9, m.getZoom()),
-        duration: motionDuration(500),
-      });
+    else if (n.action === "selection") {
+      if (props.selection.fieldId) {
+        focusFieldSelection(m);
+      } else {
+        m.flyTo({
+          center: [props.selection.longitude, props.selection.latitude],
+          zoom: Math.max(9, m.getZoom()),
+          duration: motionDuration(500),
+        });
+      }
+    }
   }, [props.navigation.nonce]);
   return (
     <div

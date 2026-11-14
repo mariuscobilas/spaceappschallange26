@@ -5,7 +5,7 @@
 export interface GeoCoordinate {
   latitude: number;
   longitude: number;
-  altitudeMeters?: number;
+  altitudeMeters?: number | null;
 }
 
 export interface GeoPolygon {

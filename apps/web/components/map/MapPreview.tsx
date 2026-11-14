@@ -1,653 +1,552 @@
 "use client";
 
+import { FieldDetails } from "@/components/map/FieldDetails";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
-  ArrowLeft,
-  ArrowUpRight,
-  ChevronDown,
+  CloudRain,
+  Droplets,
+  Info,
   Layers3,
-  MapPin,
-  MessageSquare,
+  Leaf,
   Minus,
   Plus,
   RotateCcw,
-  Satellite,
-  Wheat,
-  X,
 } from "lucide-react";
-import { cellArea, isValidCell } from "h3-js";
 import farms from "@/data/benchmark_farms.json";
+import { useMeridian } from "@/components/workspace/MeridianProvider";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { crops, today, validDate } from "@/lib/workspace";
 import type {
-  MapCanvasProps,
-  MapSettings,
-  MapStatus,
+  MapMode,
   Overlay,
   PreviewCrop,
   Selection,
+  TimeMode,
 } from "@/lib/map/types";
 
 const MapCanvas = dynamic(() => import("@/components/map/MapCanvas"), {
   ssr: false,
   loading: () => (
-    <div className="map-loading">
-      <span className="loader-dot" />
-      Preparing map layers…
+    <div className="flex h-full items-center justify-center gap-3">
+      <Skeleton className="size-5" />
+      <span className="text-sm text-muted-foreground">Preparing map…</span>
     </div>
   ),
 });
-const STORAGE_KEY = "meridian.map-settings.v3";
-const LEGACY_KEYS = ["meridian.map-settings.v2", "meridian.map-settings.v1"];
-const initialFarm = farms.find((farm) => farm.id === "tribune") ?? farms[0];
-const today = () => new Date().toISOString().slice(0, 10);
-const defaults: MapSettings = {
-  mode: "field",
-  crop: "wheat",
-  timeMode: "latest",
-  observationDate: today(),
-  overlay: "off",
-  opacity: 0.55,
-  selection: {
-    latitude: initialFarm.latitude,
-    longitude: initialFarm.longitude,
-    name: initialFarm.name,
-    benchmarkId: initialFarm.id,
+const layers = [
+  {
+    value: "smap",
+    label: "Soil moisture · SMAP",
+    short: "Soil moisture",
+    icon: Droplets,
+    description:
+      "Regional surface soil moisture. This does not measure an individual field’s root zone.",
   },
-};
-const crops: { value: PreviewCrop; label: string }[] = [
-  { value: "wheat", label: "Wheat" },
-  { value: "corn", label: "Corn" },
-  { value: "soybeans", label: "Soybeans" },
-  { value: "cotton", label: "Cotton" },
-  { value: "sorghum", label: "Sorghum" },
-];
-const layers: { value: Overlay; label: string; short: string }[] = [
-  { value: "smap", label: "Soil moisture · SMAP", short: "SMAP" },
-  { value: "ndvi", label: "Vegetation · NDVI", short: "NDVI" },
-  { value: "imerg", label: "Precipitation · IMERG", short: "IMERG" },
-  { value: "off", label: "No overlay", short: "Off" },
-];
-function validSettings(value: unknown): value is MapSettings {
-  if (!value || typeof value !== "object") return false;
-  const v = value as Partial<MapSettings>;
-  const date = v.observationDate;
-  const parsedDate =
-    typeof date === "string" ? new Date(`${date}T00:00:00Z`) : null;
-  return (
-    (v.mode === "field" || v.mode === "atlas") &&
-    crops.some((c) => c.value === v.crop) &&
-    (v.timeMode === "latest" || v.timeMode === "past") &&
-    typeof date === "string" &&
-    /^\d{4}-\d{2}-\d{2}$/.test(date) &&
-    parsedDate !== null &&
-    !Number.isNaN(parsedDate.getTime()) &&
-    parsedDate.toISOString().slice(0, 10) === date &&
-    date <= today() &&
-    layers.some((l) => l.value === v.overlay) &&
-    typeof v.opacity === "number" &&
-    Number.isFinite(v.opacity) &&
-    v.opacity >= 0 &&
-    v.opacity <= 1 &&
-    !!v.selection &&
-    typeof v.selection.latitude === "number" &&
-    Number.isFinite(v.selection.latitude) &&
-    Math.abs(v.selection.latitude) <= 90 &&
-    typeof v.selection.longitude === "number" &&
-    Number.isFinite(v.selection.longitude) &&
-    Math.abs(v.selection.longitude) <= 180 &&
-    typeof v.selection.name === "string" &&
-    (v.selection.hexId === undefined ||
-      (typeof v.selection.hexId === "string" &&
-        isValidCell(v.selection.hexId))) &&
-    (v.selection.benchmarkId === undefined ||
-      farms.some((farm) => farm.id === v.selection?.benchmarkId))
-  );
-}
-function clearPreviewQuery() {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.has("design")) return;
-  url.searchParams.delete("design");
-  window.history.replaceState({}, "", url);
-}
+  {
+    value: "ndvi",
+    label: "Vegetation · NDVI",
+    short: "Vegetation",
+    icon: Leaf,
+    description:
+      "Vegetation greenness from an 8-day composite. Review seasonal patterns across an area.",
+  },
+  {
+    value: "imerg",
+    label: "Rainfall · IMERG",
+    short: "Rainfall",
+    icon: CloudRain,
+    description:
+      "Estimated precipitation rate at the observation time, in mm/hour; not a daily total or forecast.",
+  },
+] as const;
 
 export default function MapPreview() {
-  const [settings, setSettings] = useState<MapSettings>(defaults);
-  const [ready, setReady] = useState(false);
-  const [status, setStatus] = useState<MapStatus>({
-    loading: true,
-    message: "Connecting to map layers",
-    failed: false,
-  });
-  const [navigation, setNavigation] = useState<MapCanvasProps["navigation"]>({
-    action: "reset",
-    nonce: 0,
-  });
-  const [retry, setRetry] = useState(0);
-  const [layerOpen, setLayerOpen] = useState(false);
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [intelOpen, setIntelOpen] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [copyFeedback, setCopyFeedback] = useState("");
+  const {
+    settings,
+    change,
+    selectLocation,
+    navigation,
+    navigateMap,
+    status,
+    reportStatus,
+    retry,
+    retryImagery,
+    fields,
+    activeField,
+    fieldDraft,
+    drawing,
+    beginField,
+    editField,
+    receiveBoundary,
+    updateFieldDraft,
+    finishDrawing,
+    cancelField,
+    chooseField,
+    requestTransition,
+  } = useMeridian();
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+  const [drawingMessage, setDrawingMessage] = useState("");
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed: unknown = JSON.parse(stored);
-        if (validSettings(parsed)) setSettings(parsed);
-      } else {
-        for (const key of LEGACY_KEYS) {
-          const raw = localStorage.getItem(key);
-          if (!raw) continue;
-          const parsed = JSON.parse(raw) as Partial<MapSettings>;
-          if (
-            parsed &&
-            typeof parsed === "object" &&
-            crops.some((crop) => crop.value === parsed.crop) &&
-            (parsed.mode === "field" || parsed.mode === "atlas") &&
-            typeof parsed.opacity === "number" &&
-            parsed.opacity >= 0 &&
-            parsed.opacity <= 1 &&
-            layers.some((layer) => layer.value === parsed.overlay) &&
-            validSettings({
-              ...defaults,
-              ...parsed,
-              timeMode: "latest",
-              observationDate: today(),
-              overlay: "off",
-            })
-          ) {
-            setSettings({
-              ...defaults,
-              ...parsed,
-              timeMode: "latest",
-              observationDate: today(),
-              overlay: "off",
-            });
-            break;
-          }
-        }
-      }
-    } catch {
-      /* Continue with defaults when local storage is unavailable. */
-    }
-    setPanelOpen(window.matchMedia("(min-width: 641px)").matches);
-    clearPreviewQuery();
-    setReady(true);
-  }, []);
+    if (fieldDraft?.boundary && drawing.mode === "browse") setDetailsOpen(true);
+  }, [fieldDraft?.boundary, drawing.mode]);
+  const pathname = usePathname();
   useEffect(() => {
-    if (ready) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      } catch {
-        /* Storage is optional. */
+    if (pathname !== "/") setDetailsOpen(false);
+  }, [pathname]);
+  const select = (selection: Selection) =>
+    requestTransition(() => {
+      if (settings.mode === "field") beginField(selection);
+      else {
+        if (fieldDraft) cancelField();
+        selectLocation(selection);
       }
-    }
-  }, [ready, settings]);
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        if (layerOpen) setLayerOpen(false);
-        else if (intelOpen) setIntelOpen(false);
+      setDetailsOpen(true);
+    });
+  const chooseFarm = (id: string) =>
+    requestTransition(() => {
+      const farm = farms.find((f) => f.id === id);
+      if (farm) {
+        if (fieldDraft) cancelField();
+        selectLocation(
+          {
+            name: farm.name,
+            latitude: farm.latitude,
+            longitude: farm.longitude,
+            benchmarkId: farm.id,
+          },
+          true,
+        );
+        setDetailsOpen(false);
       }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [layerOpen, intelOpen]);
-  const change = useCallback(
-    <K extends keyof MapSettings>(key: K, value: MapSettings[K]) =>
-      setSettings((previous) => ({ ...previous, [key]: value })),
-    [],
-  );
-  const chooseFarm = useCallback(
-    (id: string) => {
-      const farm = farms.find((entry) => entry.id === id);
-      if (!farm) return;
-      change("selection", {
-        latitude: farm.latitude,
-        longitude: farm.longitude,
-        name: farm.name,
-        benchmarkId: farm.id,
-      });
-      setNavigation((n) => ({ action: "selection", nonce: n.nonce + 1 }));
-    },
-    [change],
-  );
-  const select = useCallback(
-    (selection: Selection) => {
-      change("selection", selection);
-      setPanelOpen(true);
-      setIntelOpen(false);
-    },
-    [change],
-  );
-  const onStatus = useCallback((next: MapStatus) => setStatus(next), []);
-  const navigationAction = useCallback(
-    (action: MapCanvasProps["navigation"]["action"]) =>
-      setNavigation((n) => ({ action, nonce: n.nonce + 1 })),
-    [],
-  );
-  const selectedCrop = useMemo(
-    () => crops.find((crop) => crop.value === settings.crop)?.label ?? "Wheat",
-    [settings.crop],
-  );
-  const selectedLayer =
-    layers.find((layer) => layer.value === settings.overlay)?.short ?? "Off";
-  const coords = `${Math.abs(settings.selection.latitude).toFixed(4)}° ${settings.selection.latitude < 0 ? "S" : "N"} · ${Math.abs(settings.selection.longitude).toFixed(4)}° ${settings.selection.longitude < 0 ? "W" : "E"}`;
-  const area = settings.selection.hexId
-    ? `${cellArea(settings.selection.hexId, "km2").toFixed(2)} km²`
-    : null;
-  const contextText = `Location: ${settings.selection.name}${settings.selection.benchmarkId ? ", Kansas" : ""}\nCoordinates: ${coords}\n${area ? `Regional cell: ${area}\n` : ""}Crop: ${selectedCrop}\nObservation period: ${settings.timeMode === "latest" ? "Latest conditions" : `Past conditions (${settings.observationDate})`}\nNASA layer: ${settings.overlay === "off" ? "None" : settings.overlay.toUpperCase()}`;
-  const copyRequest = async () => {
-    const request = `${contextText}\n\nQuestion: ${question.trim() || "(add a question)"}`;
-    try {
-      await navigator.clipboard.writeText(request);
-      setCopyFeedback("Request copied");
-    } catch {
-      setCopyFeedback("Clipboard unavailable");
-    }
-    window.setTimeout(() => setCopyFeedback(""), 2200);
-  };
+    });
+  const layer = layers.find((l) => l.value === settings.overlay);
+  const showStatus =
+    status.loading || status.failed || !!status.message || !!status.layer;
 
-  if (!ready)
-    return (
-      <main className="app-shell boot-shell" aria-label="Loading Meridian">
-        <div className="boot-mark">M</div>
-        <span>Opening field intelligence</span>
-      </main>
-    );
   return (
-    <main className="app-shell map-preview">
+    <div
+      className="workspace-map flex h-full min-h-0 flex-col"
+      aria-label="Explore workspace"
+    >
+      <header
+        className="map-toolbar flex shrink-0 flex-wrap items-center gap-2 border-b bg-background px-3 py-3"
+        aria-label="Map toolbar"
+      >
+        <SidebarTrigger aria-label="Toggle navigation" />
+        <h1 className="sr-only">Explore</h1>
+        <FieldGroup>
+          <Field className="w-44">
+            <FieldLabel htmlFor="benchmark-select" className="sr-only">
+              Benchmark location
+            </FieldLabel>
+            <NativeSelect
+              id="benchmark-select"
+              className="w-full"
+              aria-label="Benchmark location"
+              value={settings.selection.benchmarkId ?? "custom"}
+              onChange={(e) => chooseFarm(e.target.value)}
+            >
+              {!settings.selection.benchmarkId && (
+                <NativeSelectOption value="custom">
+                  Selected region
+                </NativeSelectOption>
+              )}
+              {farms.map((f) => (
+                <NativeSelectOption value={f.id} key={f.id}>
+                  {f.name}, Kansas
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field className="w-28 crop-control">
+            <FieldLabel htmlFor="cash-crop" className="sr-only">
+              Cash crop
+            </FieldLabel>
+            <NativeSelect
+              id="cash-crop"
+              aria-label="Cash crop"
+              className="w-full"
+              value={fieldDraft?.currentCrop ?? settings.crop}
+              onChange={(e) => {
+                const crop = e.target.value as PreviewCrop;
+                if (fieldDraft)
+                  updateFieldDraft({ currentCrop: crop, cropSource: "manual" });
+                else change("crop", crop);
+              }}
+            >
+              {crops.map((c) => (
+                <NativeSelectOption value={c.value} key={c.value}>
+                  {c.label}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </Field>
+        </FieldGroup>
+        <ToggleGroup
+          aria-label="Map mode"
+          variant="outline"
+          value={[settings.mode]}
+          onValueChange={(v) => {
+            if (v[0])
+              requestTransition(() => {
+                if (fieldDraft) cancelField();
+                change("mode", v[0] as MapMode);
+              });
+          }}
+          spacing={0}
+        >
+          <ToggleGroupItem value="field" aria-label="Field Simulator">
+            Field
+          </ToggleGroupItem>
+          <ToggleGroupItem value="atlas" aria-label="National Risk Atlas">
+            Atlas
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <FieldGroup>
+          <Field className="w-40">
+            <FieldLabel htmlFor="saved-field-select" className="sr-only">
+              Saved fields
+            </FieldLabel>
+            <NativeSelect
+              id="saved-field-select"
+              className="w-full"
+              value={activeField?.id ?? ""}
+              onChange={(e) => {
+                if (e.target.value) chooseField(e.target.value);
+              }}
+            >
+              <NativeSelectOption value="">
+                Saved fields ({fields.length})
+              </NativeSelectOption>
+              {fields.map((f) => (
+                <NativeSelectOption key={f.id} value={f.id}>
+                  {f.name}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </Field>
+        </FieldGroup>
+        {drawing.mode === "polygon" || drawing.mode === "edit" ? (
+          <>
+            <Button onClick={finishDrawing}>Finish boundary</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                cancelField();
+                setDrawingMessage("");
+              }}
+            >
+              Cancel drawing
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              disabled={!mapReady}
+              onClick={() =>
+                requestTransition(() => {
+                  change("mode", "field");
+                  setDrawingMessage(
+                    "Click the map to select an exact field point.",
+                  );
+                  setDetailsOpen(false);
+                })
+              }
+            >
+              Select point
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!mapReady}
+              onClick={() =>
+                requestTransition(() => {
+                  change("mode", "field");
+                  beginField(undefined, true);
+                  setDetailsOpen(false);
+                  setDrawingMessage(
+                    "Click to add vertices. Finish boundary or double-click to complete; Cancel drawing discards the draft.",
+                  );
+                })
+              }
+            >
+              Draw boundary
+            </Button>
+          </>
+        )}
+        <Popover>
+          <PopoverTrigger
+            render={<Button variant="outline" />}
+            aria-label="Layers"
+          >
+            <Layers3 data-icon="inline-start" />
+            {layer?.short ?? "Conditions"}
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="w-80 max-w-[calc(100vw-24px)]"
+          >
+            <PopoverHeader>
+              <PopoverTitle>Map conditions</PopoverTitle>
+              <PopoverDescription>
+                Choose a NASA observation to explore.
+              </PopoverDescription>
+            </PopoverHeader>
+            <ToggleGroup
+              orientation="vertical"
+              aria-label="Select map layer"
+              value={[settings.overlay]}
+              onValueChange={(v) => {
+                if (v[0]) change("overlay", v[0] as Overlay);
+              }}
+              className="w-full items-stretch"
+              spacing={1}
+            >
+              <ToggleGroupItem
+                value="off"
+                aria-label="No overlay"
+                className="justify-start"
+              >
+                Clean basemap
+              </ToggleGroupItem>
+              {layers.map(({ value, label, icon: Icon }) => (
+                <ToggleGroupItem
+                  key={value}
+                  value={value}
+                  aria-label={label}
+                  className="justify-start"
+                >
+                  <Icon data-icon="inline-start" />
+                  {label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+            {layer && (
+              <>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {layer.description}
+                </p>
+                <Separator />
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="layer-opacity">
+                      Layer opacity · {Math.round(settings.opacity * 100)}%
+                    </FieldLabel>
+                    <Slider
+                      id="layer-opacity"
+                      aria-label="Layer opacity"
+                      value={settings.opacity * 100}
+                      min={0}
+                      max={100}
+                      step={1}
+                      onValueChange={(v) => change("opacity", Number(v) / 100)}
+                      className="py-3"
+                    />
+                  </Field>
+                </FieldGroup>
+                {status.layer && !status.failed && !status.loading && (
+                  <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+                    <span>
+                      Observed {status.layer.date} · {status.layer.units}
+                    </span>
+                    {status.layer.legend && (
+                      <img
+                        src={status.layer.legend}
+                        alt={`${status.layer.label} data legend`}
+                        className="h-14 w-full object-contain object-left"
+                      />
+                    )}
+                    <span>NASA GIBS</span>
+                  </div>
+                )}
+              </>
+            )}
+          </PopoverContent>
+        </Popover>
+        <FieldGroup className="ml-auto">
+          <Field className="w-40">
+            <FieldLabel htmlFor="observation-period" className="sr-only">
+              Observation period
+            </FieldLabel>
+            <NativeSelect
+              id="observation-period"
+              aria-label="Observation period"
+              value={settings.timeMode}
+              className="w-full"
+              onChange={(e) => change("timeMode", e.target.value as TimeMode)}
+            >
+              <NativeSelectOption value="latest">
+                Latest conditions
+              </NativeSelectOption>
+              <NativeSelectOption value="past">
+                Past conditions
+              </NativeSelectOption>
+            </NativeSelect>
+          </Field>
+          {settings.timeMode === "past" && (
+            <Field className="w-36">
+              <FieldLabel htmlFor="observation-date" className="sr-only">
+                Observation date
+              </FieldLabel>
+              <Input
+                id="observation-date"
+                aria-label="Observation date"
+                type="date"
+                max={today()}
+                value={settings.observationDate}
+                onChange={(e) => {
+                  if (validDate(e.target.value))
+                    change("observationDate", e.target.value);
+                }}
+              />
+            </Field>
+          )}
+        </FieldGroup>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Selected location details"
+          onClick={() => {
+            if (settings.mode === "field" && !fieldDraft && !activeField)
+              beginField();
+            setDetailsOpen(true);
+          }}
+        >
+          <Info />
+        </Button>
+      </header>
+
       <section
-        id="map"
-        className="map-stage"
+        className="map-stage relative min-h-0 flex-1 overflow-hidden"
         aria-label="Interactive field map"
       >
         <MapCanvas
           {...settings}
           onSelect={select}
-          onStatus={onStatus}
+          onStatus={reportStatus}
           navigation={navigation}
           retry={retry}
+          drawing={drawing}
+          onBoundaryChange={receiveBoundary}
+          onDrawingStatus={setDrawingMessage}
+          onMapReady={setMapReady}
         />
-      </section>
-      <header className="command-bar">
-        <a className="brand-lockup" href="#map" aria-label="Meridian">
-          <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 36 36">
-              <path d="M18 3.5 31 11v14L18 32.5 5 25V11z" />
-              <path d="M18 3.5v29M5 11l26 14M31 11 5 25" />
-              <circle cx="18" cy="18" r="4.2" />
-            </svg>
-          </span>
-          <strong>Meridian</strong>
-        </a>
-        <nav className="mode-switch" aria-label="Map mode">
-          <button
-            aria-label="Field Simulator"
-            onClick={() => change("mode", "field")}
-            className={settings.mode === "field" ? "selected" : ""}
-            aria-pressed={settings.mode === "field"}
-          >
-            Field Simulator
-          </button>
-          <button
-            aria-label="National Risk Atlas"
-            onClick={() => change("mode", "atlas")}
-            className={settings.mode === "atlas" ? "selected" : ""}
-            aria-pressed={settings.mode === "atlas"}
-          >
-            National Risk Atlas
-          </button>
-        </nav>
-        <label className="header-control crop-control">
-          <Wheat size={17} aria-hidden="true" />
-          <span>{selectedCrop}</span>
-          <ChevronDown size={15} aria-hidden="true" />
-          <select
-            aria-label="Cash crop"
-            value={settings.crop}
-            onChange={(event) =>
-              change("crop", event.target.value as PreviewCrop)
-            }
-          >
-            {crops.map((crop) => (
-              <option key={crop.value} value={crop.value}>
-                {crop.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          className={`header-control layers-trigger ${layerOpen ? "open" : ""}`}
-          onClick={() => setLayerOpen((open) => !open)}
-          aria-expanded={layerOpen}
-          aria-label="Layers"
-        >
-          <Layers3 size={17} />
-          <span>Layers</span>
-          <b>{selectedLayer}</b>
-          <ChevronDown size={14} />
-        </button>
-        <label className="period-control">
-          <span>Observation period</span>
-          <select
-            aria-label="Observation period"
-            value={settings.timeMode}
-            onChange={(event) =>
-              change("timeMode", event.target.value as MapSettings["timeMode"])
-            }
-          >
-            <option value="latest">Latest conditions</option>
-            <option value="past">Past conditions</option>
-          </select>
-        </label>
-        {settings.timeMode === "past" && (
-          <label className="date-control">
-            <span>Observation date</span>
-            <input
-              type="date"
-              aria-label="Observation date"
-              max={today()}
-              value={settings.observationDate}
-              onChange={(event) => {
-                if (event.target.value <= today())
-                  change("observationDate", event.target.value);
-              }}
-            />
-          </label>
-        )}
-      </header>
-      {layerOpen && (
-        <div className="layer-popover" aria-label="Map layers">
-          <div className="popover-top">
-            <span>Map layers</span>
-            <button
-              aria-label="Close layers"
-              onClick={() => setLayerOpen(false)}
-            >
-              <X size={17} />
-            </button>
+        {(drawingMessage || fieldDraft) && (
+          <div className="absolute top-3 left-3 right-3 pointer-events-none">
+            <Alert role="note" className="w-fit max-w-full">
+              <AlertDescription>
+                {drawing.mode === "polygon" || drawing.mode === "edit"
+                  ? drawingMessage
+                  : fieldDraft
+                    ? "Unsaved field. Open details to save or cancel changes."
+                    : drawingMessage}
+              </AlertDescription>
+            </Alert>
           </div>
-          <div
-            className="layer-options"
-            role="group"
-            aria-label="Select map layer"
-          >
-            {layers.map((layer) => (
-              <button
-                key={layer.value}
-                className={settings.overlay === layer.value ? "chosen" : ""}
-                onClick={() => change("overlay", layer.value)}
-                aria-pressed={settings.overlay === layer.value}
-              >
-                <span className="layer-radio" />
-                {layer.label}
-              </button>
-            ))}
-          </div>
-          <label className="opacity-label" htmlFor="opacity-control">
-            <span>Layer opacity</span>
-            <span>{Math.round(settings.opacity * 100)}%</span>
-          </label>
-          <input
-            id="opacity-control"
-            type="range"
-            min="0"
-            max="100"
-            value={Math.round(settings.opacity * 100)}
-            onChange={(event) =>
-              change("opacity", Number(event.target.value) / 100)
-            }
-          />
-        </div>
-      )}
-      <button
-        className="mobile-controls-toggle"
-        aria-expanded={panelOpen}
-        aria-label={panelOpen ? "Close location panel" : "Open location panel"}
-        onClick={() => setPanelOpen((open) => !open)}
-      >
-        <MapPin size={16} />
-        {panelOpen ? "Close location panel" : "Open location panel"}
-        <ChevronDown size={15} />
-      </button>
-      <aside
-        className={`control-panel ${panelOpen ? "mobile-open" : "is-collapsed"}`}
-        aria-label={intelOpen ? "Meridian Intel" : "Selected location details"}
-      >
-        {intelOpen ? (
-          <>
-            <div className="panel-topline">
-              <button
-                className="intel-back"
-                onClick={() => setIntelOpen(false)}
-              >
-                <ArrowLeft size={17} />
-                Back to location
-              </button>
-              <button
-                className="panel-close"
-                aria-label="Close location panel"
-                onClick={() => setPanelOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="intel-heading">
-              <span className="eyebrow">MERIDIAN INTEL</span>
-              <h1>Ask a field question</h1>
-              <p>Share a question with the current map context.</p>
-            </div>
-            <div className="intel-context">
-              <strong>
-                {settings.selection.name}
-                {settings.selection.benchmarkId ? ", Kansas" : ""}
-              </strong>
-              <span>
-                {selectedCrop} ·{" "}
-                {settings.timeMode === "latest"
-                  ? "Latest conditions"
-                  : settings.observationDate}
-              </span>
-              {area && <span>Regional cell · {area}</span>}
-            </div>
-            <label className="question-label" htmlFor="intel-question">
-              Your question
-            </label>
-            <textarea
-              id="intel-question"
-              value={question}
-              onChange={(event) => setQuestion(event.target.value)}
-              placeholder="What should I consider when comparing this area’s conditions?"
-            />
-            <div className="suggested-prompts">
-              <span>Try asking</span>
-              <button
-                onClick={() =>
-                  setQuestion("What does the selected NASA layer measure?")
-                }
-              >
-                What does this layer measure?
-              </button>
-              <button
-                onClick={() =>
-                  setQuestion(
-                    "How could these observations inform a crop decision?",
-                  )
-                }
-              >
-                How could this inform a crop decision?
-              </button>
-            </div>
-            <div className="intel-notice">
-              Analysis is not connected yet. Copy the request to share or use
-              when analysis becomes available.
-            </div>
-            <button className="ask-button" onClick={copyRequest}>
-              <MessageSquare size={17} />
-              {copyFeedback || "Copy request"}
-              <ArrowUpRight size={16} />
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="panel-topline">
-              <div>
-                <span className="eyebrow">SELECTED LOCATION</span>
-                <h1>
-                  {settings.selection.name}
-                  {settings.selection.benchmarkId ? ", Kansas" : ""}
-                </h1>
-              </div>
-              <button
-                className="panel-close"
-                aria-label="Close location panel"
-                onClick={() => setPanelOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="location-coords">
-              <MapPin size={15} />
-              <span>{coords}</span>
-            </div>
-            <label className="section-heading" htmlFor="benchmark-select">
-              Benchmark location
-            </label>
-            <div className="select-wrap location-select">
-              <select
-                id="benchmark-select"
-                aria-label="Benchmark location"
-                value={settings.selection.benchmarkId ?? "custom"}
-                onChange={(event) => chooseFarm(event.target.value)}
-              >
-                {!settings.selection.benchmarkId && (
-                  <option value="custom">Map selection</option>
-                )}
-                {farms.map((farm) => (
-                  <option value={farm.id} key={farm.id}>
-                    {farm.name}, Kansas
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={15} aria-hidden="true" />
-            </div>
-            <div className="context-summary">
-              <span>
-                Crop<strong>{selectedCrop}</strong>
-              </span>
-              <span>
-                Observation period
-                <strong>
-                  {settings.timeMode === "latest"
-                    ? "Latest conditions"
-                    : `Past · ${settings.observationDate}`}
-                </strong>
-              </span>
-            </div>
-            {area && (
-              <div className="cell-area">
-                <span>Regional cell</span>
-                <strong>{area}</strong>
-              </div>
-            )}
-            {settings.overlay !== "off" && (
-              <section className="data-provenance">
-                <div className="section-heading">
-                  <span>NASA observation</span>
-                  <span className="source-chip">
-                    {settings.overlay.toUpperCase()}
-                  </span>
-                </div>
-                {status.layer ? (
-                  <>
-                    <strong>{status.layer.label}</strong>
-                    <span>
-                      {status.layer.date} · {status.layer.units}
-                    </span>
-                    {status.layer.description && (
-                      <p>{status.layer.description}</p>
-                    )}
-                    {status.layer.legend && (
-                      <img
-                        className="native-legend"
-                        src={status.layer.legend}
-                        alt={`${status.layer.label} data legend`}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <p>NASA GIBS imagery is loading for this layer.</p>
-                )}
-              </section>
-            )}
-            <button
-              className="ask-button"
-              onClick={() => {
-                setIntelOpen(true);
-                setCopyFeedback("");
-              }}
-            >
-              <MessageSquare size={17} />
-              Ask Meridian Intel
-              <ArrowUpRight size={16} />
-            </button>
-          </>
         )}
-      </aside>
-      <div className="map-tools" aria-label="Map navigation">
-        <button
-          onClick={() => navigationAction("zoom-in")}
-          aria-label="Zoom in"
-        >
-          <Plus size={18} />
-        </button>
-        <button
-          onClick={() => navigationAction("zoom-out")}
-          aria-label="Zoom out"
-        >
-          <Minus size={18} />
-        </button>
-        <span className="tool-separator" />
-        <button
-          onClick={() => navigationAction("reset")}
-          aria-label="Reset map view"
-        >
-          <RotateCcw size={16} />
-        </button>
-      </div>
-      {(status.loading ||
-        status.failed ||
-        Boolean(status.message.trim()) ||
-        Boolean(status.layer)) && (
         <div
-          className={`map-status ${status.failed ? "status-error" : ""}`}
-          role="status"
-          aria-live="polite"
+          className="absolute right-3 bottom-16 flex flex-col gap-1 rounded-lg border bg-background p-1 shadow-xs"
+          aria-label="Map navigation"
         >
-          <span
-            className={`status-mark ${status.loading ? "is-loading" : status.failed ? "is-error" : ""}`}
-          />
-          <span className="status-message">
-            {status.failed
-              ? status.message
-              : status.loading
-                ? status.message
-                : status.layer
-                  ? `${status.layer.date} · ${status.layer.label}`
-                  : status.message}
-          </span>
-          {status.failed && (
-            <button onClick={() => setRetry((count) => count + 1)}>
-              Retry
-            </button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            aria-label="Zoom in"
+            onClick={() => navigateMap("zoom-in")}
+          >
+            <Plus />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            aria-label="Zoom out"
+            onClick={() => navigateMap("zoom-out")}
+          >
+            <Minus />
+          </Button>
+          <Separator />
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            aria-label="Reset map view"
+            onClick={() => navigateMap("reset")}
+          >
+            <RotateCcw />
+          </Button>
         </div>
-      )}
-      {settings.overlay !== "off" && (
-        <div className="source-attribution">NASA GIBS</div>
-      )}
-      <div className="preview-note">Select a hexagon to explore</div>
-    </main>
+        {showStatus && (
+          <div className="absolute bottom-6 left-3 max-w-[calc(100%-90px)]">
+            <Alert
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              variant={status.failed ? "destructive" : "default"}
+              className="w-fit shadow-xs"
+            >
+              <AlertDescription>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span>
+                    {status.failed || status.loading
+                      ? status.message
+                      : status.layer
+                        ? `${status.layer.date} · ${status.layer.label}`
+                        : status.message}
+                  </span>
+                  {status.failed && (
+                    <Button variant="outline" size="sm" onClick={retryImagery}>
+                      Retry
+                    </Button>
+                  )}
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+        {settings.overlay !== "off" && (
+          <span className="absolute right-2 bottom-7 bg-background/90 px-1.5 py-0.5 text-xs text-muted-foreground">
+            NASA GIBS
+          </span>
+        )}
+      </section>
+
+      <FieldDetails
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        onEditBoundary={() => {
+          editField();
+          setDetailsOpen(false);
+          setDrawingMessage(
+            "Drag vertices to edit. Finish boundary to review and save your changes.",
+          );
+        }}
+        onAtlas={() => {
+          change("mode", "atlas");
+          setDetailsOpen(false);
+        }}
+      />
+    </div>
   );
 }

@@ -30,27 +30,45 @@ apps/api/.venv/bin/python -m pip install -r apps/api/requirements.txt
 
 Run `pnpm dev` from the root. The web app is at http://localhost:3000 and the API at http://localhost:8000. See [apps/api/API.md](apps/api/API.md) for endpoints and mock payloads. Run `pnpm run build` to build the frontend. FastAPI is interpreted and has no build step.
 
-## Meridian map design preview
+## Meridian workspace
 
 Run `pnpm --filter @spaceapps/web dev`, then open http://localhost:3000.
-Meridian uses one compact header, a right-aligned latest/past observation selector,
-and one collapsible location panel. The map combines a light OpenFreeMap basemap (roads and place names)
-with translucent geographic hexagons. Legacy design links open the same workspace.
+The frontend uses shadcn/ui (Base UI / Nova), Tailwind v4, and a full-height
+navigation sidebar with separate Explore, Field Planner, Economics and Ask Meridian
+workspaces. Production builds use Next.js Webpack; development uses Turbopack.
 
-Both field and atlas modes support six Kansas locality shortcuts and crop context.
-The map uses H3 resolution 2 below zoom 4, resolution 3 from zoom 4, resolution 4
-from zoom 6, and viewport-scoped resolution 5 from zoom 9. Cells represent regional
-geography, not verified farm parcels or a crop classification.
+Explore places map controls in one toolbar. The light OpenFreeMap basemap retains
+roads and place names under selectable H3 cells. Field / Atlas modes preserve crop,
+location and dates. Kansas locality shortcuts are Tribune, Colby, Hays, Salina,
+Manhattan and Ottawa. H3 resolution is 2 below zoom 4, 3 below 6, 4 below 9, then
+viewport-scoped 5. Cells represent regional geography, not verified farm parcels.
 
-NASA imagery is opt-in. Historical selections use the most recent advertised
-observation on or before the chosen date; each product's actual date and units
-remain visible. There are no risk scores or drought simulations. The Meridian
-Intel request view prepares/copies selected context and a question; analysis is
-not connected and no model response is fabricated.
+NASA SMAP, VIIRS NDVI and IMERG imagery is opt-in. Historical dates resolve to the
+last advertised observation on/before the request; actual dates, units and legends
+remain visible. IMERG depicts precipitation rate. Loading or external failures
+leave map navigation usable. On-demand location details open in a Sheet.
+
+Field mode selects exact map points and supports named, saved polygon fields with
+Terra Draw. Draw or edit a boundary, finish it, then save or cancel. Geodesic area
+and centroid are calculated locally; fields above 5,000 ha remain editable and are
+directed to Atlas. Unsaved changes have Save / Discard / Stay protection.
+
+Field details request a USDA Cropland Data Layer point sample through the API.
+The source year is shown, detected crops require explicit acceptance, and manual
+crop selection remains available when classification is unsupported or unavailable.
+This is a point sample, not a whole-field crop assessment.
+
+Field Planner saves management assumptions per saved field and crop. Polygon
+hectares are authoritative in both Planner and Economics; point areas are manual.
+Economics calculates from explicitly entered prices, yields, percentage change,
+costs, support and area; blank inputs are not zero. It supplies no market values or
+model forecasts. Ask Meridian copies a question with selected map and plan context;
+analysis is not connected. No risk scores or drought simulation are fabricated.
 
 Geography: Natural Earth (public domain). Hexagons: H3. Imagery/legends: NASA GIBS.
-No Meteomatics credentials are needed. Backend/model integration and Azure/GoDaddy
-deployment remain deferred. Settings persist locally without login.
+No login or Meteomatics credentials are needed. ML/analysis integration and
+Azure/GoDaddy deployment remain deferred. Fields, plans and economic inputs stay
+in browser storage; existing location-based inputs migrate when a field is saved.
 
 Validation:
 
@@ -60,3 +78,8 @@ pnpm --filter @spaceapps/web build
 pnpm --filter @spaceapps/web exec playwright install chromium
 pnpm --filter @spaceapps/web exec playwright test
 ```
+
+## Project progress
+
+See [milestones](docs/MILESTONES.md) for delivery gates and
+[continuation handoff](docs/HANDOFF.md) for current decisions and implementation state.
