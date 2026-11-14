@@ -52,7 +52,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
     node.setAttribute("data-test-map-instance", "stable"),
   );
 
-  await page.getByLabel("Benchmark location").selectOption("hays");
+  await page.getByLabel("Field or location").selectOption("benchmark:hays");
   await page.getByLabel("Cash crop").selectOption("corn");
   await page.getByLabel("Observation period").selectOption("past");
   await page.getByLabel("Observation date", { exact: true }).fill("2026-11-01");
@@ -77,7 +77,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
 
   await page.getByRole("link", { name: "Field Planner" }).click();
   await expect(
-    page.getByRole("heading", { name: "Plan a cover crop" }),
+    page.getByRole("heading", { name: "Plan termination" }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Field Planner" }),
@@ -90,7 +90,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(map).toBeVisible();
   await expect(map).toHaveAttribute("data-test-map-instance", "stable");
   await expect(canvas).toHaveAttribute("data-hex-resolution", resolution!);
-  await expect(page.getByLabel("Benchmark location")).toHaveValue("hays");
+  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
   await expect(
@@ -105,7 +105,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await page.goForward();
   await expect(page).toHaveURL(/\/$/);
   await page.reload();
-  await expect(page.getByLabel("Benchmark location")).toHaveValue("hays");
+  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
   await expect(
@@ -154,14 +154,12 @@ test("fallback hex selection opens a detail sheet that can close before zooming"
   await expect(canvas).toHaveAttribute("data-hex-resolution", "2", {
     timeout: 30000,
   });
-  const details = page.getByRole("dialog", {
-    name: "Selected region",
-  });
+  const details = page.getByRole("complementary", { name: "Region overview" });
   await expect(async () => {
     await page.mouse.click(800, 400);
     await expect(details).toContainText("Selected region");
   }).toPass({ timeout: 20000 });
-  await details.getByRole("button", { name: "Close" }).click();
+  await details.getByRole("button", { name: "Close region overview" }).click();
   await expect(details).toBeHidden();
 
   await page.getByRole("button", { name: "Zoom in", exact: true }).click();
@@ -277,7 +275,7 @@ test("legacy map settings migrate without old scenarios or external imagery", as
   await page.goto("/");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
   await expect(page.getByLabel("Observation period")).toHaveValue("latest");
-  await expect(page.getByLabel("Benchmark location")).toHaveValue("hays");
+  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await expect(page.getByRole("button", { name: /drought/i })).toHaveCount(0);
   expect(earthdataRequests).toBe(0);
 });

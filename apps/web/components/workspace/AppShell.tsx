@@ -22,6 +22,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
@@ -32,6 +35,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { FieldGuards } from "@/components/workspace/FieldGuards";
+import { FieldContext } from "@/components/workspace/FieldContext";
+import { WorkspaceBackup } from "@/components/workspace/WorkspaceBackup";
 import MapPreview from "@/components/map/MapPreview";
 import { cn } from "@/lib/utils";
 
@@ -92,7 +97,7 @@ function AppNavigation() {
                   <SidebarMenuButton
                     size="lg"
                     className="group-data-[collapsible=icon]:justify-center"
-                    isActive={pathname === href}
+                    isActive={pathname === href || (href !== "/" && pathname.startsWith(`${href}/`))}
                     tooltip={title}
                     render={
                       <Link
@@ -105,6 +110,17 @@ function AppNavigation() {
                     <Icon aria-hidden="true" />
                     <span className="group-data-[collapsible=icon]:sr-only">{title}</span>
                   </SidebarMenuButton>
+                  {href === "/planner" && <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        className="min-h-11 md:min-h-7"
+                        isActive={pathname === "/planner/saved"}
+                        render={<Link href="/planner/saved" aria-current={pathname === "/planner/saved" ? "page" : undefined} onClick={() => setOpenMobile(false)} />}
+                      >
+                        <span>Saved plans</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -112,6 +128,7 @@ function AppNavigation() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-5 group-data-[collapsible=icon]:hidden">
+        <WorkspaceBackup />
         <Separator />
         <p className="pt-3 text-xs leading-relaxed text-muted-foreground">
           Your workspace stays in this browser.
@@ -129,18 +146,19 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (pathname === "/") setMapVisited(true);
   }, [pathname]);
-  const page = destinations.find((d) => d.href === pathname);
+  const page = destinations.find((d) => d.href === pathname || (d.href !== "/" && pathname.startsWith(`${d.href}/`)));
   return (
     <>
       <AppNavigation />
       <SidebarInset className="h-dvh min-h-0 min-w-0 overflow-hidden">
         {pathname !== "/" && (
-          <header className="flex h-16 shrink-0 items-center gap-3 border-b px-4 md:px-6">
+          <header className="flex min-h-16 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3 md:px-6">
             <SidebarTrigger aria-label="Toggle navigation" />
             <Separator orientation="vertical" className="my-4" />
-            <span className="text-sm font-medium">
-              {page?.title ?? "Meridian"}
+            <span className="mr-auto text-sm font-medium">
+              {pathname === "/planner/saved" ? "Saved plans" : page?.title ?? "Meridian"}
             </span>
+            <FieldContext />
           </header>
         )}
         <div className="relative min-h-0 flex-1">

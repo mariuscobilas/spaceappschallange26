@@ -13,6 +13,7 @@ test("draws and saves a boundary that survives reload", async ({ page }) => {
   }
   await expect(canvas).toHaveAttribute("data-hex-resolution", "5");
   await drawButton.click();
+  await expect(canvas).toHaveAttribute("data-drawing-ready", "true");
 
   const bounds = await canvas.boundingBox();
   if (!bounds) throw new Error("Map canvas is not visible");
@@ -46,8 +47,8 @@ test("draws and saves a boundary that survives reload", async ({ page }) => {
   expect(savedBeforeReload.fields[0].areaHectares).toBeGreaterThan(0);
 
   await page.reload();
-  await expect(page.getByLabel("Saved fields")).toHaveValue(
-    savedBeforeReload.fields[0].id,
+  await expect(page.getByLabel("Field or location")).toHaveValue(
+    `field:${savedBeforeReload.fields[0].id}`,
   );
   const savedAfterReload = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}"),

@@ -6,7 +6,15 @@ import {
   resolutionForZoom,
   resolveObservationDate,
   tileTemplate,
+  h3CellFeature,
 } from "../lib/map/engine";
+
+test("detailed H3 cells use closed longitude/latitude GeoJSON around the chosen U.S. point", () => {
+  const feature = h3CellFeature(hexAt(39, -99, 5), 5);
+  const ring = feature.geometry.coordinates[0];
+  expect(ring[0]).toEqual(ring.at(-1));
+  expect(ring.every(([longitude, latitude]) => longitude > -100 && longitude < -98 && latitude > 38 && latitude < 40)).toBe(true);
+});
 
 test("H3 geometry covers geographic CONUS at progressive resolutions", async () => {
   const boundary = JSON.parse(

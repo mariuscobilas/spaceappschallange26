@@ -23,9 +23,11 @@ import {
   initialSettings,
   validMapSettings,
   validPlan,
+  validPlanDraft,
 } from "@/lib/workspace";
 import type { EconomicsDraft, FieldPlan, SavedPlan } from "@/lib/workspace";
 import { analyzeBoundary } from "@/lib/fields/geometry";
+import { BACKUP_KEYS, UNIT_KEY, type WorkspaceBackup } from "@/lib/workspace-backup";
 import {
   fieldSelection,
   normalizeField,
@@ -35,6 +37,7 @@ import {
 const MAP_KEY = "meridian.map-settings.v3",
   FIELDS_KEY = "meridian.fields.v1",
   PLANS_KEY = "meridian.field-plans.v2",
+  PLAN_DRAFTS_KEY = "meridian.plan-drafts.v1",
   ECONOMICS_KEY = "meridian.economics.v2";
 interface MeridianContextValue {
   ready: boolean;
@@ -48,7 +51,13 @@ interface MeridianContextValue {
   retry: number;
   retryImagery: () => void;
   savedPlan?: SavedPlan;
+  planDraft?: FieldPlan;
+  updatePlanDraft: (draft: FieldPlan) => void;
   savePlan: (plan: FieldPlan) => boolean;
+  savedPlans: { key: string; plan: SavedPlan }[];
+  getPlanDraft: (plan: SavedPlan) => FieldPlan | undefined;
+  openSavedPlan: (key: string, restoreDraft?: boolean) => boolean;
+  deleteSavedPlan: (key: string) => boolean;
   economicsDraft: EconomicsDraft;
   updateEconomics: (draft: EconomicsDraft) => void;
   storageAvailable: boolean;
@@ -73,13 +82,29 @@ interface MeridianContextValue {
   requestTransition: (action: () => void) => void;
   pendingAction: (() => void) | null;
   resolveTransition: (choice: "save" | "discard" | "stay") => void;
+  createBackup: () => WorkspaceBackup;
+  importBackup: (backup: WorkspaceBackup) => { imported: number; skipped: number } | null;
 }
 const MeridianContext = createContext<MeridianContextValue | null>(null);
+
+function isMigratedPlanAlias(left: SavedPlan, right: SavedPlan, fields: SavedField[]) {
+  const fieldPlan = left.location.fieldId ? left : right.location.fieldId ? right : undefined;
+  const legacyPlan = fieldPlan === left ? right : fieldPlan === right ? left : undefined;
+  if (!fieldPlan || !legacyPlan || legacyPlan.location.fieldId) return false;
+  const field = fields.find((item) => item.id === fieldPlan.location.fieldId);
+  if (!field?.benchmarkId || field.benchmarkId !== legacyPlan.location.benchmarkId) return false;
+  if (Math.abs(field.location.latitude - legacyPlan.location.latitude) > 1e-6 ||
+      Math.abs(field.location.longitude - legacyPlan.location.longitude) > 1e-6 ||
+      fieldPlan.crop !== legacyPlan.crop || fieldPlan.savedAt !== legacyPlan.savedAt) return false;
+  return ["coverCrop", "terminationDays", "plantingDate", "areaHa", "notes"].every((key) => fieldPlan[key as keyof SavedPlan] === legacyPlan[key as keyof SavedPlan]);
+}
+
 export function MeridianProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false),
     [settings, setSettings] = useState(initialSettings);
   const [plans, setPlans] = useState<Record<string, SavedPlan>>({}),
     [economics, setEconomics] = useState<Record<string, EconomicsDraft>>({});
+  const [planDrafts, setPlanDrafts] = useState<Record<string, FieldPlan>>({});
   const [fields, setFields] = useState<SavedField[]>([]),
     [fieldDraft, setFieldDraft] = useState<SavedField | null>(null),
     [draftDirty, setDraftDirty] = useState(false);
@@ -159,7 +184,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
           restored = {
             ...restored,
             selection: fieldSelection(active),
-            crop: active.currentCrop as PreviewCrop,
+            crop: (restored.selection.fieldId === active.id ? restored.crop : active.currentCrop) as PreviewCrop,
           };
         else if (restored.selection.fieldId)
           restored = { ...restored, selection: initialSettings.selection };
@@ -190,6 +215,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         SavedPlan
       >,
     );
+    setPlanDrafts(readRecords(PLAN_DRAFTS_KEY, PLAN_DRAFTS_KEY, validPlanDraft) as Record<string, FieldPlan>);
     setEconomics(
       readRecords(
         "meridian.economics.v1",
@@ -383,6 +409,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     }));
     const nextPlans = { ...plans },
       nextEconomics = { ...economics };
+    const nextDrafts = { ...planDrafts };
     for (const crop of crops) {
       const old = `${legacyOrigin.current}|${crop.value}`,
         key = `${normalized.id}|${crop.value}`;
@@ -391,8 +418,13 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
           ...plans[old],
           location: fieldSelection(normalized),
         };
+      // Keep the migration origin as an alias of the stable field ID. Its v2
+      // record overrides v1 on restore, so renaming/re-saving cannot duplicate it.
+      if (plans[old]) nextPlans[old] = { ...plans[old], location: fieldSelection(normalized) };
       if (!nextEconomics[key] && economics[old])
         nextEconomics[key] = { ...economics[old] };
+      if (!nextDrafts[key] && planDrafts[old])
+        nextDrafts[key] = { ...planDrafts[old] };
       if (nextPlans[key])
         nextPlans[key] = {
           ...nextPlans[key],
@@ -409,8 +441,10 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     }
     setPlans(nextPlans);
     setEconomics(nextEconomics);
+    setPlanDrafts(nextDrafts);
     store(PLANS_KEY, nextPlans);
     store(ECONOMICS_KEY, nextEconomics);
+    store(PLAN_DRAFTS_KEY, nextDrafts);
     store(FIELDS_KEY, {
       version: 1,
       activeFieldId: normalized.id,
@@ -456,6 +490,9 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     store(PLANS_KEY, nextPlans);
     store(ECONOMICS_KEY, nextEconomics);
     store(FIELDS_KEY, { version: 1, fields: next });
+    const nextDrafts = Object.fromEntries(Object.entries(planDrafts).filter(([key]) => !key.startsWith(`${id}|`)));
+    setPlanDrafts(nextDrafts);
+    store(PLAN_DRAFTS_KEY, nextDrafts);
     setFieldDraft(null);
     markDirty(false);
     resetDrawing();
@@ -467,6 +504,16 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     storedPlan && boundaryArea !== undefined
       ? { ...storedPlan, areaHa: String(boundaryArea) }
       : storedPlan;
+  const storedDraft = planDrafts[key];
+  const planDraft = storedDraft && boundaryArea !== undefined
+    ? { ...storedDraft, areaHa: String(boundaryArea) } : storedDraft;
+  const updatePlanDraft = (draft: FieldPlan) => {
+    const next = { ...planDrafts, [key]: {
+      ...draft, ...(boundaryArea !== undefined ? { areaHa: String(boundaryArea) } : {}),
+    } };
+    setPlanDrafts(next);
+    store(PLAN_DRAFTS_KEY, next);
+  };
   const savePlan = (draft: FieldPlan) => {
     const saved: SavedPlan = {
       ...draft,
@@ -477,8 +524,88 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     };
     if (!validPlan(saved)) return false;
     const next = { ...plans, [key]: saved };
+    const nextDrafts = { ...planDrafts };
+    delete nextDrafts[key];
     setPlans(next);
-    return store(PLANS_KEY, next);
+    setPlanDrafts(nextDrafts);
+    const planStored = store(PLANS_KEY, next);
+    store(PLAN_DRAFTS_KEY, nextDrafts);
+    return planStored;
+  };
+  const savedPlanGroups = new Map<string, { key: string; plan: SavedPlan }>();
+  for (const [planKey, plan] of Object.entries(plans)) {
+    const logicalKey = `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`;
+    const alias = [...savedPlanGroups.entries()].find(([, existing]) => isMigratedPlanAlias(existing.plan, plan, fields));
+    if (alias) {
+      if (plan.location.fieldId) savedPlanGroups.set(alias[0], { key: planKey, plan });
+      continue;
+    }
+    const previous = savedPlanGroups.get(logicalKey);
+    const isCanonical = planKey === logicalKey;
+    const previousIsCanonical = previous?.key === logicalKey;
+    if (!previous || (isCanonical && !previousIsCanonical) || (isCanonical === previousIsCanonical && plan.savedAt > previous.plan.savedAt))
+      savedPlanGroups.set(logicalKey, { key: planKey, plan });
+  }
+  const savedPlans = [...savedPlanGroups.values()];
+  savedPlans.sort((left, right) => right.plan.savedAt.localeCompare(left.plan.savedAt));
+  const getPlanDraft = (plan: SavedPlan) => planDrafts[`${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`];
+  const openSavedPlan = (planKey: string, restoreDraft = false) => {
+    const plan = plans[planKey];
+    if (!plan) return false;
+    const field = plan.location.fieldId ? fields.find((item) => item.id === plan.location.fieldId) : undefined;
+    const selection = field ? fieldSelection(field) : plan.location;
+    const crop = plan.crop;
+    const nextFields = field
+      ? fields.map((item) => item.id === field.id
+        ? { ...item, currentCrop: crop, cropSource: "manual" as const, updatedAt: new Date().toISOString() }
+        : item)
+      : fields;
+    if (field) setFields(nextFields);
+    const targetKey = `${selection.fieldId ?? selection.benchmarkId ?? selection.hexId ?? `${selection.latitude.toFixed(4)},${selection.longitude.toFixed(4)}`}|${crop}`;
+    if (restoreDraft) {
+      const { location: _location, crop: _crop, savedAt: _savedAt, ...draft } = plan;
+      const nextDrafts = { ...planDrafts, [targetKey]: draft };
+      setPlanDrafts(nextDrafts);
+      store(PLAN_DRAFTS_KEY, nextDrafts);
+    }
+    setFieldDraft(null);
+    markDirty(false);
+    resetDrawing();
+    setSettings((current) => {
+      const nextSettings = { ...current, crop, selection };
+      store(MAP_KEY, nextSettings);
+      store(FIELDS_KEY, { version: 1, activeFieldId: selection.fieldId, fields: nextFields });
+      return nextSettings;
+    });
+    return true;
+  };
+  const deleteSavedPlan = (planKey: string) => {
+    if (!plans[planKey]) return true;
+    const next = { ...plans };
+    const selected = plans[planKey];
+    const logicalKey = `${selected.location.fieldId ?? selected.location.benchmarkId ?? selected.location.hexId ?? `${selected.location.latitude.toFixed(4)},${selected.location.longitude.toFixed(4)}`}|${selected.crop}`;
+    const deleted = new Set<string>();
+    for (const [candidateKey, plan] of Object.entries(next)) {
+      const candidateLogicalKey = `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`;
+      if (candidateLogicalKey === logicalKey || isMigratedPlanAlias(selected, plan, fields)) {
+        delete next[candidateKey];
+        deleted.add(candidateKey);
+      }
+    }
+    setPlans(next);
+    const canonicalStored = store(PLANS_KEY, next);
+    let legacyStored = true;
+    try {
+      const legacy = JSON.parse(localStorage.getItem("meridian.field-plans.v1") ?? "{}");
+      if (legacy && typeof legacy === "object" && !Array.isArray(legacy)) {
+        for (const key of deleted) delete legacy[key];
+        legacyStored = store("meridian.field-plans.v1", legacy);
+      }
+    } catch {
+      legacyStored = false;
+      setStorageAvailable(false);
+    }
+    return canonicalStored && legacyStored;
   };
   const economicsDraft = {
     ...(economics[key] ?? {
@@ -513,6 +640,68 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
       finish: d.finish,
     }));
   };
+  const createBackup = (): WorkspaceBackup => {
+    let unitSystem: "metric" | "us" = "metric";
+    try { unitSystem = localStorage.getItem(UNIT_KEY) === "us" ? "us" : "metric"; } catch {}
+    return {
+      version: 1, exportedAt: new Date().toISOString(), settings, fields,
+      // Storage can retain a benchmark-keyed migration alias whose plan payload
+      // now points at the canonical field ID. Export only the canonical plan
+      // groups exposed to users so every emitted key matches its payload.
+      activeFieldId: settings.selection.fieldId,
+      plans: Object.fromEntries(savedPlans.map(({ plan }) => [
+        `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`,
+        plan,
+      ])),
+      drafts: planDrafts, economics, unitSystem,
+    };
+  };
+  const importBackup = (backup: WorkspaceBackup) => {
+    if (dirtyRef.current) return null;
+    const existingIds = new Set(fields.map((field) => field.id));
+    const newFields = backup.fields.filter((field) => !existingIds.has(field.id)).map(normalizeField);
+    const mergedFields = [...fields, ...newFields];
+    const validRef = (plan: SavedPlan) => !plan.location.fieldId || mergedFields.some((field) => field.id === plan.location.fieldId);
+    const additions = <T,>(current: Record<string, T>, incoming: Record<string, T>, valid: (item: T) => boolean = () => true) => {
+      const next = { ...current };
+      let added = 0, skipped = 0;
+      for (const [key, item] of Object.entries(incoming)) {
+        if (Object.prototype.hasOwnProperty.call(next, key) || !valid(item)) skipped++;
+        else { next[key] = item; added++; }
+      }
+      return { next, added, skipped };
+    };
+    const planResult = additions(plans, backup.plans, validRef);
+    const draftResult = additions(planDrafts, backup.drafts);
+    const economicsResult = additions(economics, backup.economics);
+    const selectedId = backup.settings.selection.fieldId ?? backup.activeFieldId;
+    const active = selectedId && mergedFields.some((field) => field.id === selectedId)
+      ? mergedFields.find((field) => field.id === selectedId) : undefined;
+    const nextSettings = active
+      ? { ...backup.settings, selection: fieldSelection(active) }
+      : backup.settings.selection.fieldId && !mergedFields.some((field) => field.id === backup.settings.selection.fieldId)
+        ? { ...backup.settings, selection: initialSettings.selection } : backup.settings;
+    const writes: [string, string][] = [
+      [BACKUP_KEYS.settings, JSON.stringify(nextSettings)],
+      [BACKUP_KEYS.fields, JSON.stringify({ version: 1, activeFieldId: active?.id, fields: mergedFields })],
+      [BACKUP_KEYS.plans, JSON.stringify(planResult.next)], [BACKUP_KEYS.drafts, JSON.stringify(draftResult.next)],
+      [BACKUP_KEYS.economics, JSON.stringify(economicsResult.next)], [UNIT_KEY, backup.unitSystem],
+    ];
+    let before: readonly (readonly [string, string | null])[] = [];
+    try {
+      before = writes.map(([key]) => [key, localStorage.getItem(key)] as const);
+      for (const [key, value] of writes) localStorage.setItem(key, value);
+    } catch {
+      for (const [key, value] of before) try { value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); } catch {}
+      setStorageAvailable(false);
+      return null;
+    }
+    setSettings(nextSettings); setFields(mergedFields); setPlans(planResult.next);
+    setPlanDrafts(draftResult.next); setEconomics(economicsResult.next);
+    previousSelection.current = nextSettings.selection;
+    window.dispatchEvent(new CustomEvent("meridian:unit-system-change", { detail: backup.unitSystem }));
+    return { imported: newFields.length + planResult.added + draftResult.added + economicsResult.added, skipped: (backup.fields.length - newFields.length) + planResult.skipped + draftResult.skipped + economicsResult.skipped };
+  };
   return (
     <MeridianContext.Provider
       value={{
@@ -527,7 +716,13 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         retry,
         retryImagery: () => setRetry((r) => r + 1),
         savedPlan,
+        planDraft,
+        updatePlanDraft,
         savePlan,
+        savedPlans,
+        getPlanDraft,
+        openSavedPlan,
+        deleteSavedPlan,
         economicsDraft,
         updateEconomics,
         storageAvailable,
@@ -557,6 +752,8 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         requestTransition,
         pendingAction,
         resolveTransition,
+        createBackup,
+        importBackup,
       }}
     >
       {children}

@@ -1,0 +1,42 @@
+{
+  "sample": {
+    "latitude": 38.4697,
+    "longitude": -101.7527
+  },
+  "requestedDate": "2026-11-14",
+  "retrievedAt": "2026-11-14T12:00:00Z",
+  "soilMapUnit": null,
+  "precipitation30d": {
+    "status": "unavailable",
+    "value": null,
+    "unit": "mm",
+    "periodStart": null,
+    "periodEnd": null,
+    "source": "NASA POWER meteorology",
+    "sourceUrl": "https://power.larc.nasa.gov/docs/services/api/temporal/daily/",
+    "spatialResolution": "Meteorology grid: 0.5° latitude × 0.625° longitude",
+    "message": "Source data unavailable; no substitute estimate supplied."
+  },
+  "rootZoneWetness": {
+    "status": "unavailable",
+    "value": null,
+    "unit": "fraction",
+    "periodStart": null,
+    "periodEnd": null,
+    "source": "NASA POWER meteorology",
+    "sourceUrl": "https://power.larc.nasa.gov/docs/methodology/data/sources_hydrology/",
+    "spatialResolution": "Meteorology grid: 0.5° latitude × 0.625° longitude",
+    "message": "Source data unavailable; no substitute estimate supplied."
+  },
+  "availableWaterStorage": {
+    "status": "unavailable",
+    "value": null,
+    "unit": "mm",
+    "periodStart": null,
+    "periodEnd": null,
+    "source": "USDA NRCS Soil Data Access / SSURGO",
+    "sourceUrl": "https://sdmdataaccess.sc.egov.usda.gov/",
+    "spatialResolution": "Soil map-unit weighted average, 0–100 cm",
+    "message": "Source data unavailable; no substitute estimate supplied."
+  }
+}

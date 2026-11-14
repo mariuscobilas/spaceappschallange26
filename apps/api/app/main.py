@@ -31,6 +31,7 @@ except ImportError:
     )
 
 from app.routers.land_cover import router as land_cover_router
+from app.routers.field_conditions import router as field_conditions_router
 
 app = FastAPI(
     title="Field Shift API",
@@ -47,6 +48,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(land_cover_router)
+app.include_router(field_conditions_router)
 
 
 @app.get("/health", response_model=HealthResponse)

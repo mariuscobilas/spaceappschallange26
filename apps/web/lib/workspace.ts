@@ -29,6 +29,17 @@ export interface SavedPlan extends FieldPlan {
   crop: PreviewCrop;
   savedAt: string;
 }
+// Drafts accept unfinished dates/area values so navigation never erases input.
+export function validPlanDraft(value: unknown): value is FieldPlan {
+  if (!value || typeof value !== "object") return false;
+  const draft = value as FieldPlan;
+  return coverCrops.some((crop) => crop.value === draft.coverCrop) &&
+    Number.isInteger(draft.terminationDays) && draft.terminationDays >= 0 &&
+    draft.terminationDays <= 60 && draft.terminationDays % 5 === 0 &&
+    typeof draft.plantingDate === "string" && draft.plantingDate.length <= 10 &&
+    typeof draft.areaHa === "string" && draft.areaHa.length <= 40 &&
+    typeof draft.notes === "string" && draft.notes.length <= 4000;
+}
 export const emptyPlan: FieldPlan = {
   coverCrop: "rye",
   terminationDays: 30,

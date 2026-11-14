@@ -4,6 +4,7 @@ Enables end-to-end type safety between FastAPI and Next.js.
 """
 
 import math
+from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field, model_validator
 
@@ -265,4 +266,61 @@ class FieldAnalysisResponse(BaseModel):
     fieldName: str
     environmentSnapshot: NasaEnvironmentalSnapshot
     prediction: FieldShiftPrediction
+
+
+class FieldConditionMeasure(BaseModel):
+    status: Literal["available", "unavailable"]
+    value: Optional[float]
+    unit: Literal["mm", "fraction"]
+    periodStart: Optional[date]
+    periodEnd: Optional[date]
+    source: str
+    sourceUrl: str
+    spatialResolution: str
+    message: str
+
+    @model_validator(mode="after")
+    def check_measure(self):
+        if self.status == "available":
+            if self.value is None or not math.isfinite(self.value) or self.value < 0:
+                raise ValueError("Available measures require a finite nonnegative value")
+            if self.unit == "fraction" and self.value > 1:
+                raise ValueError("Relative wetness fraction must be between 0 and 1")
+        elif self.value is not None:
+            raise ValueError("Unavailable measures must have null value")
+        if (self.periodStart is None) != (self.periodEnd is None):
+            raise ValueError("Period requires both start and end")
+        if self.periodStart and self.periodEnd and self.periodStart > self.periodEnd:
+            raise ValueError("Period start must precede end")
+        return self
+
+
+class FieldConditionsResult(BaseModel):
+    sample: GeoCoordinate
+    requestedDate: date
+    retrievedAt: datetime
+    precipitation30d: FieldConditionMeasure
+    rootZoneWetness: FieldConditionMeasure
+    availableWaterStorage: FieldConditionMeasure
+    soilMapUnit: Optional[str]
+
+    @model_validator(mode="after")
+    def check_periods_and_units(self):
+        for name, unit in (("precipitation30d", "mm"), ("rootZoneWetness", "fraction"), ("availableWaterStorage", "mm")):
+            measure = getattr(self, name)
+            if measure.unit != unit:
+                raise ValueError(f"{name} has incorrect unit")
+            if measure.periodEnd and measure.periodEnd > self.requestedDate:
+                raise ValueError("Observation period exceeds the requested date")
+        rain = self.precipitation30d
+        if rain.status == "available" and (rain.periodStart is None or rain.periodEnd - rain.periodStart != timedelta(days=29)):
+            raise ValueError("Precipitation requires a complete 30-day interval")
+        wetness = self.rootZoneWetness
+        if wetness.status == "available" and (wetness.periodStart is None or wetness.periodStart != wetness.periodEnd):
+            raise ValueError("Wetness requires an actual single observation day")
+        if self.availableWaterStorage.periodStart is not None:
+            raise ValueError("Mapped soil capacity is not a dated moisture observation")
+        if self.retrievedAt.tzinfo is None:
+            raise ValueError("Retrieval timestamp must include a timezone")
+        return self
 

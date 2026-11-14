@@ -3,7 +3,8 @@
 import { FieldDetails } from "@/components/map/FieldDetails";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { cellToLatLng, isValidCell } from "h3-js";
 import {
   CloudRain,
   Droplets,
@@ -13,8 +14,11 @@ import {
   Minus,
   Plus,
   RotateCcw,
+  X,
 } from "lucide-react";
-import farms from "@/data/benchmark_farms.json";
+import { FieldContext } from "@/components/workspace/FieldContext";
+import { AtlasRegionOverview } from "@/components/map/AtlasRegionOverview";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -37,11 +41,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { crops, today, validDate } from "@/lib/workspace";
+import { today, validDate } from "@/lib/workspace";
 import type {
   MapMode,
   Overlay,
-  PreviewCrop,
   Selection,
   TimeMode,
 } from "@/lib/map/types";
@@ -93,21 +96,22 @@ export default function MapPreview() {
     reportStatus,
     retry,
     retryImagery,
-    fields,
     activeField,
     fieldDraft,
     drawing,
     beginField,
     editField,
     receiveBoundary,
-    updateFieldDraft,
     finishDrawing,
     cancelField,
-    chooseField,
     requestTransition,
   } = useMeridian();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const infoButton = useRef<HTMLButtonElement>(null);
+  const atlasRegion = settings.mode === "atlas" && !fieldDraft;
   const [mapReady, setMapReady] = useState(false);
+  const [drawingReady, setDrawingReady] = useState(false);
   const [drawingMessage, setDrawingMessage] = useState("");
   useEffect(() => {
     if (fieldDraft?.boundary && drawing.mode === "browse") setDetailsOpen(true);
@@ -125,26 +129,17 @@ export default function MapPreview() {
       }
       setDetailsOpen(true);
     });
-  const chooseFarm = (id: string) =>
-    requestTransition(() => {
-      const farm = farms.find((f) => f.id === id);
-      if (farm) {
-        if (fieldDraft) cancelField();
-        selectLocation(
-          {
-            name: farm.name,
-            latitude: farm.latitude,
-            longitude: farm.longitude,
-            benchmarkId: farm.id,
-          },
-          true,
-        );
-        setDetailsOpen(false);
-      }
-    });
   const layer = layers.find((l) => l.value === settings.overlay);
   const showStatus =
     status.loading || status.failed || !!status.message || !!status.layer;
+  const inspectField = () => requestTransition(() => {
+    const hex = settings.selection.hexId;
+    const [latitude, longitude] = hex && isValidCell(hex)
+      ? cellToLatLng(hex) : [settings.selection.latitude, settings.selection.longitude];
+    change("mode", "field");
+    beginField({ name: "Selected point", latitude, longitude });
+    navigateMap("selection");
+  });
 
   return (
     <div
@@ -152,60 +147,16 @@ export default function MapPreview() {
       aria-label="Explore workspace"
     >
       <header
-        className="map-toolbar flex shrink-0 flex-wrap items-center gap-2 border-b bg-background px-3 py-3"
+        className="map-toolbar flex shrink-0 flex-wrap items-end gap-2 border-b bg-background px-3 py-3"
         aria-label="Map toolbar"
       >
-        <SidebarTrigger aria-label="Toggle navigation" />
+        <SidebarTrigger aria-label="Toggle navigation" size="icon" />
         <h1 className="sr-only">Explore</h1>
-        <FieldGroup>
-          <Field className="w-44">
-            <FieldLabel htmlFor="benchmark-select" className="sr-only">
-              Benchmark location
-            </FieldLabel>
-            <NativeSelect
-              id="benchmark-select"
-              className="w-full"
-              aria-label="Benchmark location"
-              value={settings.selection.benchmarkId ?? "custom"}
-              onChange={(e) => chooseFarm(e.target.value)}
-            >
-              {!settings.selection.benchmarkId && (
-                <NativeSelectOption value="custom">
-                  Selected region
-                </NativeSelectOption>
-              )}
-              {farms.map((f) => (
-                <NativeSelectOption value={f.id} key={f.id}>
-                  {f.name}, Kansas
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
-          <Field className="w-28 crop-control">
-            <FieldLabel htmlFor="cash-crop" className="sr-only">
-              Cash crop
-            </FieldLabel>
-            <NativeSelect
-              id="cash-crop"
-              aria-label="Cash crop"
-              className="w-full"
-              value={fieldDraft?.currentCrop ?? settings.crop}
-              onChange={(e) => {
-                const crop = e.target.value as PreviewCrop;
-                if (fieldDraft)
-                  updateFieldDraft({ currentCrop: crop, cropSource: "manual" });
-                else change("crop", crop);
-              }}
-            >
-              {crops.map((c) => (
-                <NativeSelectOption value={c.value} key={c.value}>
-                  {c.label}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
-        </FieldGroup>
+        {pathname === "/" && <FieldContext />}
+        <Field className="w-auto">
+        <FieldLabel id="map-mode-label" className="text-xs text-muted-foreground">Map view</FieldLabel>
         <ToggleGroup
+          aria-labelledby="map-mode-label"
           aria-label="Map mode"
           variant="outline"
           value={[settings.mode]}
@@ -225,33 +176,13 @@ export default function MapPreview() {
             Atlas
           </ToggleGroupItem>
         </ToggleGroup>
-        <FieldGroup>
-          <Field className="w-40">
-            <FieldLabel htmlFor="saved-field-select" className="sr-only">
-              Saved fields
-            </FieldLabel>
-            <NativeSelect
-              id="saved-field-select"
-              className="w-full"
-              value={activeField?.id ?? ""}
-              onChange={(e) => {
-                if (e.target.value) chooseField(e.target.value);
-              }}
-            >
-              <NativeSelectOption value="">
-                Saved fields ({fields.length})
-              </NativeSelectOption>
-              {fields.map((f) => (
-                <NativeSelectOption key={f.id} value={f.id}>
-                  {f.name}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
-        </FieldGroup>
+        </Field>
+        <Field className="w-auto">
+        <FieldLabel id="map-tools-label" className="text-xs text-muted-foreground">Field tools</FieldLabel>
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-labelledby="map-tools-label">
         {drawing.mode === "polygon" || drawing.mode === "edit" ? (
           <>
-            <Button onClick={finishDrawing}>Finish boundary</Button>
+            <Button onClick={finishDrawing} disabled={!drawingReady || !mapReady}>Finish boundary</Button>
             <Button
               variant="outline"
               onClick={() => {
@@ -286,9 +217,10 @@ export default function MapPreview() {
                 requestTransition(() => {
                   change("mode", "field");
                   beginField(undefined, true);
+                  setDrawingReady(false);
                   setDetailsOpen(false);
                   setDrawingMessage(
-                    "Click to add vertices. Finish boundary or double-click to complete; Cancel drawing discards the draft.",
+                    "Preparing drawing tools…",
                   );
                 })
               }
@@ -297,10 +229,15 @@ export default function MapPreview() {
             </Button>
           </>
         )}
+        </div>
+        </Field>
+        <Field className="w-auto">
+        <FieldLabel htmlFor="map-layers" className="text-xs text-muted-foreground">Map layer</FieldLabel>
         <Popover>
           <PopoverTrigger
             render={<Button variant="outline" />}
             aria-label="Layers"
+            id="map-layers"
           >
             <Layers3 data-icon="inline-start" />
             {layer?.short ?? "Conditions"}
@@ -386,9 +323,10 @@ export default function MapPreview() {
             )}
           </PopoverContent>
         </Popover>
+        </Field>
         <FieldGroup className="ml-auto">
           <Field className="w-40">
-            <FieldLabel htmlFor="observation-period" className="sr-only">
+            <FieldLabel htmlFor="observation-period" className="text-xs text-muted-foreground">
               Observation period
             </FieldLabel>
             <NativeSelect
@@ -408,7 +346,7 @@ export default function MapPreview() {
           </Field>
           {settings.timeMode === "past" && (
             <Field className="w-36">
-              <FieldLabel htmlFor="observation-date" className="sr-only">
+              <FieldLabel htmlFor="observation-date" className="text-xs text-muted-foreground">
                 Observation date
               </FieldLabel>
               <Input
@@ -429,6 +367,7 @@ export default function MapPreview() {
           variant="ghost"
           size="icon"
           aria-label="Selected location details"
+          ref={infoButton}
           onClick={() => {
             if (settings.mode === "field" && !fieldDraft && !activeField)
               beginField();
@@ -439,8 +378,9 @@ export default function MapPreview() {
         </Button>
       </header>
 
+      <div className="flex min-h-0 flex-1">
       <section
-        className="map-stage relative min-h-0 flex-1 overflow-hidden"
+        className="map-stage relative min-h-0 min-w-0 flex-1 overflow-hidden"
         aria-label="Interactive field map"
       >
         <MapCanvas
@@ -453,6 +393,7 @@ export default function MapPreview() {
           onBoundaryChange={receiveBoundary}
           onDrawingStatus={setDrawingMessage}
           onMapReady={setMapReady}
+          onDrawingReady={setDrawingReady}
         />
         {(drawingMessage || fieldDraft) && (
           <div className="absolute top-3 left-3 right-3 pointer-events-none">
@@ -531,21 +472,40 @@ export default function MapPreview() {
           </span>
         )}
       </section>
+      {atlasRegion && detailsOpen && !isMobile && <aside className="flex w-[25rem] shrink-0 flex-col overflow-hidden border-l bg-background" aria-label="Region overview">
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b p-4">
+          <div>
+            <h2 className="text-lg font-semibold">{settings.selection.name}</h2>
+            <p className="text-sm text-muted-foreground">National Atlas · Regional overview</p>
+          </div>
+          <Button variant="ghost" size="icon" aria-label="Close region overview" onClick={() => { setDetailsOpen(false); infoButton.current?.focus(); }}><X /></Button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          <AtlasRegionOverview enabled={detailsOpen} />
+        </div>
+        <footer className="flex shrink-0 flex-col gap-2 border-t p-4">
+          <p className="text-xs text-muted-foreground">Start at the centre, then select or draw your actual field.</p>
+          <Button onClick={inspectField} disabled={!settings.selection.hexId}>Inspect field here</Button>
+        </footer>
+      </aside>}
+      </div>
 
       <FieldDetails
-        open={detailsOpen}
+        open={detailsOpen && (!atlasRegion || isMobile)}
         onOpenChange={setDetailsOpen}
         onEditBoundary={() => {
           editField();
+          setDrawingReady(false);
           setDetailsOpen(false);
           setDrawingMessage(
-            "Drag vertices to edit. Finish boundary to review and save your changes.",
+            "Preparing drawing tools…",
           );
         }}
         onAtlas={() => {
           change("mode", "atlas");
           setDetailsOpen(false);
         }}
+        onInspectField={inspectField}
       />
     </div>
   );

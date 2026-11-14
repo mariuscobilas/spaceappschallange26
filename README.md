@@ -1,6 +1,6 @@
 # Space Apps Challenge 2026
 
-Field Shift starter: Next.js web app, FastAPI backend, and Turborepo task runner. The ML goal and pipeline will be designed separately.
+Meridian (original project name: Field Shift) is a NASA Earth observation workspace for field exploration, cover-crop planning and transparent manual economics. It uses Next.js, FastAPI and Turborepo. The client baseline and first numeric environmental context are implemented locally; validated agronomic analysis remains pending.
 
 ## Project areas
 
@@ -58,12 +58,43 @@ The source year is shown, detected crops require explicit acceptance, and manual
 crop selection remains available when classification is unsupported or unavailable.
 This is a point sample, not a whole-field crop assessment.
 
+Field details and Planner show source-backed field context from the API: complete
+30-day NASA POWER precipitation, modeled root-zone relative wetness, and USDA
+mapped soil water-storage capacity. Actual source periods, grid/map-unit meaning,
+source links and missing states are available in the panel. Soil capacity is not
+current moisture; historical weather uses its selected period while soil mapping
+uses the current survey. These values are not yield forecasts or recommendations.
+
 Field Planner saves management assumptions per saved field and crop. Polygon
 hectares are authoritative in both Planner and Economics; point areas are manual.
+The same field and intended next crop stay switchable in every workspace. Planner
+leads with planting date and shows your planned termination date; unfinished drafts
+survive navigation and reload separately from confirmed plans. Economics and Planner
+offer U.S./metric units while storing metric assumptions. Economics can show per-area
+change before acreage is entered; parcel totals require a valid managed area.
+Confirmed plans are available under **Field Planner → Saved plans** at
+`/planner/saved`. Open restores the field and crop; differing working drafts have
+an explicit restore choice. Deleting a plan preserves its field and economic inputs.
+Atlas selections open a docked regional overview on desktop and a Sheet on phones:
+hex area/centre/detail, crop/date context and clearly identified centre-point
+conditions. The map remains interactive beside the desktop overview.
 Economics calculates from explicitly entered prices, yields, percentage change,
 costs, support and area; blank inputs are not zero. It supplies no market values or
-model forecasts. Ask Meridian copies a question with selected map and plan context;
-analysis is not connected. No risk scores or drought simulation are fabricated.
+model forecasts. Saved plans also supports two-plan calendar comparison and text
+export, with a warning when field or crop contexts differ. This compares confirmed
+records; it does not store multiple scenario versions for one field/crop.
+
+Ask Meridian prepares, copies and exports a question with field/plan context and
+verified numeric conditions, including sample coordinates, periods, units, sources
+and missing states. Saved plans and distinct working drafts are labeled. Analysis
+is not connected. No risk scores or drought simulation are fabricated.
+
+**Workspace backup** in the sidebar exports versioned JSON for fields, plans,
+drafts, economics, map preferences and display units. Import validates the file,
+shows a preview and merges on explicit confirmation; existing local records win
+collisions. Settings and units are restored from the backup. Unsaved field edits
+block import, and storage failure triggers rollback of preceding writes. Keep a
+downloaded backup before clearing browser data; this is not cloud synchronization.
 
 Geography: Natural Earth (public domain). Hexagons: H3. Imagery/legends: NASA GIBS.
 No login or Meteomatics credentials are needed. ML/analysis integration and
@@ -83,3 +114,12 @@ pnpm --filter @spaceapps/web exec playwright test
 
 See [milestones](docs/MILESTONES.md) for delivery gates and
 [continuation handoff](docs/HANDOFF.md) for current decisions and implementation state.
+See [next product delivery](docs/PRODUCT-NEXT.md) for the SPA-85/86/88 dependency
+split and the proposed simulation contract handoff.
+
+Current progress (14 November 2026): 58 frontend checks passed across the complete
+regression run and focused reruns; TypeScript and production build passed. These
+are local checks, not deployed acceptance. Earlier backend verification recorded
+20 tests and 13 shared fixtures passing; those were not rerun in the client pass.
+See [client delivery](docs/CLIENT-DELIVERY.md), [PRD](docs/PRD.md), and the
+[future delivery plan](docs/PRODUCT-NEXT.md).

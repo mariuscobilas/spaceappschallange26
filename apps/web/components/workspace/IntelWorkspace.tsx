@@ -18,6 +18,10 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { coverCrops, crops, locationLabel } from "@/lib/workspace";
+import { useFieldConditions } from "@/lib/fields/use-field-conditions";
+import { analyzeBoundary } from "@/lib/fields/geometry";
+import { today } from "@/lib/workspace";
+import { describeConditions } from "@/lib/intel-request";
 
 export default function IntelWorkspace() {
   const {
@@ -26,11 +30,21 @@ export default function IntelWorkspace() {
     savedPlan,
     activeField,
     boundaryArea,
+    planDraft,
     question,
     setQuestion,
   } = useMeridian();
   const [feedback, setFeedback] = useState("");
-  const [manualCopy, setManualCopy] = useState(false);
+  const [copiedRequest, setCopiedRequest] = useState(false);
+  const conditionPoint = settings.selection.boundary
+    ? analyzeBoundary(settings.selection.boundary)?.sample
+    : { latitude: settings.selection.latitude, longitude: settings.selection.longitude };
+  const conditionDate = settings.timeMode === "past" ? settings.observationDate : today();
+  const { result: conditions, loading: conditionsLoading } = useFieldConditions(conditionPoint, conditionDate, true);
+  const planMatchesSaved = !!savedPlan && !!planDraft &&
+    ["coverCrop", "terminationDays", "plantingDate", "areaHa", "notes"].every((key) =>
+      planDraft[key as keyof typeof planDraft] === savedPlan[key as keyof typeof savedPlan]);
+  const hasWorkingPlanDraft = !!planDraft && !planMatchesSaved;
   const crop = crops.find((c) => c.value === settings.crop)?.label;
   const context = [
     `Location: ${locationLabel(settings.selection)}`,
@@ -45,7 +59,8 @@ export default function IntelWorkspace() {
     ...(status.layer && !status.failed && !status.loading
       ? [`Actual observation: ${status.layer.date}`]
       : []),
-    ...(savedPlan
+    `Plan status: ${hasWorkingPlanDraft ? "working draft (unsaved changes may be present)" : savedPlan ? `saved plan recorded ${savedPlan.savedAt}` : "no plan"}`,
+    ...(savedPlan && !hasWorkingPlanDraft
       ? [
           `Cover crop: ${coverCrops.find((c) => c.value === savedPlan.coverCrop)?.label}`,
           `Termination lead time: ${savedPlan.terminationDays} days before planting`,
@@ -55,24 +70,43 @@ export default function IntelWorkspace() {
           ...(savedPlan.plantingDate
             ? [`Planned planting date: ${savedPlan.plantingDate}`]
             : []),
+          `Saved plan notes: ${savedPlan.notes || "none"}`,
         ]
       : []),
+    ...(hasWorkingPlanDraft ? [
+      `Draft cover crop: ${coverCrops.find((c) => c.value === planDraft.coverCrop)?.label}`,
+      `Draft termination lead time: ${planDraft.terminationDays} days before planting`,
+      `Draft field area: ${planDraft.areaHa ? `${planDraft.areaHa} ha` : "not entered"}`,
+      `Draft planting date: ${planDraft.plantingDate || "not entered"}`,
+      `Draft notes: ${planDraft.notes || "none"}`,
+    ] : []),
+    describeConditions(conditions),
   ].join("\n");
   const request = `${context}\n\nQuestion: ${question.trim()}`;
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(request);
       setFeedback("Request copied");
-      setManualCopy(false);
+      setCopiedRequest(true);
     } catch {
-      setFeedback("Select and copy the prepared request below.");
-      setManualCopy(true);
+      setFeedback("Clipboard access was unavailable. Select the prepared request below to copy it.");
+      setCopiedRequest(false);
     }
   };
   const suggest = (text: string) => {
     setQuestion(text);
     setFeedback("");
-    setManualCopy(false);
+    setCopiedRequest(false);
+  };
+  const exportRequest = () => {
+    const blob = new Blob([request], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "meridian-request.txt";
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setFeedback("Request exported");
   };
   return (
     <section
@@ -94,7 +128,7 @@ export default function IntelWorkspace() {
             {settings.timeMode === "latest"
               ? "Latest conditions"
               : settings.observationDate}
-            {savedPlan ? " · Saved field plan" : ""}
+            {hasWorkingPlanDraft ? " · Working draft" : savedPlan ? " · Saved field plan" : " · No plan"}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
@@ -108,7 +142,7 @@ export default function IntelWorkspace() {
                 onChange={(e) => {
                   setQuestion(e.target.value);
                   setFeedback("");
-                  setManualCopy(false);
+                  setCopiedRequest(false);
                 }}
                 placeholder="What should I review before planting here?"
                 className="min-h-36"
@@ -147,26 +181,11 @@ export default function IntelWorkspace() {
             <Info aria-hidden="true" />
             <AlertTitle>Analysis is not connected yet</AlertTitle>
             <AlertDescription>
-              You can prepare and copy your question with its map context.
+              {conditionsLoading ? "Field readings are loading. The prepared request marks them unavailable until verified." : "Prepare, copy, or export a request with verified numeric field conditions, their periods, sources, and missing-data states."}
               Meridian does not generate an assessment in this workspace yet.
             </AlertDescription>
           </Alert>
-          {manualCopy && (
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="prepared-request">
-                  Prepared request
-                </FieldLabel>
-                <Textarea
-                  id="prepared-request"
-                  readOnly
-                  value={request}
-                  className="min-h-52"
-                  onFocus={(e) => e.target.select()}
-                />
-              </Field>
-            </FieldGroup>
-          )}
+          <FieldGroup><Field><FieldLabel htmlFor="prepared-request">Prepared request</FieldLabel><Textarea id="prepared-request" readOnly value={request} className="min-h-52" onFocus={(e) => e.target.select()} /></Field></FieldGroup>
           {feedback && (
             <p className="text-sm text-muted-foreground" role="status">
               {feedback}
@@ -184,8 +203,9 @@ export default function IntelWorkspace() {
           </Button>
           <Button disabled={!question.trim()} onClick={copy}>
             <Copy data-icon="inline-start" />
-            Copy request
+            {copiedRequest ? "Copied" : "Copy request"}
           </Button>
+          <Button variant="outline" disabled={!question.trim()} onClick={exportRequest}>Export .txt</Button>
         </CardFooter>
       </Card>
     </section>

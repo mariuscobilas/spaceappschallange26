@@ -124,6 +124,54 @@ An upstream timeout, invalid response, or unavailable year returns `200` with `s
 
 ---
 
+## 5. `GET /api/v1/field-conditions`
+
+Source-backed numeric context for one sample point. Returns the shared
+`FieldConditionsResult` DTO; it does not run a simulation or return a recommendation.
+
+Required query parameters: `latitude` (24..50), `longitude` (-125..-66), finite
+coordinates in the approximate CONUS bounds. Optional `as_of` is an ISO date from
+1981-01-01 through today UTC; omitted means today UTC. Invalid queries return `422`.
+
+```sh
+curl 'http://localhost:8000/api/v1/field-conditions?latitude=38.4697&longitude=-101.7521&as_of=2026-11-14'
+```
+
+The response includes the requested sample/date, retrieval timestamp, optional soil
+map-unit name, and three independent measures. Each measure includes availability,
+value or null, units, actual period, source link, spatial resolution and interpretation.
+
+| Measure | Meaning |
+| --- | --- |
+| `precipitation30d` | NASA POWER `PRECTOTCORR`: sum of exactly 30 contiguous valid UTC daily values, in mm, ending on the latest complete available interval on/before the request. |
+| `rootZoneWetness` | NASA POWER `GWETROOT`: 0–1 relative saturation of the modeled 0–100 cm root zone on its actual available day. This is not volumetric water content. |
+| `availableWaterStorage` | USDA NRCS SSURGO `muaggatt.aws0100wta`: map-unit weighted capacity for 0–100 cm, converted from source cm to mm. It is not current water remaining. |
+
+POWER uses a meteorology grid, approximately 0.5° latitude × 0.625° longitude, with
+MERRA-2/GEOS-IT sources. These are regional modeled estimates, not field sensors or
+numeric extractions from GIBS imagery. Polygon clients use an interior sample point;
+the API does not compute polygon averages. Do not multiply relative wetness by soil
+capacity to infer plant-available water.
+
+Dates can lag the request and differ between measures. Missing daily values are
+never zero-filled; an incomplete 30-day window is withheld. Current mapped soil
+data have null observation dates even for historical requests: this endpoint does
+not reconstruct historical soil surveys. No soil texture is inferred from a name.
+
+NASA and USDA requests run concurrently with independent seven-second deadlines,
+bounded response bodies and unit/missing-value validation. Upstream failures return
+`200` with the affected measure unavailable/null, preserving available values from
+the other provider. A bounded memory cache uses coordinates/date, 30-minute TTL for
+fully available results and 30 seconds for partial/unavailable results.
+
+Fixtures: `shared/payloads/field-conditions-available.json`,
+`field-conditions-partial.json`, `field-conditions-unavailable.json`. Fixtures are
+development examples and are never served as current observations on failure.
+
+Source documentation: [NASA POWER daily API](https://power.larc.nasa.gov/docs/services/api/temporal/daily/),
+[NASA MERRA-2 moisture definitions](https://gmao.gsfc.nasa.gov/gmao-products/merra-2/faq_merra-2/),
+[USDA SDA column descriptions](https://sdmdataaccess.sc.egov.usda.gov/documents/TableColumnDescriptionsReport.pdf).
+
 ## Testing Endpoints with curl
 
 ```sh

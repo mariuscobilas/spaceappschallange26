@@ -1,6 +1,6 @@
 # Meridian — hackathon milestones
 
-Updated: 14 November 2026. Working name: Meridian; original project/PRD name: FieldShift.
+Updated: 14 November 2026 after the client completion pass. Working name: Meridian; original project/PRD name: FieldShift. Completion below means local implementation, not deployment or scientific validation.
 
 ## 1. Application and map workspace — complete
 
@@ -38,14 +38,29 @@ Live imagery depends on NASA; visualization tiles are not numeric model features
 - Real USDA CDL point lookup, explicit crop acceptance, source-year disclosure,
   and manual fallback for missing or unsupported classifications.
 
+- Versioned JSON backup/export and reviewed merge import preserve fields, plans,
+  drafts, economics, settings and units. Existing records win conflicts; invalid
+  files are rejected and failed storage writes trigger rollback. Migrated plan
+  aliases export under canonical keys. This remains browser-local storage.
+
 Done when: a boundary can be drawn, saved, reopened and edited without losing its
 field-specific inputs. CDL is a point sample, not a whole-field classification.
 
-## 4. Real environmental context — next
+## 4. Real environmental context — first numeric slice complete
+
+- `/api/v1/field-conditions` retrieves NASA POWER 30-day corrected precipitation
+  and root-zone relative wetness, plus USDA SDA mapped available water storage.
+- Details and Planner expose actual periods, source links, grid/map-unit meaning,
+  and independent unavailable states. Soil capacity is not current moisture;
+  historical weather does not imply historical soil mapping.
+- Complete 30-day rain windows only; bounded concurrent provider requests and
+  date-aware caching. Live NASA/USDA point lookups verified.
+- Remaining: model-specific temperature/evapotranspiration features, appropriate
+  aggregation and applicability validation, and simulation integration.
 
 - Finalize shared TypeScript/Pydantic contracts and sample payloads before endpoints.
-- Connect the selected location/cell to real environmental observations and soil/crop
-  information, with units, dates, provenance, and explicit unavailable states.
+- Extend the initial point context as needed by the agreed model, with units,
+  dates, provenance, spatial meaning and explicit unavailable states.
 - Replace locality reference points with verified farm/parcel data where available.
 - Evaluate Meteomatics for selected-field weather context through the backend;
   credentials stay server-side. It is optional, not a dependency of the map preview.
@@ -56,7 +71,10 @@ values; timeouts leave useful navigation and clearly identify missing data.
 ## 5. Meridian Intel — request UI complete; analysis integration pending
 
 - Dedicated Ask Meridian workspace attaches selected map and saved-plan context to
-  an editable question, offers starting questions, and copies the prepared request.
+  an editable question, offers starting questions, and copies/exports the prepared request.
+- Numeric context includes actual sample coordinates, source periods, units, links
+  and missing values. Saved records are distinguished from changed working drafts.
+  No generated answer or future analysis client is implemented.
 - Next: connect the agreed backend analysis service using shared contracts.
 - Show meaningful loading/error states and grounded responses with source dates.
 
@@ -65,11 +83,21 @@ state. The current UI explicitly says analysis is not connected; it does not ans
 
 ## 6. Field planning and economics — manual tools complete; predictions pending
 
+- Termination-first usability pass: shared field/next-crop selector across all
+  workspaces, calendar-led Planner, working drafts preserved independently from
+  confirmed plans, and U.S./metric inputs with canonical metric storage.
+- Economics shows per-area results before acreage is supplied; parcel totals
+  require valid managed area. Atlas offers a point drilldown at its hex centroid.
 - Field Planner saves cover-crop type, termination lead time, optional planting date,
   entered field area and notes per selected location/crop. Calendar dates are arithmetic.
 - Economics calculates net change and break-even from entered assumptions (USD/tonne,
   tonnes/ha, yield change %, costs/payment USD/ha, hectares). No live/default prices,
   predicted yields or generated recommendations. Inputs persist per location/crop.
+- Saved plans at `/planner/saved` can reopen, restore or delete confirmed records
+  and compare two records with a downloadable calendar summary. Context differences
+  are disclosed. One confirmed record per field/crop remains the storage model;
+  same-field scenario history and prediction sensitivity remain pending.
+- Planner explains missing inputs; Economics identifies manually entered assumptions.
 - Agree model inputs, calibration dataset, target outputs, and validation with the
   backend/ML team before adding result cards or controls that imply predictions.
 - Implement a single cover-crop-to-cash-crop decision cycle and validated model output.
@@ -91,15 +119,22 @@ validated model. Current neutral variations are visual styling, not assessments.
 
 ## 8. Demo readiness — baseline checks complete; full workflow pending
 
-- Baseline: production build (Webpack), TypeScript, 10/10 shared fixtures, and field
-  drawing/persistence, geometry, crop acceptance and unsaved-navigation checks.
-  Browser/data/calculator checks also cover planning/economics persistence
-  and hand-calculated financial scenarios.
+- Latest client baseline: production build (Webpack), TypeScript and 58 checks
+  passed across the complete regression run and focused reruns. Coverage includes
+  geometry, persistence, units, financial arithmetic, source periods, offline/stale
+  conditions, saved-plan comparison/export, JSON import/export, quota rollback,
+  legacy aliases and 390px backup access.
+- Earlier environment delivery recorded 20 backend tests and 13 shared fixtures
+  passing. These were not rerun during the client completion pass.
 - Repeat acceptance checks after real data/Intel/model integration across all six
   benchmarks, phone/desktop, historical dates, and unavailable services.
 - Prepare the final demonstration, attributions, screenshots/video, and submission.
 
 Done when: the agreed end-to-end workflow is repeatable without login or blank panels.
+
+Source-backed simulation, generated explanations and quantitative Atlas acceptance
+remain pending. See [future delivery plan](PRODUCT-NEXT.md) for dependencies and
+[client delivery](CLIENT-DELIVERY.md) for the completed browser-side work.
 
 ## 9. Deployment — final stage, pending
 

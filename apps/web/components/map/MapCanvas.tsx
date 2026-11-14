@@ -7,10 +7,11 @@ import type { GeoPolygon } from "@spaceapps/shared";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point } from "@turf/helpers";
 import type { GeoJSONSource, Map as MlMap, MapMouseEvent } from "maplibre-gl";
-import { cellToChildren } from "h3-js";
+import { cellToChildren, getResolution, isValidCell } from "h3-js";
 import { analyzeBoundary } from "../../lib/fields/geometry";
 import {
   buildH3Collection,
+  h3CellFeature,
   DEFAULT_CAMERA,
   ATLAS_CAMERA,
   hexAt,
@@ -140,6 +141,7 @@ export default function MapCanvas(props: MapCanvasProps) {
         fallbackActive.current = true;
         attached.current = false;
         propsRef.current.onMapReady?.(false);
+        reportDrawingReady(false);
         if (terraDraw.current) {
           drawingSnapshot.current = terraDraw.current.getSnapshot();
           drawingSnapshotSession.current = propsRef.current.drawing?.session;
@@ -188,6 +190,7 @@ export default function MapCanvas(props: MapCanvasProps) {
       terraSelectMode.current = null;
       activeDrawMode.current = "";
       propsRef.current.onMapReady?.(false);
+      reportDrawingReady(false);
       map?.remove();
       mapRef.current = null;
     };
@@ -310,13 +313,7 @@ export default function MapCanvas(props: MapCanvasProps) {
     const features = [] as NonNullable<FeatureCollection["features"]>;
     for (const f of parents) {
       for (const id of cellToChildren(String(f.properties?.hexId), 5)) {
-        const boundary = awaitBoundary(id);
-        features.push({
-          type: "Feature",
-          id,
-          properties: { hexId: id, resolution: 5 },
-          geometry: { type: "Polygon", coordinates: [boundary] },
-        } as never);
+        features.push(h3CellFeature(id, 5));
         if (features.length >= 14999) break;
       }
       if (features.length >= 14999) break;
@@ -329,10 +326,7 @@ export default function MapCanvas(props: MapCanvasProps) {
     const p = propsRef.current;
     const src = map.getSource("field-h3") as GeoJSONSource;
     const grid = getGrid();
-    const selectedId =
-      p.selection.name === "Selected region"
-        ? hexAt(p.selection.latitude, p.selection.longitude, resolution.current)
-        : (p.selection.hexId ?? "");
+    const selectedId = p.selection.hexId ?? "";
     const selectedFarm = BENCHMARKS.find(
       (f) => f.id === p.selection.benchmarkId,
     );
@@ -371,16 +365,20 @@ export default function MapCanvas(props: MapCanvasProps) {
     const selected = propsRef.current.selection;
     const polygonSource = map.getSource("field-selection") as GeoJSONSource;
     const pointSource = map.getSource("field-point") as GeoJSONSource;
-    const features: Feature<Polygon>[] = selected.boundary
-      ? [{ type: "Feature", properties: {}, geometry: selected.boundary }]
-      : [];
+    const region = propsRef.current.mode === "atlas" && selected.hexId && isValidCell(selected.hexId)
+      ? selected.hexId : undefined;
+    const features: Feature<Polygon>[] = region
+      ? [h3CellFeature(region, getResolution(region))]
+      : propsRef.current.mode === "field" && selected.boundary
+        ? [{ type: "Feature", properties: {}, geometry: selected.boundary }] : [];
+    const marker = region ? hexCenter(region) : selected;
     polygonSource.setData({ type: "FeatureCollection", features });
     pointSource.setData({
       type: "FeatureCollection",
       features: [{
         type: "Feature",
         properties: {},
-        geometry: { type: "Point", coordinates: [selected.longitude, selected.latitude] },
+        geometry: { type: "Point", coordinates: [marker.longitude, marker.latitude] },
       }],
     });
   }
@@ -408,12 +406,18 @@ export default function MapCanvas(props: MapCanvasProps) {
     }
   }
 
+  function reportDrawingReady(ready: boolean) {
+    if (element.current) element.current.dataset.drawingReady = String(ready);
+    propsRef.current.onDrawingReady?.(ready);
+  }
+
   async function syncDrawing() {
     const map = mapRef.current;
     if (!map || !attached.current) return;
     const drawing = propsRef.current.drawing;
     if (!drawing) return;
     if (drawing.mode !== "polygon" && drawing.mode !== "edit") {
+      reportDrawingReady(false);
       terraDraw.current?.stop();
       terraDraw.current = null;
       terraSelectMode.current = null;
@@ -425,6 +429,7 @@ export default function MapCanvas(props: MapCanvasProps) {
       drawingSnapshot.current = [];
     }
     if (drawingSession.current !== drawing.session || !terraDraw.current) {
+      reportDrawingReady(false);
       terraDraw.current?.stop();
       terraDraw.current = null;
       drawingSession.current = drawing.session;
@@ -432,10 +437,16 @@ export default function MapCanvas(props: MapCanvasProps) {
       const buildGeneration = ++drawingBuildGeneration.current;
       const requestedMode = drawing.mode;
       const requestedSession = drawing.session;
-      const [td, adapter] = await Promise.all([
+      const drawingModules = await Promise.all([
         import("terra-draw"),
         import("terra-draw-maplibre-gl-adapter"),
-      ]);
+      ]).catch(() => null);
+      if (!drawingModules) {
+        if (buildGeneration === drawingBuildGeneration.current)
+          propsRef.current.onDrawingStatus?.("Drawing tools could not load. Cancel drawing and try again.");
+        return;
+      }
+      const [td, adapter] = drawingModules;
       const latestDrawing = propsRef.current.drawing;
       if (
         map !== mapRef.current ||
@@ -516,6 +527,10 @@ export default function MapCanvas(props: MapCanvasProps) {
         activeDrawMode.current = "select";
         if (selectedFeatureId !== undefined) selectMode?.selectFeature(selectedFeatureId);
       }
+      reportDrawingReady(true);
+      propsRef.current.onDrawingStatus?.(drawing.mode === "polygon"
+        ? "Click to add vertices. Finish boundary or double-click to complete; Cancel drawing discards the draft."
+        : "Drag vertices to edit. Finish boundary to review and save your changes.");
     }
     const draw = terraDraw.current;
     const desiredMode = drawing.mode === "polygon" ? "polygon" : "select";
@@ -561,19 +576,9 @@ export default function MapCanvas(props: MapCanvasProps) {
     const farm = BENCHMARKS.find(
       (f) => hexAt(f.latitude, f.longitude, resolution.current) === hexId,
     );
-    if (farm) {
-      propsRef.current.onSelect({
-        name: farm.name,
-        latitude: farm.latitude,
-        longitude: farm.longitude,
-        benchmarkId: farm.id,
-        hexId,
-      });
-      return;
-    }
     propsRef.current.onSelect({
       ...hexCenter(hexId),
-      name: "Selected region",
+      name: farm ? `Region near ${farm.name}` : "Selected region",
       hexId,
     });
   }
@@ -779,6 +784,3 @@ export default function MapCanvas(props: MapCanvasProps) {
     />
   );
 }
-
-// Imported lazily through the H3 module to keep geometry generation local.
-import { cellToBoundary as awaitBoundary } from "h3-js";

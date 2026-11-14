@@ -1,0 +1,42 @@
+{
+  "sample": {
+    "latitude": 38.4697,
+    "longitude": -101.7527
+  },
+  "requestedDate": "2026-11-14",
+  "retrievedAt": "2026-11-14T12:00:00Z",
+  "soilMapUnit": "Example mapped soil unit (fixture)",
+  "precipitation30d": {
+    "status": "available",
+    "value": 24.8,
+    "unit": "mm",
+    "periodStart": "2026-10-14",
+    "periodEnd": "2026-11-12",
+    "source": "NASA POWER meteorology",
+    "sourceUrl": "https://power.larc.nasa.gov/docs/services/api/temporal/daily/",
+    "spatialResolution": "Meteorology grid: 0.5° latitude × 0.625° longitude",
+    "message": "Complete 30-day sum of corrected daily precipitation; regional estimate, not a rain gauge."
+  },
+  "rootZoneWetness": {
+    "status": "available",
+    "value": 0.42,
+    "unit": "fraction",
+    "periodStart": "2026-11-12",
+    "periodEnd": "2026-11-12",
+    "source": "NASA POWER meteorology",
+    "sourceUrl": "https://power.larc.nasa.gov/docs/methodology/data/sources_hydrology/",
+    "spatialResolution": "Meteorology grid: 0.5° latitude × 0.625° longitude",
+    "message": "Relative saturation in the 0–100 cm root zone; not volumetric moisture or plant-available water."
+  },
+  "availableWaterStorage": {
+    "status": "available",
+    "value": 146,
+    "unit": "mm",
+    "periodStart": null,
+    "periodEnd": null,
+    "source": "USDA NRCS Soil Data Access / SSURGO",
+    "sourceUrl": "https://sdmdataaccess.sc.egov.usda.gov/",
+    "spatialResolution": "Soil map-unit weighted average, 0–100 cm",
+    "message": "Mapped storage capacity, not current water remaining. Example fixture; not a measured field value."
+  }
+}

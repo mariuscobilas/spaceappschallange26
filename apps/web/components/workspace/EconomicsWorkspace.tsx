@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Fragment } from "react";
+import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
@@ -23,9 +25,12 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useUnitSystem } from "@/hooks/use-unit-system";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { calculateEconomics } from "@/lib/economics";
-import type { EconomicsDraft } from "@/lib/workspace";
+import { economicsUnitLabel, fromCanonicalEconomicsValue, toCanonicalEconomicsValue, type EconomicsUnitKey, type UnitSystem } from "@/lib/units";
+import { contextKey, type EconomicsDraft } from "@/lib/workspace";
 
 const fields: {
   key: keyof EconomicsDraft;
@@ -97,6 +102,13 @@ const numberValue = (text: string) =>
   text.trim() === "" ? null : Number(text);
 
 export default function EconomicsWorkspace() {
+  const [unitSystem, setUnitSystem] = useUnitSystem();
+  const [inputBuffers, setInputBuffers] = useState<Record<string, { system: UnitSystem; value: string }>>({});
+  const chooseUnits = (value: string) => {
+    if (value !== "metric" && value !== "us") return;
+    setUnitSystem(value);
+    setInputBuffers({});
+  };
   const {
     ready,
     settings,
@@ -112,6 +124,15 @@ export default function EconomicsWorkspace() {
     polygonArea === undefined
       ? economicsDraft
       : { ...economicsDraft, areaHa: polygonArea };
+  const crop = settings.crop;
+  const displayValues = Object.fromEntries(fields.map((field) => {
+    const value = numberValue(displayedDraft[field.key]);
+    const converted = value !== null && Number.isFinite(value) && unitSystem === "us"
+      ? String(Number(fromCanonicalEconomicsValue(field.key as EconomicsUnitKey, value, unitSystem, crop).toPrecision(8)))
+      : displayedDraft[field.key];
+    const buffer = inputBuffers[`${contextKey(settings)}:${field.key}`];
+    return [field.key, buffer?.system === unitSystem ? buffer.value : converted];
+  })) as unknown as EconomicsDraft;
   const parsed = Object.fromEntries(
     fields.map((field) => [field.key, numberValue(displayedDraft[field.key])]),
   ) as Record<keyof EconomicsDraft, number | null>;
@@ -124,11 +145,14 @@ export default function EconomicsWorkspace() {
       (field.key === "yieldChange" ? value < -100 : value < 0) ||
       (field.key === "areaHa" && (value === 0 || value > 5000));
   }
-  const complete = fields.every((field) => !invalid[field.key]);
+  const complete = fields.filter((field) => field.key !== "areaHa").every((field) => !invalid[field.key]);
+  const areaValid = !invalid.areaHa;
   const result =
     ready && complete
       ? calculateEconomics(
-          parsed as {
+          { ...parsed,
+            areaHa: areaValid ? parsed.areaHa! : 0,
+          } as {
             grainPrice: number;
             baselineYield: number;
             yieldChange: number;
@@ -140,6 +164,8 @@ export default function EconomicsWorkspace() {
         )
       : null;
   const contextLabel = `${settings.selection.name} · ${settings.crop[0].toUpperCase() + settings.crop.slice(1)}`;
+  const areaUnit = unitSystem === "us" ? "ac" : "ha";
+  const perAreaMoney = (value: number) => money(fromCanonicalEconomicsValue("seedCost", value, unitSystem, crop));
 
   return (
     <section
@@ -162,10 +188,20 @@ export default function EconomicsWorkspace() {
       <Alert>
         <AlertTitle>Assumption calculator</AlertTitle>
         <AlertDescription>
-          Results are arithmetic scenarios calculated only from the assumptions
-          you enter.
+          Results are arithmetic scenarios calculated only from your manually entered assumptions. Baseline yield and yield change are not observed or forecast by Meridian; record their source and period in Field Planner notes before using a scenario for decisions.
         </AlertDescription>
       </Alert>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
+        <div>
+          <p className="text-sm font-medium">Display units</p>
+          <p className="text-sm text-muted-foreground">Use the units you work with. Grain bushels use the selected crop’s standard weight.</p>
+        </div>
+        <ToggleGroup value={[unitSystem]} onValueChange={(values) => chooseUnits(values[0] ?? unitSystem)} aria-label="Display units">
+          <ToggleGroupItem value="metric" aria-label="Metric units">Metric</ToggleGroupItem>
+          <ToggleGroupItem value="us" aria-label="U.S. customary units">U.S.</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
         <Card>
@@ -181,14 +217,18 @@ export default function EconomicsWorkspace() {
           <CardContent>
             <FieldGroup className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
               {fields.map((field) => {
-                const value = displayedDraft[field.key];
+                const value = displayValues[field.key];
                 const bad = value.trim() !== "" && invalid[field.key];
+                const suffix = field.key === "yieldChange" ? "%" : economicsUnitLabel(field.key as EconomicsUnitKey, unitSystem, crop);
+                const group = field.key === "grainPrice" ? "Revenue assumptions" : field.key === "seedCost" ? "Cover crop costs" : field.key === "areaHa" ? "Field area" : null;
                 return (
-                  <Field key={field.key} data-invalid={bad || undefined}>
+                  <Fragment key={field.key}>
+                  {group && <p className="col-span-full border-b pb-1 text-sm font-medium">{group}</p>}
+                  <Field data-invalid={bad || undefined}>
                     <FieldLabel htmlFor={`economics-${field.key}`}>
-                      {field.label}{" "}
+                      {field.key === "grainPrice" && crop === "cotton" ? "Cotton lint price" : field.label}{" "}
                       <span className="font-normal text-muted-foreground">
-                        ({field.suffix})
+                        ({suffix})
                       </span>
                     </FieldLabel>
                     <Input
@@ -196,19 +236,25 @@ export default function EconomicsWorkspace() {
                       type="number"
                       step="any"
                       min={field.min}
-                      max={field.max}
+                      max={field.key === "areaHa" && unitSystem === "us" ? String(5000 * 2.4710538147) : field.max}
                       inputMode="decimal"
                       value={value}
                       readOnly={
                         field.key === "areaHa" && polygonArea !== undefined
                       }
                       aria-invalid={bad || undefined}
-                      onChange={(event) =>
+                      onChange={(event) => {
+                        const input = event.target.value;
+                        const bufferKey = `${contextKey(settings)}:${field.key}`;
+                        setInputBuffers((current) => ({ ...current, [bufferKey]: { system: unitSystem, value: input } }));
                         updateEconomics({
                           ...economicsDraft,
-                          [field.key]: event.target.value,
-                        })
-                      }
+                          [field.key]: input.trim() === "" ? "" : (() => {
+                            const n = Number(input);
+                            return Number.isFinite(n) ? String(toCanonicalEconomicsValue(field.key as EconomicsUnitKey, n, unitSystem, crop)) : economicsDraft[field.key];
+                          })(),
+                        });
+                      }}
                     />
                     <FieldDescription>
                       {field.key === "areaHa" && polygonArea !== undefined
@@ -217,11 +263,15 @@ export default function EconomicsWorkspace() {
                           ? field.key === "yieldChange"
                             ? "Enter a finite percentage of −100% or higher."
                             : field.key === "areaHa"
-                              ? "Enter an area greater than 0 and no more than 5,000 ha."
+                            ? `Enter an area greater than 0 and no more than ${unitSystem === "us" ? (5000 * 2.4710538147).toLocaleString() + " ac" : "5,000 ha"}.`
                               : "Enter a finite value of 0 or greater."
-                          : field.help}
+                          : field.key === "yieldChange" ? "Assumed scenario input only; the app does not forecast yield changes." : field.help}
+                    {field.key === "baselineYield" && crop === "cotton" ? (
+                      <span className="mt-1 block">Cotton yield is treated as lint weight, not whole harvested seed cotton.</span>
+                    ) : null}
                     </FieldDescription>
                   </Field>
+                  </Fragment>
                 );
               })}
             </FieldGroup>
@@ -241,8 +291,7 @@ export default function EconomicsWorkspace() {
                 <EmptyHeader>
                   <EmptyTitle>Enter all assumptions</EmptyTitle>
                   <EmptyDescription>
-                    Results appear after every input contains a valid number.
-                    Zero is accepted for costs and subsidy.
+                    Results appear after each revenue and cost assumption contains a valid number. Zero is accepted for costs and subsidy.
                   </EmptyDescription>
                 </EmptyHeader>
               </Empty>
@@ -261,51 +310,49 @@ export default function EconomicsWorkspace() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      Net change per hectare
+                      Net change per {unitSystem === "us" ? "acre" : "hectare"}
                     </p>
                     <p className="text-2xl font-semibold tabular-nums">
-                      {money(result.netChangePerHa)}
+                      {perAreaMoney(result.netChangePerHa)}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      Total for {parsed.areaHa} ha
+                      {areaValid ? `Total for ${Number(displayValues.areaHa).toLocaleString()} ${unitSystem === "us" ? "ac" : "ha"}` : "Parcel total"}
                     </p>
-                    <p className="text-2xl font-semibold tabular-nums">
-                      {money(result.totalNetChange)}
-                    </p>
+                    <p className="text-2xl font-semibold tabular-nums">{areaValid ? money(result.totalNetChange) : "Enter a valid field area"}</p>
                   </div>
                 </div>
                 <Separator />
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between gap-4">
                     <span className="text-muted-foreground">
-                      Baseline revenue / ha
+                      Baseline revenue / {areaUnit}
                     </span>
                     <span className="tabular-nums">
-                      {money(result.baselineRevenue)}
+                      {perAreaMoney(result.baselineRevenue)}
                     </span>
                   </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-muted-foreground">
-                      Revenue at assumed yield / ha
+                      Revenue at assumed yield / {areaUnit}
                     </span>
                     <span className="tabular-nums">
-                      {money(result.assumedRevenue)}
+                      {perAreaMoney(result.assumedRevenue)}
                     </span>
                   </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-muted-foreground">
-                      Seed + termination cost / ha
+                      Seed + termination cost / {areaUnit}
                     </span>
                     <span className="tabular-nums">
-                      {money(result.coverCropCost)}
+                      {perAreaMoney(result.coverCropCost)}
                     </span>
                   </div>
                   <div className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">Subsidy / ha</span>
+                    <span className="text-muted-foreground">Subsidy / {areaUnit}</span>
                     <span className="tabular-nums">
-                      {money(parsed.subsidy!)}
+                      {perAreaMoney(parsed.subsidy!)}
                     </span>
                   </div>
                 </div>
@@ -335,11 +382,11 @@ export default function EconomicsWorkspace() {
         <Link className="underline underline-offset-4" href="/planner">
           Field Planner
         </Link>{" "}
-        to record management assumptions, or{" "}
+        to plan termination timing. Switch fields or the next cash crop in the header, or{" "}
         <Link className="underline underline-offset-4" href="/">
           return to the map
         </Link>{" "}
-        to change the selected location or crop.
+        to inspect observations.
       </p>
     </section>
   );

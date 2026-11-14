@@ -36,6 +36,9 @@ import { useLandCover } from "@/lib/fields/use-land-cover";
 import { analyzeBoundary } from "@/lib/fields/geometry";
 import { validSavedField } from "@/lib/fields/storage";
 import { crops, locationLabel } from "@/lib/workspace";
+import { today } from "@/lib/workspace";
+import { FieldConditions } from "@/components/fields/FieldConditions";
+import { AtlasRegionOverview } from "@/components/map/AtlasRegionOverview";
 import type { PreviewCrop } from "@/lib/map/types";
 
 export function FieldDetails({
@@ -43,11 +46,13 @@ export function FieldDetails({
   onOpenChange,
   onEditBoundary,
   onAtlas,
+  onInspectField,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onEditBoundary: () => void;
   onAtlas: () => void;
+  onInspectField: () => void;
 }) {
   const {
     settings,
@@ -91,7 +96,7 @@ export function FieldDetails({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="overflow-y-auto data-[side=right]:w-full sm:data-[side=right]:max-w-md">
           <SheetHeader>
             <SheetTitle>{fieldDraft ? "Field details" : name}</SheetTitle>
             <SheetDescription>
@@ -101,6 +106,8 @@ export function FieldDetails({
             </SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-5 px-4">
+            {settings.mode === "atlas" && !fieldDraft ? <AtlasRegionOverview enabled={open} /> : <>
+
             {fieldDraft ? (
               <FieldGroup>
                 <Field data-invalid={!fieldDraft.name.trim() || undefined}>
@@ -217,6 +224,12 @@ export function FieldDetails({
             )}
             {settings.mode === "field" && (
               <>
+                <FieldConditions
+                  compact
+                  point={point}
+                  asOf={settings.timeMode === "past" ? settings.observationDate : today()}
+                  enabled={open && (!field?.boundary || (!!info && !info.error))}
+                />
                 <Separator />
                 <section
                   className="flex flex-col gap-3"
@@ -302,6 +315,7 @@ export function FieldDetails({
                 </AlertDescription>
               </Alert>
             )}
+            </>}
           </div>
           <SheetFooter>
             {fieldDraft ? (
@@ -338,13 +352,18 @@ export function FieldDetails({
                   </Button>
                 )}
               </>
-            ) : null}
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">Start at this hexagon’s centre, then select a point or draw your actual field.</p>
+                <Button onClick={onInspectField} disabled={!settings.selection.hexId}>Inspect field here</Button>
+              </>
+            )}
             {activeField && (
               <Button variant="destructive" onClick={() => setDeleting(true)}>
                 Delete field
               </Button>
             )}
-            {!fieldDraft && (
+            {!fieldDraft && settings.mode === "field" && (
               <>
                 <Button
                   variant="outline"

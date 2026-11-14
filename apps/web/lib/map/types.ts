@@ -57,4 +57,5 @@ export interface MapCanvasProps extends MapSettings {
   onBoundaryChange?: (boundary: GeoPolygon) => void;
   onDrawingStatus?: (message: string) => void;
   onMapReady?: (ready: boolean) => void;
+  onDrawingReady?: (ready: boolean) => void;
 }

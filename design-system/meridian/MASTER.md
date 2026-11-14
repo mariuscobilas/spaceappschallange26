@@ -15,13 +15,22 @@ Explore `/`, Field Planner `/planner`, Economics `/economics`, Ask Meridian `/in
 Use shadcn Sidebar components; collapse to icons on desktop, Sheet navigation on
 phones. The sidebar contains navigation only, not map filters or field details.
 
-Explore has one horizontal toolbar above the map: location, crop, Field / Atlas
+Explore has one horizontal toolbar above the map: unified field/location picker, intended next crop, Field / Atlas
 mode, Conditions, Latest / Past date, and on-demand details. No second header strip.
 The map remains mounted across workspace navigation; other pages have their own
 main content and one compact page header. Controls wrap within one toolbar surface
 on small viewports. Details open in an accessible Sheet after a selection or Info.
+Reuse the same field/location and crop controls in the other workspace headers;
+farmers must not return to the map merely to switch fields.
+Align actual Explore input/button rectangles with consistent label rows above
+control groups and bottom alignment. Keep Saved plans under Field Planner and
+linked from Planner. Confirmed-plan cards expose timing, field/crop, area and date,
+with explicit draft restoration and plan-only deletion confirmation.
 Field mode selects exact points and supports named polygon fields; Atlas selects
 regional hexagons. Keep drawing instructions and Finish/Cancel actions visible.
+Atlas selections open a docked right overview beside the desktop map; phones use
+a Sheet. Show full hex area, centre, resolution, crop/date and sampled conditions,
+distinguishing sample readings from regional aggregates.
 
 ## Map and observations
 
@@ -36,11 +45,23 @@ leave map navigation available. IMERG is precipitation rate, not accumulated rai
 
 ## Farmer workflows
 
+The primary task is terminating an existing cover crop before the next cash crop.
+Lead Planner with planting date, then cover crop and lead time. Display a prominent
+calendar termination date alongside the form, explicitly chosen by the user.
+Keep working drafts per field/crop through navigation and reload independently
+from confirmed saved plans.
+
 Field Planner saves cover-crop species, 0–60 day termination lead time, optional
 planting date, entered field area and notes per selected location/crop. Calendar
 termination dates are simple date arithmetic, not a model result. Regional hex
 area is never substituted for managed field area. Saved polygon hectares are
 authoritative; point-based fields use manual hectares. Predictions remain unavailable.
+
+Show numeric field context in details and Planner using one compact list, with
+neutral styling and independent unavailable states. Display actual weather periods,
+relative saturation rather than VWC, and mapped soil capacity rather than current
+water remaining. Source links, spatial resolution and provider messages belong in
+an expandable disclosure. Numeric provider failures must not block planning.
 
 Field details show name, crop, geodesic hectares and centroid. Boundary edits require
 Finish then Save or Cancel. Protect dirty drafts on navigation. Oversized boundaries
@@ -51,6 +72,10 @@ Economics starts with blank, explicitly entered assumptions: USD/tonne, tonnes/h
 assumed yield change %, costs/payment USD/ha, and managed hectares. Calculate net
 change and break-even arithmetically; no live price or yield forecast is implied.
 Blank values are not zero. Preserve inputs per location/crop across navigation.
+Offer metric/U.S. inputs and results, using metric canonical storage. Unit switches
+must not alter assumptions or calculation results. Grain bushels use crop-specific
+weights; cotton uses lint pounds. Allow per-area economics before area is provided;
+require valid area for parcel totals.
 
 Ask Meridian prepares/copies a real question with selected map and saved-plan
 context. Show disconnected analysis honestly. No fabricated conversation history.

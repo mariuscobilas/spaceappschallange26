@@ -185,20 +185,19 @@ export async function buildH3Collection(
     for (const coords of polygons) {
       const cells = polygonToCells(coords as Position[][], resolution, true);
       for (const id of cells) {
-        const geometry: Polygon = {
-          type: "Polygon",
-          coordinates: [cellToBoundary(id, true)],
-        };
-        features.push({
-          type: "Feature",
-          id,
-          properties: { hexId: id, resolution },
-          geometry,
-        });
+        features.push(h3CellFeature(id, resolution));
       }
     }
   }
   return { type: "FeatureCollection", features };
+}
+
+/** H3's default coordinates are lat/lon; all MapLibre GeoJSON must be lon/lat. */
+export function h3CellFeature(id: string, resolution: number): Feature<Polygon> {
+  return {
+    type: "Feature", id, properties: { hexId: id, resolution },
+    geometry: { type: "Polygon", coordinates: [cellToBoundary(id, true)] },
+  };
 }
 
 export function hexAt(latitude: number, longitude: number, resolution = 4) {
