@@ -1,0 +1,11 @@
+{
+  "request": {
+    "message": "hello"
+  },
+  "response": {
+    "message": "hello",
+    "mock": true,
+    "timestamp": "2026-11-14T10:00:00.000Z"
+  }
+}
+

@@ -1,0 +1,31 @@
+{
+  "field": {
+    "id": "field-us-mw-001",
+    "name": "Oak Creek Sector A",
+    "location": {
+      "latitude": 41.8781,
+      "longitude": -87.6298,
+      "altitudeMeters": 181
+    },
+    "boundary": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-87.632, 41.876],
+          [-87.627, 41.876],
+          [-87.627, 41.88],
+          [-87.632, 41.88],
+          [-87.632, 41.876]
+        ]
+      ]
+    },
+    "areaHectares": 45.5,
+    "currentCrop": "corn",
+    "plantingDate": "2026-04-20",
+    "soilType": "silt_loam",
+    "irrigation": "rainfed",
+    "notes": "Experiencing recurring late-summer heatwaves and topsoil dry-down."
+  },
+  "planningHorizonYears": 5
+}
+

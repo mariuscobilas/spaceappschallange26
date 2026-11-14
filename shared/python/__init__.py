@@ -1,0 +1,48 @@
+"""
+Shared schemas and contracts for Space Apps 2026 - Field Shift.
+"""
+
+from .schemas import (
+    ApiError,
+    ApiResponse,
+    HealthResponse,
+    MockRequest,
+    MockResponse,
+    GeoCoordinate,
+    CropType,
+    SoilType,
+    IrrigationType,
+    FieldProfile,
+    NasaObservationPoint,
+    ClimateTrend,
+    NasaEnvironmentalSnapshot,
+    ClimateRiskFactor,
+    CropShiftOption,
+    AdaptationAction,
+    FieldShiftPrediction,
+    FieldAnalysisRequest,
+    FieldAnalysisResponse,
+)
+
+__all__ = [
+    "ApiError",
+    "ApiResponse",
+    "HealthResponse",
+    "MockRequest",
+    "MockResponse",
+    "GeoCoordinate",
+    "CropType",
+    "SoilType",
+    "IrrigationType",
+    "FieldProfile",
+    "NasaObservationPoint",
+    "ClimateTrend",
+    "NasaEnvironmentalSnapshot",
+    "ClimateRiskFactor",
+    "CropShiftOption",
+    "AdaptationAction",
+    "FieldShiftPrediction",
+    "FieldAnalysisRequest",
+    "FieldAnalysisResponse",
+]
+

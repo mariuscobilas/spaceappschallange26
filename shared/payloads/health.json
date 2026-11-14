@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "service": "field-shift-api",
+  "version": "0.1.0",
+  "timestamp": "2026-11-14T10:00:00.000Z",
+  "uptimeSeconds": 1420,
+  "checks": {
+    "api": true,
+    "mlModelLoaded": true,
+    "nasaDataService": true
+  }
+}
+

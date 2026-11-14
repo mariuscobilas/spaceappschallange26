@@ -12,9 +12,15 @@ if (!existsSync(python)) {
   process.exit(1);
 }
 
+const env = {
+  ...process.env,
+  PYTHONPATH: [root, join(root, "shared"), apiDir, process.env.PYTHONPATH].filter(Boolean).join(process.platform === "win32" ? ";" : ":"),
+};
+
 const child = spawn(python, ["-m", "uvicorn", "app.main:app", "--reload", "--host", "127.0.0.1", "--port", "8000"], {
   cwd: apiDir,
   stdio: "inherit",
+  env,
 });
 
 child.on("error", (error) => {

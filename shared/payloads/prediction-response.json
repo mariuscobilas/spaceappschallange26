@@ -1,0 +1,19 @@
+{
+  "fieldId": "field-us-mw-001",
+  "vulnerabilityScore": 68.4,
+  "confidenceScore": 0.89,
+  "primaryRecommendation": "Shift 30% acreage to grain sorghum and advance planting date by 10 days.",
+  "topAlternativeCrops": [
+    {
+      "crop": "sorghum",
+      "suitabilityScore": 91,
+      "expectedYieldDeltaPct": 18.5
+    },
+    {
+      "crop": "soybeans",
+      "suitabilityScore": 82,
+      "expectedYieldDeltaPct": 4.0
+    }
+  ]
+}
+

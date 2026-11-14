@@ -2,8 +2,7 @@
   "name": "spaceappschallange26",
   "private": true,
   "version": "0.1.0",
-  "packageManager": "npm@11.11.0",
-  "workspaces": ["apps/*"],
+  "packageManager": "pnpm@12.18.0",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build"
