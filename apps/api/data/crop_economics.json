@@ -1,0 +1,195 @@
+{
+    "metadata": {
+        "title": "Space Apps Challenge 2026 - Adapting Farms with NASA Data: Crop Economics & Agronomic Parameters",
+        "version": "1.0",
+        "target_year": 2026,
+        "conversion_factors": {
+            "hectare_to_acre": 2.47105,
+            "formula_yield_per_ha": "yield_per_acre * 2.47105"
+        }
+    },
+    "crops": {
+        "winter_wheat": {
+            "cdl_code": 24,
+            "native_unit": "bushel",
+            "metric_mass_per_unit_kg": 27.2155,
+            "usda_wasde_price_usd_per_native_unit": 6.3,
+            "price_usd_per_kg": 0.2315,
+            "price_usd_per_metric_ton": 231.48,
+            "moisture_sensitivity_weight": 0.55,
+            "nitrogen_credit_weight": -0.45,
+            "kansas_baseline": {
+                "yield_per_acre": 46.0,
+                "yield_per_ha": 113.67,
+                "metric_yield_kg_per_ha": 3094
+            },
+            "conus_baseline": {
+                "yield_per_acre": 51.5,
+                "yield_per_ha": 127.26,
+                "metric_yield_kg_per_ha": 3463
+            }
+        },
+        "spring_wheat": {
+            "cdl_code": 23,
+            "native_unit": "bushel",
+            "metric_mass_per_unit_kg": 27.2155,
+            "usda_wasde_price_usd_per_native_unit": 6.3,
+            "price_usd_per_kg": 0.2315,
+            "price_usd_per_metric_ton": 231.48,
+            "moisture_sensitivity_weight": 0.7,
+            "nitrogen_credit_weight": -0.5,
+            "kansas_baseline": {
+                "note": "Negligible KS acreage; Northern Plains benchmark",
+                "yield_per_acre": 49.0,
+                "yield_per_ha": 121.08,
+                "metric_yield_kg_per_ha": 3295
+            },
+            "conus_baseline": {
+                "yield_per_acre": 51.0,
+                "yield_per_ha": 126.03,
+                "metric_yield_kg_per_ha": 3430
+            }
+        },
+        "corn": {
+            "cdl_code": 1,
+            "native_unit": "bushel",
+            "metric_mass_per_unit_kg": 25.4012,
+            "usda_wasde_price_usd_per_native_unit": 4.7,
+            "price_usd_per_kg": 0.185,
+            "price_usd_per_metric_ton": 185.03,
+            "moisture_sensitivity_weight": 0.95,
+            "nitrogen_credit_weight": -0.85,
+            "kansas_baseline": {
+                "yield_per_acre": 115.5,
+                "yield_per_ha": 285.41,
+                "metric_yield_kg_per_ha": 7250
+            },
+            "conus_baseline": {
+                "yield_per_acre": 179.3,
+                "yield_per_ha": 443.06,
+                "metric_yield_kg_per_ha": 11254
+            }
+        },
+        "soybeans": {
+            "cdl_code": 5,
+            "native_unit": "bushel",
+            "metric_mass_per_unit_kg": 27.2155,
+            "usda_wasde_price_usd_per_native_unit": 12.1,
+            "price_usd_per_kg": 0.4446,
+            "price_usd_per_metric_ton": 444.6,
+            "moisture_sensitivity_weight": 0.75,
+            "nitrogen_credit_weight": 0.65,
+            "kansas_baseline": {
+                "yield_per_acre": 42.6,
+                "yield_per_ha": 105.27,
+                "metric_yield_kg_per_ha": 2865
+            },
+            "conus_baseline": {
+                "yield_per_acre": 53.3,
+                "yield_per_ha": 131.71,
+                "metric_yield_kg_per_ha": 3585
+            }
+        },
+        "cotton": {
+            "cdl_code": 2,
+            "native_unit": "pound",
+            "metric_mass_per_unit_kg": 0.4536,
+            "usda_wasde_price_usd_per_native_unit": 0.62,
+            "price_usd_per_kg": 1.3669,
+            "price_usd_per_metric_ton": 1366.87,
+            "moisture_sensitivity_weight": 0.45,
+            "nitrogen_credit_weight": -0.4,
+            "kansas_baseline": {
+                "yield_per_acre": 790,
+                "yield_per_ha": 1952.13,
+                "metric_yield_kg_per_ha": 885
+            },
+            "conus_baseline": {
+                "yield_per_acre": 856,
+                "yield_per_ha": 2115.22,
+                "metric_yield_kg_per_ha": 959
+            }
+        },
+        "sorghum": {
+            "cdl_code": 4,
+            "native_unit": "bushel",
+            "metric_mass_per_unit_kg": 25.4012,
+            "usda_wasde_price_usd_per_native_unit": 4.45,
+            "price_usd_per_kg": 0.1752,
+            "price_usd_per_metric_ton": 175.19,
+            "moisture_sensitivity_weight": 0.35,
+            "nitrogen_credit_weight": -0.55,
+            "kansas_baseline": {
+                "yield_per_acre": 74.0,
+                "yield_per_ha": 182.86,
+                "metric_yield_kg_per_ha": 4645
+            },
+            "conus_baseline": {
+                "yield_per_acre": 71.5,
+                "yield_per_ha": 176.68,
+                "metric_yield_kg_per_ha": 4488
+            }
+        }
+    },
+    "cover_crops": {
+        "cereal_rye": {
+            "scientific_name": "Secale cereale",
+            "seeding_rate_kg_ha": 67.3,
+            "seeding_rate_lb_ac": 60.0,
+            "seed_cost_usd_ha": 57.82,
+            "establishment_termination_cost_usd_ha": 64.25,
+            "total_cost_usd_ha": 122.07,
+            "nitrogen_credit_kg_ha": 5.0,
+            "nitrogen_credit_weight": 0.05,
+            "moisture_impact_mm": -20.0,
+            "moisture_sensitivity_weight": -0.35,
+            "agronomic_role": "Best ahead of soybeans or cotton; suppresses weeds and erosion; must terminate 10-14 days before corn."
+        },
+        "winter_pea": {
+            "scientific_name": "Pisum sativum subsp. arvense",
+            "seeding_rate_kg_ha": 67.3,
+            "seeding_rate_lb_ac": 60.0,
+            "seed_cost_usd_ha": 108.23,
+            "establishment_termination_cost_usd_ha": 64.25,
+            "total_cost_usd_ha": 172.48,
+            "nitrogen_credit_kg_ha": 72.5,
+            "nitrogen_credit_weight": 0.8,
+            "moisture_impact_mm": -15.0,
+            "moisture_sensitivity_weight": -0.25,
+            "agronomic_role": "High N credit ahead of corn or sorghum; rapid mineralization."
+        },
+        "forage_radish": {
+            "scientific_name": "Raphanus sativus",
+            "seeding_rate_kg_ha": 9.0,
+            "seeding_rate_lb_ac": 8.0,
+            "seed_cost_usd_ha": 47.44,
+            "establishment_termination_cost_usd_ha": 28.86,
+            "total_cost_usd_ha": 76.3,
+            "nitrogen_credit_kg_ha": 27.5,
+            "nitrogen_credit_weight": 0.3,
+            "moisture_impact_mm": 15.0,
+            "moisture_sensitivity_weight": 0.2,
+            "agronomic_role": "Winter-kills cleanly; bio-drills compaction and recycles deep subsoil N."
+        },
+        "multi_species_mix": {
+            "scientific_name": "Rye + Winter Pea + Radish + Clover",
+            "seeding_rate_kg_ha": 44.8,
+            "seeding_rate_lb_ac": 40.0,
+            "seed_cost_usd_ha": 81.54,
+            "establishment_termination_cost_usd_ha": 64.25,
+            "total_cost_usd_ha": 145.79,
+            "nitrogen_credit_kg_ha": 45.0,
+            "nitrogen_credit_weight": 0.5,
+            "moisture_impact_mm": -10.0,
+            "moisture_sensitivity_weight": -0.1,
+            "agronomic_role": "Maximizes soil organic carbon and NRCS EQIP cost-share eligibility."
+        }
+    },
+    "dataset_attributions": [
+        "USDA NASS Cropland Data Layer (CDL)",
+        "USDA WASDE & NASS Agricultural Prices (2026/27)",
+        "USDA NASS Crop Production & RMA APH Yields",
+        "USDA NRCS & SARE Cover Crop Economics",
+        "NASA Earth Science Data Systems (SMAP, ECOSTRESS, GPM, NASA POWER, Landsat, MODIS, GRACE-FO)"
+    ]
+}
