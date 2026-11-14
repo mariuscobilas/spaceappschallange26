@@ -1,0 +1,8 @@
+[
+  { "id": "tribune", "name": "Tribune", "latitude": 38.4697, "longitude": -101.7521 },
+  { "id": "colby", "name": "Colby", "latitude": 39.3958, "longitude": -101.0524 },
+  { "id": "hays", "name": "Hays", "latitude": 38.8792, "longitude": -99.3268 },
+  { "id": "salina", "name": "Salina", "latitude": 38.8403, "longitude": -97.6114 },
+  { "id": "manhattan", "name": "Manhattan", "latitude": 39.1836, "longitude": -96.5717 },
+  { "id": "ottawa", "name": "Ottawa", "latitude": 38.6156, "longitude": -95.2678 }
+]

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Field Shift",
-  description: "NASA Space Apps Challenge 2026 project starter",
+  title: "Meridian — Field intelligence",
+  description: "Explore field conditions grounded in NASA Earth observation data.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

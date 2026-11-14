@@ -9,3 +9,8 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+
+# Browser verification artifacts
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/public/vendor/maplibre/
