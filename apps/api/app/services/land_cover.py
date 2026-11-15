@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import logging
 import re
 import time
 import xml.etree.ElementTree as ET
@@ -38,12 +39,14 @@ _NON_CROP_CLASS_CODES = (
     {111, 112, 121, 122, 123, 124, 131, 141, 142, 143, 152, 176, 190, 195}
 )
 _CACHE: OrderedDict[tuple[float, float, int], tuple[float, LandCoverResult]] = OrderedDict()
+logger = logging.getLogger(__name__)
 
 
 def latest_year() -> int:
     try:
         return max(1997, int(os.getenv("CDL_LATEST_YEAR", "2025")))
-    except ValueError:
+    except ValueError as exc:
+        logger.warning("Invalid CDL_LATEST_YEAR setting; using 2025 (%s)", type(exc).__name__)
         return 2025
 
 
@@ -123,4 +126,5 @@ async def lookup(latitude: float, longitude: float, requested_year: int) -> Land
             _CACHE.popitem(last=False)
         return result
     except (httpx.HTTPError, ValueError, ET.ParseError, KeyError, TypeError) as exc:
+        logger.warning("USDA Cropland Data Layer lookup unavailable (%s)", type(exc).__name__)
         return unavailable(requested_year, sample, f"USDA CDL data is temporarily unavailable ({type(exc).__name__}). You can continue with a manually selected crop.")

@@ -11,6 +11,14 @@ test("accepts supported client workspace backup and keeps unit preference", () =
   expect(parseWorkspaceBackup(backup())).toMatchObject({ version: 1, unitSystem: "us", drafts: { "benchmark-1|wheat": emptyPlan } });
 });
 
+test("accepts optional season facts while rejecting invalid fact years and identities", () => {
+  const value = JSON.parse(backup());
+  value.seasonFacts = [{ fieldId: "field-1", planningYear: 2027, irrigation: "unknown", sourceMessageId: "msg-1", contextVersion: "v1", text: "Irrigation unconfirmed", savedAt: "2026-11-14T10:00:00.000Z" }];
+  expect(parseWorkspaceBackup(JSON.stringify(value)).seasonFacts).toHaveLength(1);
+  value.seasonFacts[0].planningYear = 2300;
+  expect(() => parseWorkspaceBackup(JSON.stringify(value))).toThrow(/season facts/i);
+});
+
 test("rejects unsupported versions, unsafe keys, invalid records and orphan field references", () => {
   const unsupported = JSON.parse(backup()); unsupported.version = 99;
   expect(() => parseWorkspaceBackup(JSON.stringify(unsupported))).toThrow(/unsupported version/i);
@@ -42,6 +50,7 @@ test("reviews and merges a backup, preserving local collisions and restoring all
     plans: { "import-field|corn": { location: { latitude: 39, longitude: -99, name: "Imported field", fieldId: "import-field" }, crop: "corn", coverCrop: "rye", terminationDays: 25, plantingDate: "2027-04-20", areaHa: "12", notes: "backup plan", savedAt: "2026-11-14T10:00:00.000Z" } },
     drafts: { "import-field|corn": { ...emptyPlan, notes: "backup draft" } },
     economics: { "import-field|corn": { ...emptyEconomics, grainPrice: "210" } }, unitSystem: "us",
+    seasonFacts: [{ fieldId: "import-field", planningYear: 2027, irrigation: "available", sourceMessageId: "msg-fact", contextVersion: "v1", text: "Irrigation confirmed available", savedAt: "2026-11-14T10:00:00.000Z" }],
   };
   await page.goto("/planner");
   await page.getByRole("button", { name: "Workspace backup" }).click();
@@ -55,6 +64,7 @@ test("reviews and merges a backup, preserving local collisions and restoring all
     drafts: JSON.parse(localStorage.getItem("meridian.plan-drafts.v1") ?? "{}"),
     economics: JSON.parse(localStorage.getItem("meridian.economics.v2") ?? "{}"),
     settings: JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"), units: localStorage.getItem("meridian.unit-system.v1"),
+    facts: JSON.parse(localStorage.getItem("meridian.season-facts.v1") ?? "[]"),
   }));
   expect(saved.fields.map((field: { id: string }) => field.id)).toEqual(["import-field", "local-field"]);
   expect(saved.plans["import-field|corn"].notes).toBe("keep local");
@@ -62,6 +72,7 @@ test("reviews and merges a backup, preserving local collisions and restoring all
   expect(saved.economics["import-field|corn"].grainPrice).toBe("210");
   expect(saved.settings.crop).toBe("corn");
   expect(saved.units).toBe("us");
+  expect(saved.facts).toMatchObject([{ fieldId: "import-field", planningYear: 2027 }]);
 });
 
 test("shows invalid backup feedback and leaves storage untouched", async ({ page }) => {
@@ -116,18 +127,18 @@ test("rolls back earlier storage writes when quota fails partway through import"
     localStorage.setItem("meridian.unit-system.v1", "metric");
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = function (key: string, value: string) {
-      if ((window as Window & { failBackupWrite?: boolean }).failBackupWrite && key === "meridian.economics.v2") throw new DOMException("quota", "QuotaExceededError");
+      if ((window as Window & { failBackupWrite?: boolean }).failBackupWrite && key === "meridian.season-facts.v1") throw new DOMException("quota", "QuotaExceededError");
       return original.call(this, key, value);
     };
   });
   await page.goto("/");
   await page.getByRole("button", { name: "Workspace backup" }).click();
-  const before = await page.evaluate(() => ["meridian.map-settings.v3", "meridian.fields.v1", "meridian.field-plans.v2", "meridian.plan-drafts.v1", "meridian.economics.v2", "meridian.unit-system.v1"].map((key) => localStorage.getItem(key)));
+  const before = await page.evaluate(() => ["meridian.map-settings.v3", "meridian.fields.v1", "meridian.field-plans.v2", "meridian.plan-drafts.v1", "meridian.economics.v2", "meridian.unit-system.v1", "meridian.season-facts.v1"].map((key) => localStorage.getItem(key)));
   await page.locator('input[type="file"]').setInputFiles({ name: "backup.json", mimeType: "application/json", buffer: Buffer.from(backup()) });
   await page.evaluate(() => { (window as Window & { failBackupWrite?: boolean }).failBackupWrite = true; });
   await page.getByRole("button", { name: "Import and merge" }).click();
   await expect(page.getByText(/Import could not be saved/)).toBeVisible();
-  const after = await page.evaluate(() => ["meridian.map-settings.v3", "meridian.fields.v1", "meridian.field-plans.v2", "meridian.plan-drafts.v1", "meridian.economics.v2", "meridian.unit-system.v1"].map((key) => localStorage.getItem(key)));
+  const after = await page.evaluate(() => ["meridian.map-settings.v3", "meridian.fields.v1", "meridian.field-plans.v2", "meridian.plan-drafts.v1", "meridian.economics.v2", "meridian.unit-system.v1", "meridian.season-facts.v1"].map((key) => localStorage.getItem(key)));
   expect(after).toEqual(before);
 });
 

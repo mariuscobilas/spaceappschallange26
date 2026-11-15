@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -16,6 +17,7 @@ MAX_DATASET_BYTES = 10 * 1024 * 1024
 MAX_REGIONS = 1000
 UNAVAILABLE_MESSAGE = "No validated county yield dataset is available on this service."
 DEFAULT_DATASET_PATH = Path(__file__).resolve().parents[4] / "shared" / "data" / "regional-yield.json"
+logger = logging.getLogger(__name__)
 
 
 def unavailable(message: str = UNAVAILABLE_MESSAGE) -> RegionalYieldDataset:
@@ -71,7 +73,8 @@ def _load_cached(path: str, modified_ns: int, size: int) -> RegionalYieldDataset
         if len(dataset.regions) > MAX_REGIONS:
             return unavailable("Configured county yield dataset exceeds the 1,000 county limit.")
         return dataset
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError, ValidationError, TypeError):
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError, ValidationError, TypeError) as exc:
+        logger.warning("Configured county yield dataset rejected (%s)", type(exc).__name__)
         return unavailable("Configured county yield dataset failed validation and was withheld.")
 
 
@@ -89,5 +92,6 @@ def load_regional_yield(path_value: str | None = None) -> RegionalYieldDataset:
         dataset = _load_cached(str(resolved), stat.st_mtime_ns, stat.st_size)
         # Avoid sharing a mutable response model between request handlers.
         return dataset.model_copy(deep=True)
-    except OSError:
+    except OSError as exc:
+        logger.warning("County yield dataset could not be opened (%s)", type(exc).__name__)
         return unavailable()

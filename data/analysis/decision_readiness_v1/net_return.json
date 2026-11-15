@@ -56,5 +56,5 @@
   "input_oof_sha256": "4fe5aff6ff1c8df39ea5a32b4eb5c13c5085fcf3e4b77ad6afe6fda446830e72",
   "interpretation": "Research-only retrospective paired contrasts. No calibrated forecast probabilities or validated uncertainty bounds are available; abstain.",
   "monetary_sensitivity": {},
-  "net_return_module_sha256": "9607da93098e467617dc36d445d7dec379c1fd58f2f5d4bbccc5602296ee5790"
+  "net_return_module_sha256": "e6da7f385fd0b3eebb6e3295b06cbe35eabfe7042451d6cc4214f408b61a52ab"
 }

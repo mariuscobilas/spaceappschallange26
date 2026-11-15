@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Component, Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
-import { ArrowUp, LoaderCircle, RotateCcw, Square, Sprout, Plus } from "lucide-react";
+import { ArrowUp, LoaderCircle, RotateCcw, Square, Sprout } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { AnalyzeResult } from "@spaceapps/shared";
-import type { MeridianChatContext } from "@spaceapps/shared";
+import type { MeridianChatContext, MeridianPlanProposal, MeridianSeasonFactsUpdate } from "@spaceapps/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
-import { getConversation, saveConversation, startConversation } from "@/components/workspace/intel-chat-session";
+import { getConversation, getConversationIssue, saveConversation, startConversation, clearConversationHistory } from "@/components/workspace/intel-chat-session";
+import { MessageScroller, MessageScrollerButton, MessageScrollerContent, MessageScrollerItem, MessageScrollerProvider, MessageScrollerViewport } from "@/components/ui/message-scroller";
+import { Message, MessageContent as MessageRowContent, MessageHeader } from "@/components/ui/message";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+import { InputGroup, InputGroupButton, InputGroupTextarea } from "@/components/ui/input-group";
+import { readSeasonFacts, saveMeridianSeasonFacts, seasonFactsStorageAvailable } from "@/lib/meridian/context";
+import { economicsUnitLabel, fromCanonicalEconomicsValue } from "@/lib/units";
 
 export type IntelChatContext = MeridianChatContext;
 
@@ -29,6 +35,10 @@ function friendlyError(error: unknown) {
   } catch {
     return raw.length > 240 ? "Meridian could not complete that request. Please retry." : raw;
   }
+}
+
+function markdownWithoutRawHtml(source: string) {
+  return source.replace(/<\/?[A-Za-z][^>]*>/g, (tag) => tag.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
 }
 
 function ComparisonCard({ result }: { result: AnalyzeResult }) {
@@ -88,7 +98,7 @@ function ComparisonCard({ result }: { result: AnalyzeResult }) {
   );
 }
 
-function ToolResult({ part }: { part: unknown }) {
+function ToolResult({ part, context, onApplyProposal }: { part: unknown; context: MeridianChatContext; onApplyProposal: (proposal: MeridianPlanProposal) => boolean }) {
   const item = part as { state?: string; output?: { ok?: boolean; result?: AnalyzeResult; error?: string }; errorText?: string };
   if (item.state === "input-streaming" || item.state === "input-available") return <p className="mt-2 text-sm text-muted-foreground">Running Clovis comparison…</p>;
   const output = item.output;
@@ -96,20 +106,126 @@ function ToolResult({ part }: { part: unknown }) {
   return output.ok && output.result ? <ComparisonCard result={output.result} /> : <p className="mt-2 text-sm text-destructive">Comparison failed: {output.error ?? "Please retry."}</p>;
 }
 
-function MessageContent({ message }: { message: UIMessage }) {
+function MeridianToolResult({ name, part, context, onApplyProposal, onSeasonFactApplied }: { name: string; part: unknown; context: MeridianChatContext; onApplyProposal: (proposal: MeridianPlanProposal) => boolean; onSeasonFactApplied: (year: number) => void }) {
+  const item = part as { state?: string; output?: { ok?: boolean; result?: unknown; error?: string }; errorText?: string };
+  const label = ({ getFieldEvidence: "Field evidence", getCropReferences: "Crop references", compareCropScenarios: "Cash crop comparison", rememberSeasonFacts: "Season facts", preparePlanDraft: "Plan draft" } as Record<string, string>)[name] ?? name;
+  if (item.state === "input-streaming" || item.state === "input-available") return <p className="text-sm text-muted-foreground" role="status">{label} in progress…</p>;
+  if (item.state === "output-error" || item.output?.ok === false) return <p className="text-sm text-destructive" role="alert">{label} failed: {item.output?.error ?? item.errorText ?? "Please retry."}</p>;
+  if (item.state !== "output-available" || !item.output?.result) return null;
+  const result = item.output.result as Record<string, unknown>;
+  if (name === "compareCropScenarios" && Array.isArray(result.rows)) {
+    const rows = result.rows as Array<Record<string, unknown>>;
+    const rankedCrops = Array.isArray(result.ranking) ? result.ranking.map(String) : [];
+    const orderedRows = [...rows].sort((a, b) => {
+      const ai = rankedCrops.indexOf(String(a.crop)); const bi = rankedCrops.indexOf(String(b.crop));
+      return (ai < 0 ? Number.MAX_SAFE_INTEGER : ai) - (bi < 0 ? Number.MAX_SAFE_INTEGER : bi);
+    });
+    const units = context.displayUnits ?? "metric";
+    const value = (raw: unknown, key: "baselineYield" | "grainPrice" | "seedCost", crop: string) => {
+      if (typeof raw !== "number" || !Number.isFinite(raw)) return "Unavailable";
+      const converted = fromCanonicalEconomicsValue(key, raw, units, crop);
+      return `${converted.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${economicsUnitLabel(key, units, crop)}`;
+    };
+    return <section className="mt-3 w-full rounded-lg border bg-card p-4 text-card-foreground" aria-label="Cash crop comparison">
+      <h3 className="font-semibold">Historical cash crop screen</h3><p className="mb-3 text-sm text-muted-foreground">USDA ERS reference year {String(result.referenceYear ?? "unavailable")} · planning year {String(result.planningYear ?? context.planningYear ?? "unspecified")} · {result.geographicMatch === "national_fallback" ? "National reference fallback" : result.geographicMatch === "partial_regional" ? "Partial regional coverage" : result.geographicMatch === "regional" ? "Regional references" : "Geography unspecified"}{result.geographicRegion ? ` (${String(result.geographicRegion)})` : ""} · references {result.referenceStatus === "stale_fallback" ? "using a previously verified fallback" : result.referenceStatus === "available" ? "available" : "unavailable"}. {String(result.referenceMessage ?? "")} Historical screen, not a field forecast or crop recommendation.</p>
+      <div className="max-w-full overflow-x-auto"><table className="w-full min-w-[48rem] border-collapse text-left text-sm"><thead><tr className="border-b text-muted-foreground">{["Crop", `Yield (${units === "us" ? "crop-specific US units" : "t/ha"})`, `Price (${units === "us" ? "crop-specific US units" : "USD/t"})`, `Total cost (${units === "us" ? "USD/ac" : "USD/ha"})`, `Gross revenue (${units === "us" ? "USD/ac" : "USD/ha"})`, `Net return (${units === "us" ? "USD/ac" : "USD/ha"})`, "Whole-field gross (USD)", "Whole-field net return (USD)"].map((title) => <th key={title} scope="col" className="px-2 py-2 font-medium">{title}</th>)}</tr></thead><tbody>{orderedRows.map((row, i) => { const crop = String(row.crop ?? ""); const perArea = (raw: unknown) => typeof raw === "number" && Number.isFinite(raw) ? `${fromCanonicalEconomicsValue("seedCost", raw, units, crop).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${units === "us" ? "USD/ac" : "USD/ha"}` : "Unavailable"; const total = (raw: unknown) => typeof raw === "number" && Number.isFinite(raw) ? raw.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "Unavailable"; const ranked = rankedCrops.includes(crop); return <tr key={`${crop}-${i}`} className="border-b last:border-0"><th scope="row" className="px-2 py-2 font-medium">{crop || "Unknown"}{!ranked && <span className="block text-xs font-normal text-muted-foreground">Not ranked · {String(row.sourceRegion ?? "reference coverage unavailable")}</span>}</th><td className="px-2 py-2">{value(row.yieldTHa, "baselineYield", crop)}</td><td className="px-2 py-2">{value(row.priceUsdT, "grainPrice", crop)}</td><td className="px-2 py-2">{perArea(row.totalCostUsdHa)}</td><td className="px-2 py-2">{perArea(row.grossRevenueUsdHa)}</td><td className="px-2 py-2">{perArea(row.netReturnUsdHa)}</td><td className="px-2 py-2">{total(row.wholeFieldGrossRevenueUsd)}</td><td className="px-2 py-2">{total(row.wholeFieldNetReturnUsd)}</td></tr>; })}</tbody></table></div>
+      <details className="mt-3 text-sm"><summary className="cursor-pointer font-medium">Break-even values</summary><ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-muted-foreground">{rows.map((row, i) => <li key={`break-even-${i}`}>{String(row.crop)} · price {typeof row.breakEvenPriceUsdT === "number" ? `${row.breakEvenPriceUsdT.toFixed(2)} USD/t` : "unavailable"} · yield {typeof row.breakEvenYieldTHa === "number" ? `${row.breakEvenYieldTHa.toFixed(2)} t/ha` : "unavailable"}</li>)}</ul></details>
+      <details className="mt-3 text-sm"><summary className="cursor-pointer font-medium">Sources, inputs, and assumptions</summary><ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-muted-foreground">{(Array.isArray(result.assumptions) ? result.assumptions : []).map((line, i) => <li key={i}>{String(line)}</li>)}{rows.map((row, i) => <li key={`source-${i}`}>{String(row.crop)} · {String(row.sourceRegion ?? "region unavailable")} · source year {String(row.sourceYear ?? "unavailable")} · {Array.isArray(row.inputBasis) ? row.inputBasis.join("; ") : "Input basis unavailable"} · {typeof row.provenance === "string" && /^https:\/\//.test(row.provenance) ? <a className="underline" href={row.provenance} target="_blank" rel="noreferrer">USDA ERS source</a> : "Source link unavailable"}</li>)}</ul></details>
+    </section>;
+  }
+  if (name === "getCropReferences" && Array.isArray(result.rows)) {
+    const rows = result.rows as Array<Record<string, unknown>>;
+    const units = context.displayUnits ?? "metric";
+    const val = (raw: unknown, key: "baselineYield" | "grainPrice" | "seedCost", crop: string) => typeof raw === "number" && Number.isFinite(raw) ? `${fromCanonicalEconomicsValue(key, raw, units, crop).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${economicsUnitLabel(key, units, crop)}` : "Unavailable";
+    return <section className="mt-3 w-full rounded-lg border bg-card p-4 text-card-foreground"><h3 className="font-semibold">USDA ERS crop references</h3><p className="text-sm text-muted-foreground">Source year {String(result.referenceYear ?? "unavailable")} · {result.status === "stale_fallback" ? "previously verified fallback" : result.status === "available" ? "available" : "unavailable"}</p><details className="mt-2 text-sm"><summary className="cursor-pointer font-medium">Per-crop reference values</summary><div className="mt-2 max-w-full overflow-x-auto"><table className="w-full min-w-[30rem] text-left text-sm"><thead><tr className="border-b text-muted-foreground"><th className="px-2 py-2">Crop</th><th className="px-2 py-2">Yield</th><th className="px-2 py-2">Price</th><th className="px-2 py-2">Total production cost</th></tr></thead><tbody>{rows.map((row, i) => { const crop = String(row.crop ?? ""); return <tr className="border-b last:border-0" key={`${crop}-${i}`}><th scope="row" className="px-2 py-2 font-medium">{crop}</th><td className="px-2 py-2">{val(row.yieldTHa, "baselineYield", crop)}</td><td className="px-2 py-2">{val(row.priceUsdT, "grainPrice", crop)}</td><td className="px-2 py-2">{val(row.totalCostUsdHa, "seedCost", crop)}</td></tr>; })}</tbody></table></div></details><details className="mt-2 text-sm"><summary className="cursor-pointer font-medium">Source coverage and assumptions</summary><p className="mt-2 text-muted-foreground">{String(result.message ?? "")}</p><ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-muted-foreground">{(Array.isArray(result.assumptions) ? result.assumptions : []).map((line, i) => <li key={`a-${i}`}>{String(line)}</li>)}{(Array.isArray(result.provenance) ? result.provenance as Array<Record<string, unknown>> : []).map((source, i) => <li key={`s-${i}`}>{String(source.crop)} · retrieved {String(source.retrievedAt ?? "date unavailable")} · {typeof source.sourceUrl === "string" && /^https:\/\//.test(source.sourceUrl) ? <a className="underline" href={source.sourceUrl} target="_blank" rel="noreferrer">Source data</a> : "Source link unavailable"}</li>)}</ul></details></section>;
+  }
+  if (name === "getPredictionOptions") {
+    const list = (key: string) => Array.isArray(result[key]) ? (result[key] as Array<{ label?: unknown; id?: unknown }>).map((entry) => String(entry.label ?? entry.id ?? "")).filter(Boolean) : [];
+    const calendar = result.calendar as Record<string, unknown> | undefined;
+    const months = (key: string) => Array.isArray(calendar?.[key]) ? (calendar[key] as number[]).join(", ") : "Unavailable";
+    const notes = Array.isArray(result.notes) ? result.notes.map(String) : [];
+    return <section className="mt-3 w-full rounded-lg border bg-card p-4 text-card-foreground"><h3 className="font-semibold">Supported reference options</h3><div className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><h4 className="font-medium">Sites</h4><p className="text-muted-foreground">{list("sites").join(", ") || "Unavailable"}</p></div><div><h4 className="font-medium">Cover crops</h4><p className="text-muted-foreground">{list("cover_crops").join(", ") || "Unavailable"}</p></div><div><h4 className="font-medium">Following crops</h4><p className="text-muted-foreground">{list("next_crops").join(", ") || "Unavailable"}</p></div></div><details className="mt-3 text-sm"><summary className="cursor-pointer font-medium">Reference calendar</summary><dl className="mt-2 grid grid-cols-2 gap-2"><dt>Cover planting months</dt><dd>{months("cover_planting_months")}</dd><dt>Cover termination months</dt><dd>{months("cover_termination_months")}</dd><dt>Wheat planting months</dt><dd>{months("wheat_planting_months")}</dd></dl></details>{notes.length > 0 && <ul className="mt-3 list-disc pl-5 text-sm text-muted-foreground">{notes.map((note, i) => <li key={i}>{note}</li>)}</ul>}</section>;
+  }
+  if (name === "getFieldEvidence") {
+    const conditions = result.conditions as { ok?: boolean; result?: Record<string, unknown>; error?: string } | undefined;
+    const soil = result.soil as { ok?: boolean; result?: Record<string, unknown>; error?: string } | undefined;
+    const measurements = conditions?.result as Record<string, { value?: number | null; unit?: string; status?: string; message?: string; source?: string; sourceUrl?: string; periodStart?: string | null; periodEnd?: string | null; spatialResolution?: string }> | undefined;
+    const evidenceMeta = conditions?.result ? conditions.result as Record<string, unknown> : {};
+    const soilResult = soil?.result as Record<string, unknown> | undefined;
+    return <section className="mt-3 w-full rounded-lg border bg-card p-4 text-card-foreground"><h3 className="font-semibold">Selected field evidence</h3><p className="text-sm text-muted-foreground">{String(result.interpretation ?? "Point and grid evidence; not field-wide measurements.")}</p><dl className="mt-3 grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-3 gap-y-2 text-sm">{measurements && Object.entries(measurements).filter(([, value]) => value && typeof value === "object" && "status" in value).map(([key, measure]) => <Fragment key={key}><dt className="capitalize text-muted-foreground">{key.replace(/[A-Z]/g, (letter) => ` ${letter.toLowerCase()}`)}</dt><dd>{measure.status === "available" && measure.value !== null ? `${measure.value} ${measure.unit ?? ""}` : measure.message ?? "Unavailable"}{measure.sourceUrl && /^https:\/\//.test(measure.sourceUrl) && <> · <a className="underline" href={measure.sourceUrl} target="_blank" rel="noreferrer">{measure.source ?? "Source"}</a></>}</dd></Fragment>)}</dl><details className="mt-3 text-sm"><summary className="cursor-pointer font-medium">Observation dates and coverage</summary><p className="mt-2 text-muted-foreground">Requested {String(evidenceMeta.requestedDate ?? "date unavailable")} · retrieved {String(evidenceMeta.retrievedAt ?? "date unavailable")}. {measurements ? Object.entries(measurements).filter(([, measure]) => measure && typeof measure === "object").map(([key, measure]) => `${key}: ${measure.periodStart ?? "period unavailable"}${measure.periodEnd ? ` to ${measure.periodEnd}` : ""} · ${measure.spatialResolution ?? "resolution unavailable"}`).join("; ") : "Observation coverage unavailable."}</p><p className="mt-2 text-muted-foreground">Soil profile: {soil?.ok ? String(soilResult?.message ?? "Mapped soil context available") : soil?.error ?? "Unavailable"}. Soil mapping is current survey context and does not measure field profile water.</p></details></section>;
+  }
+  if (name === "preparePlanDraft") {
+    const proposal = result as unknown as MeridianPlanProposal;
+    return <PlanProposalCard proposal={proposal} context={context} onApply={() => onApplyProposal(proposal)} />;
+  }
+  if (name === "rememberSeasonFacts") {
+    const fact = result as unknown as MeridianSeasonFactsUpdate;
+    return <RememberSeasonFact fact={fact} context={context} onSaved={() => onSeasonFactApplied(fact.planningYear)} />;
+  }
+  return <p className="mt-2 text-sm text-muted-foreground">{label} completed.</p>;
+}
+
+function RememberSeasonFact({ fact, context, onSaved }: { fact: MeridianSeasonFactsUpdate; context: MeridianChatContext; onSaved: () => void }) {
+  const [state, setState] = useState<"saving" | "saved" | "session" | "stale">("saving");
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    const alreadySaved = readSeasonFacts().some((saved) => saved.fieldId === fact.fieldId && saved.planningYear === fact.planningYear && saved.sourceMessageId === fact.sourceMessageId && saved.contextVersion === fact.contextVersion);
+    if (alreadySaved) {
+      setState(seasonFactsStorageAvailable() ? "saved" : "session");
+      return;
+    }
+    const current = !!context.fieldId && context.fieldId === fact.fieldId && context.contextVersion === fact.contextVersion;
+    if (!current) { setState("stale"); return; }
+    const stored = saveMeridianSeasonFacts(fact, context);
+    setState(stored ? "saved" : !seasonFactsStorageAvailable() ? "session" : "stale");
+    onSaved();
+  }, [fact, context, onSaved]);
+  if (state === "saving") return <p className="text-sm text-muted-foreground" role="status">Saving season fact…</p>;
+  const wording = state === "saved" ? `Remembered ${fact.planningYear} irrigation status: ${fact.irrigation.status} on this device.` : state === "session" ? `Remembered ${fact.planningYear} irrigation status: ${fact.irrigation.status} for this session. Browser storage is unavailable.` : "Season fact not saved: the field or context changed. Ask Meridian to confirm it again.";
+  return <p className={`text-sm ${state === "saved" ? "text-muted-foreground" : "text-destructive"}`} role="status">{wording}</p>;
+}
+
+function PlanProposalCard({ proposal, context, onApply }: { proposal: MeridianPlanProposal; context: MeridianChatContext; onApply: () => boolean }) {
+  const [state, setState] = useState<"pending" | "applied" | "stale" | "failed" | "discarded">("pending");
+  const pretty: Record<string, string> = { crop: "Cash crop", coverCrop: "Cover crop", cashCropPlantingDate: "Cash crop planting date", terminationDays: "Termination lead time (days)", areaHa: "Field area (ha)", notes: "Notes", grainPrice: "Grain price (USD/t)", baselineYield: "Baseline yield (t/ha)", yieldChange: "Assumed yield change (%)", seedCost: "Cover seed cost (USD/ha)", terminationCost: "Cover termination cost (USD/ha)", subsidy: "Incentive (USD/ha)" };
+  const label = (key: string) => pretty[key] ?? key;
+  const entries: Array<[string, unknown]> = Object.entries(proposal.changes).flatMap(([group, value]) => typeof value === "object" && value !== null ? Object.entries(value as Record<string, unknown>).map(([key, nested]) => [`${label(group)}: ${label(key)}`, nested] as [string, unknown]) : [[label(group), value] as [string, unknown]]);
+  return <section className="mt-3 w-full rounded-lg border p-4" aria-label="Proposed plan draft"><p className="font-semibold">Proposed plan changes</p><dl className="mt-2 grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-3 gap-y-1 text-sm">{entries.map(([key, value]) => <Fragment key={key}><dt className="text-muted-foreground">{key}</dt><dd className="break-words">{String(value)}</dd></Fragment>)}</dl>
+    {state === "pending" ? <div className="mt-3 flex gap-2"><Button size="sm" onClick={() => setState(proposal.fieldId !== context.fieldId || proposal.contextVersion !== context.contextVersion ? "stale" : onApply() ? "applied" : "failed")}>Apply to plan draft</Button><Button size="sm" variant="outline" onClick={() => setState("discarded")}>Discard</Button></div> : <p className="mt-3 text-sm text-muted-foreground" role="status">{{ applied: "Applied to the editable plan draft. Review it in Field Planner before saving.", stale: "This proposal is out of date; ask Meridian to prepare it again.", failed: "This draft could not be applied. Check the proposed values and device storage, then ask Meridian to prepare it again.", discarded: "Proposal discarded." }[state]}</p>}
+  </section>;
+}
+
+function MessageContent({ message, context, onApplyProposal, onSeasonFactApplied }: { message: UIMessage; context: MeridianChatContext; onApplyProposal: (proposal: MeridianPlanProposal) => boolean; onSeasonFactApplied: (year: number) => void }) {
   const parts = message.parts ?? [];
   return <div className="flex flex-col gap-2">
     {parts.map((part, index) => {
-      if (part.type === "text") return <p key={`${message.id}-text-${index}`} className="whitespace-pre-wrap leading-relaxed">{part.text}</p>;
-      if (part.type === "tool-runClovisComparison") return <ToolResult key={`${message.id}-tool-${index}`} part={part} />;
+      if (part.type === "text") return message.role === "user" ? <p key={`${message.id}-text-${index}`} className="whitespace-pre-wrap break-words text-sm leading-relaxed">{part.text}</p> : <div key={`${message.id}-text-${index}`} className="max-w-none break-words text-sm leading-relaxed [&_a]:text-primary [&_a]:underline [&_blockquote]:my-2 [&_blockquote]:border-s-2 [&_blockquote]:pl-3 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mb-2 [&_h1]:mt-4 [&_h1]:text-xl [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mb-2 [&_h3]:mt-3 [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_pre]:my-2 [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_table]:my-3 [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_td]:border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:bg-muted [&_th]:px-2 [&_th]:py-1 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"><ReactMarkdown remarkPlugins={[remarkGfm]} components={{ a: ({ href, children, ...props }) => <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a> }}>{markdownWithoutRawHtml(part.text)}</ReactMarkdown></div>;
+      if (part.type === "tool-runClovisComparison") return <ToolResult key={`${message.id}-tool-${index}`} part={part} context={context} onApplyProposal={onApplyProposal} />;
+      if (part.type.startsWith("tool-")) return <MeridianToolResult key={`${message.id}-tool-${index}`} name={part.type.slice(5)} part={part} context={context} onApplyProposal={onApplyProposal} onSeasonFactApplied={onSeasonFactApplied} />;
       return null;
     })}
   </div>;
 }
 
-function ChatSession({ conversationKey, context, initial, onNewChat }: { conversationKey: string; context: IntelChatContext; initial: ReturnType<typeof getConversation>; onNewChat: () => void }) {
+class MessageRenderBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: Error) { console.error("Meridian message rendering failed", { error: error.name }); }
+  render() {
+    return this.state.failed
+      ? <p className="text-sm text-destructive" role="alert">This message could not be displayed safely. Ask Meridian to send it again.</p>
+      : this.props.children;
+  }
+}
+
+function ChatSession({ conversationKey, context, initial, initialStorageIssue, onApplyProposal, onSeasonFactApplied }: { conversationKey: string; context: IntelChatContext; initial: ReturnType<typeof getConversation>; initialStorageIssue?: string; onApplyProposal: (proposal: MeridianPlanProposal) => boolean; onSeasonFactApplied: (year: number) => void }) {
   const contextRef = useRef(context);
   contextRef.current = context;
+  const contextVersionRef = useRef(context.contextVersion);
+  const [contextChanged, setContextChanged] = useState(false);
+  useEffect(() => { if (contextVersionRef.current && context.contextVersion !== contextVersionRef.current) setContextChanged(true); contextVersionRef.current = context.contextVersion; }, [context.contextVersion]);
   const [draft, setDraft] = useState("");
   const transport = useRef(new DefaultChatTransport({
     api: "/api/chat",
@@ -132,15 +248,10 @@ function ChatSession({ conversationKey, context, initial, onNewChat }: { convers
   const busy = status === "submitted" || status === "streaming";
   const stopRef = useRef(stop);
   stopRef.current = stop;
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const pinnedToLatest = useRef(true);
   const [sendFailure, setSendFailure] = useState("");
   useEffect(() => () => { void stopRef.current(); }, []);
-  useLayoutEffect(() => {
-    const node = scrollRef.current;
-    if (node && pinnedToLatest.current) node.scrollTop = node.scrollHeight;
-  }, [messages, busy]);
-  useEffect(() => saveConversation(conversationKey, { id: initial.id, messages }), [conversationKey, initial.id, messages]);
+  const [storageWarning, setStorageWarning] = useState("");
+  useEffect(() => { setStorageWarning(saveConversation(conversationKey, { id: initial.id, messages }) ? "" : "Chat history is available for this session but could not be saved on this device."); }, [conversationKey, initial.id, messages]);
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -151,41 +262,53 @@ function ChatSession({ conversationKey, context, initial, onNewChat }: { convers
     try { await sendMessage({ text }); }
     catch (sendError) { setSendFailure(friendlyError(sendError)); }
   };
-  return <Card className="min-h-0 flex-1 gap-0 overflow-hidden py-0">
-    <CardHeader className="flex shrink-0 flex-row items-center justify-between gap-4 border-b py-3">
-      <CardTitle className="text-base">Field conversation</CardTitle>
-      <Button variant="outline" size="sm" onClick={() => { if (busy) void stop(); onNewChat(); }} aria-label="Start a new chat"><Plus data-icon="inline-start" />New chat</Button>
-    </CardHeader>
-    <CardContent className="flex min-h-0 flex-1 flex-col p-0">
-      <div ref={scrollRef} onScroll={(event) => { const node = event.currentTarget; pinnedToLatest.current = node.scrollHeight - node.scrollTop - node.clientHeight < 64; }} className="min-h-0 flex-1 overflow-y-auto px-4 py-5 [overflow-wrap:anywhere] md:px-6" aria-live="polite" aria-busy={busy} aria-label="Conversation">
-        {messages.length === 0 ? <div className="mx-auto flex max-w-md flex-col items-center gap-3 py-20 text-center text-muted-foreground"><Sprout aria-hidden="true" /><p className="font-medium text-foreground">What would you like to understand about this field?</p><p className="text-sm">Ask a question in your own words. You can request a Clovis cover crop comparison in the conversation.</p></div> : <div className="mx-auto flex max-w-3xl flex-col gap-6">
-          {messages.map((message) => <div key={message.id} className={`flex flex-col gap-2 ${message.role === "user" ? "items-end" : "items-start"}`}>
-            <span className="text-xs font-medium text-muted-foreground">{message.role === "user" ? "You" : "Meridian"}</span>
-            <div className={`max-w-full rounded-2xl px-4 py-3 ${message.role === "user" ? "bg-primary text-primary-foreground" : "w-full bg-muted/60"}`}><MessageContent message={message} /></div>
-          </div>)}
-          {busy && <p className="flex items-center gap-2 text-sm text-muted-foreground"><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />Meridian is working…</p>}
-          {(error || sendFailure) && <div className="flex items-center gap-2 text-sm text-destructive" role="alert"><span>{sendFailure || friendlyError(error)}</span><Button variant="outline" size="sm" onClick={async () => { setSendFailure(""); try { await regenerate(); } catch (retryError) { setSendFailure(friendlyError(retryError)); } }}><RotateCcw data-icon="inline-start" />Retry</Button></div>}
-        </div>}
-      </div>
+  return <div className="flex min-h-0 flex-1 flex-col">
+      <MessageScrollerProvider autoScroll>
+      <MessageScroller className="flex-1">
+      <MessageScrollerViewport className="min-h-0 flex-1" aria-live="polite" aria-busy={busy} aria-label="Conversation">
+      <MessageScrollerContent className="mx-auto w-full max-w-3xl px-4 py-5 md:px-6">
+        {contextChanged && <MessageScrollerItem><p className="text-center text-xs text-muted-foreground" role="status">Field context updated. Meridian will use the current field and plan details from here.</p></MessageScrollerItem>}
+        {messages.length === 0 ? <MessageScrollerItem><div className="mx-auto flex max-w-md flex-col items-center gap-3 py-20 text-center text-muted-foreground"><Sprout aria-hidden="true" /><p className="font-medium text-foreground">What would you like to understand about this field?</p><p className="text-sm">Ask a question in your own words. You can request a crop comparison in the conversation.</p></div></MessageScrollerItem> : messages.map((message) => <MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
+          <Message align={message.role === "user" ? "end" : "start"}><MessageRowContent><MessageHeader>{message.role === "user" ? "You" : "Meridian"}</MessageHeader><Bubble variant={message.role === "user" ? "default" : "muted"} align={message.role === "user" ? "end" : "start"}><BubbleContent><MessageRenderBoundary key={message.id}><MessageContent message={message} context={context} onApplyProposal={onApplyProposal} onSeasonFactApplied={onSeasonFactApplied} /></MessageRenderBoundary></BubbleContent></Bubble></MessageRowContent></Message>
+        </MessageScrollerItem>)}
+        {busy && <MessageScrollerItem><p className="flex items-center gap-2 text-sm text-muted-foreground"><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />Meridian is working…</p></MessageScrollerItem>}
+        {(error || sendFailure) && <MessageScrollerItem><div className="flex items-center gap-2 text-sm text-destructive" role="alert"><span>{sendFailure || friendlyError(error)}</span><Button variant="outline" size="sm" onClick={async () => { setSendFailure(""); try { await regenerate(); } catch (retryError) { setSendFailure(friendlyError(retryError)); } }}><RotateCcw data-icon="inline-start" />Retry</Button></div></MessageScrollerItem>}
+        {initialStorageIssue && <MessageScrollerItem><p className="text-xs text-destructive" role="status">{initialStorageIssue}</p></MessageScrollerItem>}
+        {storageWarning && <MessageScrollerItem><p className="text-xs text-destructive" role="status">{storageWarning}</p></MessageScrollerItem>}
+      </MessageScrollerContent>
+      </MessageScrollerViewport>
+      <MessageScrollerButton />
+      </MessageScroller>
+      </MessageScrollerProvider>
       <form onSubmit={submit} className="shrink-0 border-t p-3 md:p-4">
         <FieldGroup className="mx-auto max-w-3xl gap-2">
           <Field>
             <FieldLabel htmlFor="intel-chat-composer" className="sr-only">Message Meridian</FieldLabel>
-            <div className="flex items-end gap-2 rounded-xl border bg-background p-2 focus-within:ring-2 focus-within:ring-ring">
-              <Textarea id="intel-chat-composer" value={draft} maxLength={4000} rows={2} className="max-h-40 min-h-12 resize-y border-0 shadow-none focus-visible:ring-0" placeholder="Ask about this field or plan…" onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.nativeEvent.isComposing || event.key !== "Enter" || event.shiftKey) return; event.preventDefault(); event.currentTarget.form?.requestSubmit(); }} />
-              {busy ? <Button type="button" variant="outline" size="icon" onClick={() => void stop()} aria-label="Stop response"><Square /></Button> : <Button type="submit" size="icon" disabled={!draft.trim()} aria-label="Send message"><ArrowUp /></Button>}
-            </div>
+            <InputGroup>
+              <InputGroupTextarea id="intel-chat-composer" value={draft} maxLength={4000} rows={2} className="max-h-40 min-h-12 resize-y" placeholder="Ask about this field or plan…" onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.nativeEvent.isComposing || event.key !== "Enter" || event.shiftKey) return; event.preventDefault(); event.currentTarget.form?.requestSubmit(); }} />
+              <InputGroupButton type="submit" size="icon-sm" disabled={busy || !draft.trim()} aria-label="Send message"><ArrowUp /></InputGroupButton>
+              {busy && <InputGroupButton type="button" variant="outline" size="icon-sm" onClick={() => void stop()} aria-label="Stop response"><Square /></InputGroupButton>}
+            </InputGroup>
           </Field>
           <p className="text-xs text-muted-foreground">Enter to send · Shift+Enter for a new line</p>
         </FieldGroup>
       </form>
-    </CardContent>
-  </Card>;
+    </div>;
 }
 
-export function IntelChat({ conversationKey, context }: { conversationKey: string; context: IntelChatContext }) {
-  const [conversation, setConversation] = useState(() => getConversation(conversationKey));
-  useEffect(() => setConversation(getConversation(conversationKey)), [conversationKey]);
-  const newChat = () => setConversation(startConversation(conversationKey));
-  return <ChatSession key={`${conversationKey}:${conversation.id}`} conversationKey={conversationKey} context={context} initial={conversation} onNewChat={newChat} />;
+export interface IntelChatActions { newChat: () => void; clearHistory: () => void }
+
+export function IntelChat({ conversationKey, context, onApplyProposal = () => false, onSeasonFactApplied = () => undefined, onActions }: { conversationKey: string; context: IntelChatContext; onApplyProposal?: (proposal: MeridianPlanProposal) => boolean; onSeasonFactApplied?: (year: number) => void; onActions?: (actions?: IntelChatActions) => void }) {
+  const [conversation, setConversation] = useState<ReturnType<typeof getConversation> | null>(null);
+  const [historyIssue, setHistoryIssue] = useState<string>();
+  useEffect(() => { setConversation(getConversation(conversationKey)); setHistoryIssue(getConversationIssue(conversationKey)); }, [conversationKey]);
+  const newChat = () => { setConversation(startConversation(conversationKey)); setHistoryIssue(undefined); };
+  const clearHistory = () => { setConversation(clearConversationHistory(conversationKey)); setHistoryIssue(undefined); };
+  useEffect(() => {
+    if (!conversation) return;
+    onActions?.({ newChat, clearHistory });
+    return () => onActions?.(undefined);
+  }, [conversationKey, conversation?.id, onActions]);
+  if (!conversation) return <div className="flex min-h-0 flex-1 items-center justify-center text-sm text-muted-foreground" role="status">Opening conversation…</div>;
+  return <ChatSession key={`${conversationKey}:${conversation.id}`} conversationKey={conversationKey} context={context} initial={conversation} initialStorageIssue={historyIssue} onApplyProposal={onApplyProposal} onSeasonFactApplied={onSeasonFactApplied} />;
 }

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import math
 import time
 from collections import OrderedDict
@@ -25,6 +26,7 @@ CACHE_TTL_SECONDS = 30 * 60
 FAILURE_CACHE_TTL_SECONDS = 30
 CACHE_MAX_ENTRIES = 256
 _CACHE: OrderedDict[tuple[float, float], tuple[float, SoilProfileResult]] = OrderedDict()
+logger = logging.getLogger(__name__)
 
 
 def _unavailable_measure(unit: str, message: str) -> SoilMeasure:
@@ -175,7 +177,8 @@ async def lookup(sample: GeoCoordinate) -> SoilProfileResult:
         async with httpx.AsyncClient(timeout=TIMEOUT_SECONDS, follow_redirects=False) as client:
             payload = await _json(client, query)
         result = _dominant_component(_rows(payload), sample)
-    except (httpx.HTTPError, TimeoutError, ValueError, TypeError, AttributeError, json.JSONDecodeError):
+    except (httpx.HTTPError, TimeoutError, ValueError, TypeError, AttributeError, json.JSONDecodeError) as exc:
+        logger.warning("USDA soil profile lookup unavailable (%s)", type(exc).__name__)
         result = _unavailable(sample, "USDA NRCS Soil Data Access is temporarily unavailable or returned unreadable profile data.")
     ttl = CACHE_TTL_SECONDS if result.status == "available" else FAILURE_CACHE_TTL_SECONDS
     _CACHE[key] = (now - (CACHE_TTL_SECONDS - ttl), result)

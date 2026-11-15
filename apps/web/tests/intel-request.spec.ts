@@ -41,7 +41,7 @@ async function openPlanForField(page: import("@playwright/test").Page, name: str
   const card = fields.locator('[data-slot="card"]').filter({ has: page.getByText(name, { exact: true }) });
   await card.getByRole("button", { name: /Create plan|Continue draft|Continue plan/ }).click();
   await nav.getByRole("link", { name: "Ask Meridian", exact: true }).click();
-  await expect(page.getByRole("heading", { name: name, exact: true })).toBeVisible();
+  await expect(page.getByLabel("Active field")).toHaveValue(name === "North field" ? "north" : "south");
 }
 
 test("Meridian streams answers and sends text-only multi-turn history with selected field context", async ({ page }) => {
@@ -177,6 +177,163 @@ test("Meridian starts a fresh conversation without previous messages", async ({ 
   await expect(conversation).toContainText("What would you like to understand about this field?");
 });
 
+test("chat saves transcript on the device and renders Markdown without enabling raw HTML", async ({ page }) => {
+  await page.route("**/api/chat", async (route) => {
+    await route.fulfill(textStream("**Evidence**\n\n| Source | Status |\n| --- | --- |\n| NASA | Available |\n\n<script>window.__rawHtml = true</script>"));
+  });
+  await page.goto("/intel");
+  await page.getByLabel("Message Meridian").fill("Show sources as a table. Keep <img src=x onerror=alert(1)> literal.");
+  await page.getByRole("button", { name: "Send message" }).click();
+  const conversation = page.locator('[aria-label="Conversation"]');
+  await expect(conversation.locator("strong")).toContainText("Evidence");
+  await expect(conversation.locator("table")).toContainText("NASA");
+  await expect(conversation.locator("script")).toHaveCount(0);
+  await expect(conversation.locator("img")).toHaveCount(0);
+  await expect(conversation).toContainText("<img src=x onerror=alert(1)>");
+  await expect(conversation).toContainText("<script>window.__rawHtml = true</script>");
+  await expect(conversation).toContainText("Show sources as a table.");
+  const restored = await page.context().newPage();
+  await restored.goto("/intel");
+  await expect(restored.locator('[aria-label="Conversation"]')).toContainText("Show sources as a table.");
+  await expect(restored.locator('[aria-label="Conversation"]')).toContainText("NASA");
+  await restored.getByRole("button", { name: "Clear selected conversation history" }).click();
+  await expect(restored.locator('[aria-label="Conversation"]')).not.toContainText("Show sources as a table.");
+  await restored.close();
+});
+
+test("malformed persisted tool results are rejected with a visible recovery message", async ({ page }) => {
+  await seedChatFields(page);
+  await page.addInitScript(() => {
+    localStorage.setItem("meridian.intel-conversation.v1:meridian-intel:north", JSON.stringify({
+      id: "broken-chat", messages: [{ id: "broken-message", role: "assistant", parts: [
+        { type: "tool-preparePlanDraft", state: "output-available", output: { ok: true, result: {} } },
+      ] }],
+    }));
+  });
+  await page.goto("/intel");
+  const conversation = page.locator('[aria-label="Conversation"]');
+  await expect(conversation).toContainText("What would you like to understand about this field?");
+  await expect(conversation).toContainText("Saved chat history was incomplete or malformed");
+  await expect(conversation.getByRole("region", { name: "Proposed plan draft" })).toHaveCount(0);
+});
+
+test("malformed nested Clovis results cannot break the conversation composer", async ({ page }) => {
+  await seedChatFields(page);
+  await page.addInitScript(() => {
+    localStorage.setItem("meridian.intel-conversation.v1:meridian-intel:north", JSON.stringify({ id: "bad-clovis-chat", messages: [{ id: "bad-clovis", role: "assistant", parts: [
+      { type: "tool-runClovisComparison", state: "output-available", output: { ok: true, result: {
+        request: { scenario: {}, economics: {}, risk_rules: {} }, model: {}, initial_moisture: {}, recommendation: {}, financial_summary: {}, assumptions: [],
+        scenarios: [{ scenario: "dry", moisture: null, quality: null, water_risk: null, finances: null }, { scenario: "typical", moisture: {}, quality: {}, water_risk: {}, finances: {} }, { scenario: "very_rainy", moisture: {}, quality: {}, water_risk: {}, finances: {} }],
+      } } },
+    ] }] }));
+  });
+  await page.goto("/intel");
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("Saved chat history was incomplete or malformed");
+  await expect(page.getByLabel("Message Meridian")).toBeEnabled();
+});
+
+test("planning-year and budget context edits keep the selected field conversation", async ({ page }) => {
+  const requests: Array<Record<string, unknown>> = [];
+  await page.route("**/api/chat", async (route) => {
+    const body = route.request().postDataJSON() as Record<string, unknown>;
+    requests.push(body);
+    await route.fulfill(textStream(`Context check ${requests.length} · ${String((body.context as Record<string, unknown>).planningYear)}.`));
+  });
+  await seedChatFields(page);
+  await page.goto("/intel");
+  await expect(page.getByLabel("Active field")).toHaveValue("north");
+  await page.getByLabel("Message Meridian").fill("Remember this field context");
+  await page.getByRole("button", { name: "Send message" }).click();
+  const conversation = page.locator('[aria-label="Conversation"]');
+  await expect(conversation).toContainText("Context check 1");
+  await page.getByLabel("Planning year").fill("2027");
+  await page.getByLabel("Message Meridian").fill("Now use the 2027 planning context");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(conversation).toContainText("Context check 2 · 2027");
+  await expect(conversation).toContainText("Remember this field context");
+  expect((requests[1].context as Record<string, unknown>).planningYear).toBe(2027);
+  await page.goto("/economics");
+  await page.locator("#economics-grainPrice").fill("245");
+  await page.goto("/intel");
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("Remember this field context");
+  await page.getByLabel("Message Meridian").fill("Use my updated field budget");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("Context check 3 · 2027");
+  expect((requests[2].context as Record<string, unknown>).economicsDraft).toMatchObject({ grainPrice: "245" });
+});
+
+test("remembered season facts bind to the current user turn and restore on reload", async ({ page }) => {
+  await seedChatFields(page);
+  await page.route("**/api/chat", async (route) => {
+    const request = route.request().postDataJSON() as { context: Record<string, unknown>; messages: Array<{ id: string; role: string; parts: Array<{ text: string }> }> };
+    const user = request.messages.at(-1)!;
+    const quote = user.parts.map((part) => part.text).join(" ");
+    const planningYear = Number(quote.match(/20\d{2}/)?.[0] ?? 2027);
+    await route.fulfill(streamResponse([
+      { type: "start", messageId: "assistant-fact" }, { type: "start-step" },
+      { type: "tool-input-available", toolCallId: "fact-1", toolName: "rememberSeasonFacts", input: { planningYear, irrigation: "available", sourceQuote: quote } },
+      { type: "tool-output-available", toolCallId: "fact-1", output: { ok: true, result: { fieldId: request.context.fieldId, planningYear, irrigation: { status: "available" }, sourceMessageId: user.id, contextVersion: request.context.contextVersion, sourceQuote: quote } } },
+      { type: "finish-step" }, { type: "finish", finishReason: "stop" },
+    ]));
+  });
+  await page.goto("/intel");
+  await page.getByLabel("Planning year").fill("2027");
+  await page.getByLabel("Message Meridian").fill("For 2027 irrigation is available.");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("Remembered 2027 irrigation status: available");
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("available on this device.");
+  await expect(page.getByLabel("Remembered irrigation status")).toHaveValue("available");
+  await page.reload();
+  await expect(page.getByLabel("Planning year")).toHaveValue("2027");
+  await expect(page.getByLabel("Remembered irrigation status")).toHaveValue("available");
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("available on this device.");
+  await page.getByLabel("Planning year").fill("2028");
+  await page.getByLabel("Message Meridian").fill("For 2028 irrigation is available.");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator('[aria-label="Conversation"]')).toContainText("Remembered 2028 irrigation status: available");
+  await page.reload();
+  await expect(page.getByLabel("Planning year")).toHaveValue("2028");
+  await expect(page.getByLabel("Remembered irrigation status")).toHaveValue("available");
+});
+
+test("plan proposals require Apply, support Discard, and reject stale context", async ({ page }) => {
+  await seedChatFields(page);
+  let proposalId = 0;
+  await page.route("**/api/chat", async (route) => {
+    proposalId++;
+    const request = route.request().postDataJSON() as { context: Record<string, unknown> };
+    const proposal = { id: `proposal-${proposalId}`, fieldId: request.context.fieldId, contextVersion: request.context.contextVersion, changes: { coverCrop: "pea", terminationDays: 25, notes: `Draft ${proposalId}` } };
+    await route.fulfill(streamResponse([
+      { type: "start", messageId: `assistant-proposal-${proposalId}` }, { type: "start-step" },
+      { type: "tool-input-available", toolCallId: `proposal-${proposalId}`, toolName: "preparePlanDraft", input: { changes: proposal.changes } },
+      { type: "tool-output-available", toolCallId: `proposal-${proposalId}`, output: { ok: true, result: proposal } },
+      { type: "finish-step" }, { type: "finish", finishReason: "stop" },
+    ]));
+  });
+  await page.goto("/intel");
+  const composer = page.getByLabel("Message Meridian");
+  await composer.fill("Prepare a draft"); await page.getByRole("button", { name: "Send message" }).click();
+  const firstProposal = page.getByRole("region", { name: "Proposed plan draft" }).first();
+  await expect(firstProposal).toContainText("Draft 1");
+  await firstProposal.getByRole("button", { name: "Discard" }).click();
+  await expect(firstProposal).toContainText("Proposal discarded.");
+  await expect(page.getByRole("button", { name: "Stop response" })).toHaveCount(0);
+  await composer.fill("Prepare another draft");
+  await expect(page.getByRole("button", { name: "Send message" })).toBeEnabled();
+  await page.getByRole("button", { name: "Send message" }).click();
+  const secondProposal = page.getByRole("region", { name: "Proposed plan draft" }).last();
+  await expect(secondProposal).toContainText("Draft 2");
+  await page.getByLabel("Planning year").fill("2027");
+  await secondProposal.getByRole("button", { name: "Apply to plan draft" }).click();
+  await expect(secondProposal).toContainText("This proposal is out of date");
+  await composer.fill("Prepare a current draft");
+  await expect(page.getByRole("button", { name: "Send message" })).toBeEnabled();
+  await page.getByRole("button", { name: "Send message" }).click();
+  const thirdProposal = page.getByRole("region", { name: "Proposed plan draft" }).last();
+  await thirdProposal.getByRole("button", { name: "Apply to plan draft" }).click();
+  await expect(thirdProposal).toContainText("Applied to the editable plan draft");
+});
+
 test("field navigation keeps conversations isolated when an older request finishes late", async ({ page }) => {
   let requestCount = 0;
   let releasePending: (() => void) | undefined;
@@ -198,7 +355,7 @@ test("field navigation keeps conversations isolated when an older request finish
   });
   await seedChatFields(page);
   await page.goto("/intel");
-  await expect(page.getByRole("heading", { name: "North field", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Active field")).toHaveValue("north");
   await page.getByLabel("Message Meridian").fill("Remember this field");
   await page.getByRole("button", { name: "Send message" }).click();
   let conversation = page.locator('[aria-label="Conversation"]');

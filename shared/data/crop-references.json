@@ -1,0 +1,122 @@
+{
+  "dataset": "USDA ERS Commodity Costs and Returns; U.S. total",
+  "referenceYear": 2025,
+  "geographicMatch": "national_fallback",
+  "geographicRegion": null,
+  "countyFips": null,
+  "status": "available",
+  "rows": [
+    {
+      "crop": "corn",
+      "yieldTHa": 12.427997619884131,
+      "priceUsdT": 154.71726614045875,
+      "totalCostUsdHa": 2225.2333811881176,
+      "sourceRegion": "U.S. total",
+      "sourceYear": 2025,
+      "geographicMatch": "national_fallback",
+      "units": "tonnes/ha; USD/tonne; USD/ha",
+      "sourceUrl": "https://www.ers.usda.gov/media/4962/corn.csv?v=13755"
+    },
+    {
+      "crop": "cotton",
+      "yieldTHa": 1.0334247660112885,
+      "priceUsdT": 1344.8197993277533,
+      "totalCostUsdHa": 2339.569041192975,
+      "sourceRegion": "U.S. total",
+      "sourceYear": 2025,
+      "geographicMatch": "national_fallback",
+      "units": "tonnes/ha; USD/tonne; USD/ha",
+      "sourceUrl": "https://www.ers.usda.gov/media/4964/cotton.csv?v=97889"
+    },
+    {
+      "crop": "sorghum",
+      "yieldTHa": 4.9586455150042745,
+      "priceUsdT": 133.85208775510424,
+      "totalCostUsdHa": 1106.1919506759125,
+      "sourceRegion": "U.S. total",
+      "sourceYear": 2025,
+      "geographicMatch": "national_fallback",
+      "units": "tonnes/ha; USD/tonne; USD/ha",
+      "sourceUrl": "https://www.ers.usda.gov/media/4972/sorghum.csv?v=67371"
+    },
+    {
+      "crop": "soybeans",
+      "yieldTHa": 3.900562023556707,
+      "priceUsdT": 358.61861315406753,
+      "totalCostUsdHa": 1632.4275710483878,
+      "sourceRegion": "U.S. total",
+      "sourceYear": 2025,
+      "geographicMatch": "national_fallback",
+      "units": "tonnes/ha; USD/tonne; USD/ha",
+      "sourceUrl": "https://www.ers.usda.gov/media/4976/soybeans.csv?v=42084"
+    },
+    {
+      "crop": "wheat",
+      "yieldTHa": 3.6315577460700377,
+      "priceUsdT": 186.29061154622158,
+      "totalCostUsdHa": 1009.5490359841041,
+      "sourceRegion": "U.S. total",
+      "sourceYear": 2025,
+      "geographicMatch": "national_fallback",
+      "units": "tonnes/ha; USD/tonne; USD/ha",
+      "sourceUrl": "https://www.ers.usda.gov/media/4978/wheat.csv?v=86392"
+    }
+  ],
+  "provenance": [
+    {
+      "crop": "corn",
+      "sourceUrl": "https://www.ers.usda.gov/media/4962/corn.csv?v=13755",
+      "retrievedAt": "2026-11-15",
+      "sha256": "a42362ce2c9b8f6a5992ae11ef6cb1ed12e25ec59b694782572daea646113951",
+      "rawBytes": 926106,
+      "snapshotPath": "data/raw/crop-references-v1/corn.csv"
+    },
+    {
+      "crop": "cotton",
+      "sourceUrl": "https://www.ers.usda.gov/media/4964/cotton.csv?v=97889",
+      "retrievedAt": "2026-11-15",
+      "sha256": "aa8d7e335cf02cf36d40cfd3238ae6b24d560cd509b3ca438527906c23b2daec",
+      "rawBytes": 907049,
+      "snapshotPath": "data/raw/crop-references-v1/cotton.csv"
+    },
+    {
+      "crop": "sorghum",
+      "sourceUrl": "https://www.ers.usda.gov/media/4972/sorghum.csv?v=67371",
+      "retrievedAt": "2026-11-15",
+      "sha256": "5af85d43128fab49edc48e0bbaa30afdf0e4173970748b0a6ead6bba6873c7ee",
+      "rawBytes": 585542,
+      "snapshotPath": "data/raw/crop-references-v1/sorghum.csv"
+    },
+    {
+      "crop": "soybeans",
+      "sourceUrl": "https://www.ers.usda.gov/media/4976/soybeans.csv?v=42084",
+      "retrievedAt": "2026-11-15",
+      "sha256": "c917b5f19620d1b82c289ce6cca5df270b004e5cd35368c13181efe7c55e1b86",
+      "rawBytes": 1002125,
+      "snapshotPath": "data/raw/crop-references-v1/soybeans.csv"
+    },
+    {
+      "crop": "wheat",
+      "sourceUrl": "https://www.ers.usda.gov/media/4978/wheat.csv?v=86392",
+      "retrievedAt": "2026-11-15",
+      "sha256": "dcb104291c9f34c1b53292fb19ef27e32f9f51eed66915ab35ef6ec6020a8df5",
+      "rawBytes": 1009366,
+      "snapshotPath": "data/raw/crop-references-v1/wheat.csv"
+    },
+    {
+      "crop": "all",
+      "sourceUrl": "https://www.ers.usda.gov/sites/default/files/images/reglink.xls",
+      "retrievedAt": "2026-11-15",
+      "sha256": "2f325589e5f2aef28c98774773007da1253b717c51dde2952f7b014aee22fb37",
+      "rawBytes": 171520,
+      "snapshotPath": "data/raw/crop-references-v1/ers-county-region-crosswalk.xls"
+    }
+  ],
+  "assumptions": [
+    "National U.S. estimates; no regional or field-specific match is asserted.",
+    "Historical realized reference year; not a planning-year forecast.",
+    "Total main-crop cost is ERS operating costs plus allocated overhead, including land and machinery costs. Cover-crop expenses are not included.",
+    "ERS estimates are not adjusted for irrigation status or field-specific management.",
+    "Price and yield represent the primary commodity; secondary-product revenue is excluded from revenue calculations."
+  ]
+}

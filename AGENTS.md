@@ -38,6 +38,8 @@ Welcome! This repository is a collaborative monorepo for the NASA Space Apps Cha
 
 ## Current ML continuation (15 November 2026)
 
+Latest net-return follow-up: read [decision readiness](docs/DECISION_READINESS.md) and [Mandan weather ablation](docs/MANDAN_WEATHER_ABLATION.md). The retrospective weather experiment is complete and does not improve the paired decision over stronger baselines. New research economics require explicit costs/prices and abstain without independently validated downside bounds. Independent source candidates have zero accepted new pairs pending row-level verification; see [candidate audit](docs/PAIRED_DATA_CANDIDATES.md). Next resolve initial-water/sampling definitions and acquire independent compatible paired evidence, rather than rerunning the same weather/model search. No model is promoted. The checkpoint paragraphs below describe the prior state.
+
 Publication checkpoint: [research package and model weights](docs/ML_PUBLICATION.md), [Mandan weather verification](docs/MANDAN_WEATHER_VERIFICATION.md). Regional NASA crop-season data are complete; exact soil sampling dates and annual field assignments remain unresolved. A separate Colorado absolute-yield Ridge refit is packaged for research transfer, not API serving or farmer advice. Next freeze a Mandan retrospective weather ablation if continuing; no weather-aware Mandan model has been tested.
 
 Before continuing ML work, read [the ML research plan and handoff](docs/ML_RESEARCH_PLAN.md) and [the water/yield data audit](docs/WATER_YIELD_DATA_FEASIBILITY.md). These record the current user decisions, completed work, source paths, unresolved issues, experiment rationale, and phase exit conditions.

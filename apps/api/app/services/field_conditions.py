@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import math
 import time
 from collections import OrderedDict
@@ -33,6 +34,7 @@ NASA_LOOKBACK_DAYS = 90
 CACHE_TTL_SECONDS = 30 * 60
 FAILURE_CACHE_TTL_SECONDS = 30
 CACHE_MAX_ENTRIES = 256
+logger = logging.getLogger(__name__)
 
 _CACHE: OrderedDict[tuple[float, float, str], tuple[float, FieldConditionsResult]] = OrderedDict()
 
@@ -305,7 +307,8 @@ async def _lookup_soil(client: httpx.AsyncClient, latitude: float, longitude: fl
                 data={"query": query, "format": "JSON+COLUMNNAME"},
             )
         rows = _sda_rows(payload)
-    except (httpx.HTTPError, ValueError, TypeError, AttributeError, json.JSONDecodeError, TimeoutError):
+    except (httpx.HTTPError, ValueError, TypeError, AttributeError, json.JSONDecodeError, TimeoutError) as exc:
+        logger.warning("USDA field-condition lookup unavailable (%s)", type(exc).__name__)
         return (_unavailable(
             unit="mm", source=USDA_SOURCE, source_url=USDA_SOURCE_URL,
             spatial_resolution=USDA_SPATIAL_RESOLUTION,
@@ -368,7 +371,8 @@ async def _fetch_nasa(client: httpx.AsyncClient, latitude: float, longitude: flo
             payload = await _request_json(client, NASA_POWER_URL, params=params)
         if not isinstance(payload, dict):
             raise ValueError("Unexpected NASA POWER response")
-    except (httpx.HTTPError, ValueError, TypeError, AttributeError, json.JSONDecodeError, TimeoutError):
+    except (httpx.HTTPError, ValueError, TypeError, AttributeError, json.JSONDecodeError, TimeoutError) as exc:
+        logger.warning("NASA POWER field-condition lookup unavailable (%s)", type(exc).__name__)
         unavailable_precip = _unavailable(
             unit="mm", source=NASA_SOURCE, source_url=NASA_SOURCE_URL,
             spatial_resolution=NASA_SPATIAL_RESOLUTION,

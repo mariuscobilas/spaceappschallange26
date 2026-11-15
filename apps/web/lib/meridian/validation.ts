@@ -6,10 +6,18 @@ export const calendarDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((valu
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }, "Use a real calendar date (YYYY-MM-DD).");
 
+const chatBudgetSchema = z.strictObject({
+  grainPrice: z.string().max(40), baselineYield: z.string().max(40), yieldChange: z.string().max(40),
+  seedCost: z.string().max(40), terminationCost: z.string().max(40), subsidy: z.string().max(40), areaHa: z.string().max(40),
+}).partial();
+
 const planContextSchema = z.strictObject({
   coverCrop: z.string().min(1).max(40),
   terminationDays: z.number().int().min(0).max(60),
   plantingDate: z.union([z.literal(""), calendarDate]),
+  cashCropPlantingDate: z.union([z.literal(""), calendarDate]).optional(),
+  id: z.string().max(200).optional(), name: z.string().max(200).optional(), crop: z.string().max(40).optional(),
+  budget: chatBudgetSchema.optional(),
   areaHa: z.string().max(40),
   notes: z.string().max(4000),
   status: z.enum(["draft", "saved"]),
@@ -24,6 +32,19 @@ export const chatContextSchema = z.strictObject({
   observationDate: calendarDate.refine((date) => date >= "1981-01-01" && date <= new Date().toISOString().slice(0, 10),
     "Observation date must be between 1981-01-01 and today."),
   plan: planContextSchema.optional(),
+  contextVersion: z.string().max(250).optional(),
+  displayUnits: z.enum(["metric", "us"]).optional(),
+  areaHa: z.number().nonnegative().max(1_000_000).nullable().optional(),
+  areaSource: z.enum(["boundary", "field", "plan", "unknown"]).optional(),
+  activePlan: z.strictObject({ id: z.string().max(200).optional(), name: z.string().max(200).optional(), crop: z.string().min(1).max(40), budget: chatBudgetSchema.optional() }).optional(),
+  planStatus: z.enum(["draft", "saved", "none"]).optional(),
+  calendarStatus: z.enum(["complete", "incomplete", "unknown"]).optional(),
+  budgetStatus: z.enum(["complete", "incomplete", "unknown"]).optional(),
+  budgetState: z.enum(["draft", "saved", "none"]).optional(),
+  economicsDraft: chatBudgetSchema.optional(),
+  savedAlternatives: z.array(z.strictObject({ id: z.string().max(200).optional(), name: z.string().max(200).optional(), crop: z.string().min(1).max(40), coverCrop: z.string().min(1).max(40), terminationDays: z.number().int().min(0).max(60), cashCropPlantingDate: z.union([z.literal(""), calendarDate]), areaHa: z.string().max(40), budget: chatBudgetSchema.optional() })).max(50).optional(),
+  planningYear: z.number().int().min(1900).max(2200).optional(),
+  irrigation: z.strictObject({ status: z.enum(["available", "unavailable", "unknown"]), summary: z.string().max(1000).optional() }).optional(),
 });
 
 export const chatRequestSchema: z.ZodType<MeridianChatRequest> = z.strictObject({

@@ -1,8 +1,10 @@
 """Verify portable learned weights, provenance replay and feature/unit boundaries."""
 
 import copy
+import importlib.metadata
 import json
 import math
+import platform
 import sys
 import tempfile
 import unittest
@@ -13,25 +15,48 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "apps/api/app/ml"))
 import export_research_yield_model as export
 from research_yield_model import load_research_model, predict_yield
+import verify_research_replay
 
 
 class ResearchYieldBundleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.files, cls.policy = export.build_bundle()
+        # Keep integrity verification portable across runtimes, while reserving
+        # byte-identical refit reproduction for the recorded environment.
+        cls.audit = verify_research_replay.verify()
+        cls.policy = json.loads(export.POLICY.read_text(encoding="utf-8"))
         cls.directory = ROOT / cls.policy["output"]
+        cls.files = {name: (cls.directory / name).read_bytes() for name in ("model.json", "bundle.json")}
         cls.model = load_research_model(cls.directory)
         cls.input = dict(zip(cls.model["features"], cls.model["scaler_mean"]))
 
-    def test_all_data_export_is_reproducible_and_separate_from_validation(self):
+    def test_exact_all_data_export_reproduces_recorded_bytes(self):
+        manifest = json.loads(self.files["bundle.json"])
+        required = manifest["runtime"]
+        actual = {"python": platform.python_version(), **{name: importlib.metadata.version(name)
+            for name in ("numpy", "scipy", "scikit-learn")}}
+        if actual != required:
+            self.skipTest(f"Exact frozen export requires {required}; current runtime is {actual}")
+        rebuilt, _ = export.build_bundle()
+        self.assertEqual(rebuilt, self.files)
+
+    def test_recorded_bundle_metadata_and_validation_scope(self):
+        manifest = json.loads(self.files["bundle.json"])
         for name, content in self.files.items():
             self.assertEqual(content, (self.directory / name).read_bytes())
-        manifest = json.loads(self.files["bundle.json"])
         self.assertEqual(manifest["portable_parity_checked_rows"], 88)
         self.assertTrue(manifest["all_data_refit"])
         self.assertFalse(manifest["farmer_ready"])
         self.assertFalse(manifest["production_serving_changed"])
         self.assertIn("not this all-data refit", manifest["validation_belongs_to"])
+
+    def test_frozen_exporter_still_rejects_runtime_manifest_mismatch(self):
+        actual = {"python": platform.python_version(), **{name: importlib.metadata.version(name)
+            for name in ("numpy", "scipy", "scikit-learn")}}
+        if self.audit["exact_prepared_replay"]:
+            self.skipTest(f"Prepared replay exactly matches; no runtime-manifest mismatch to exercise (runtime {actual})")
+        with self.assertRaisesRegex(ValueError, "Prepared replay differs: manifest.json"):
+            export.build_bundle()
 
     def test_portable_prediction_matches_sklearn_on_new_numeric_inputs(self):
         protocol = json.loads(export.prep.PROTOCOL.read_text(encoding="utf-8"))

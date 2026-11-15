@@ -1,0 +1,13 @@
+{
+  "yield_absolute/mean": "cfa5652913714c34846d538e8853b032",
+  "yield_absolute/water": "740da640c7344dd0be9c0319f783b654",
+  "yield_absolute/water_weather": "bac7c11b9df24fcbac7225ea218f2fb2",
+  "yield_absolute/weather": "5293f59bcc154fac91e862a13710c8cd",
+  "yield_difference/direct_water": "e5f17d72e9274a9798d70359f1db72ea",
+  "yield_difference/direct_water_weather": "38f62e26aef5448e98073e8248c71b21",
+  "yield_difference/mean_difference": "d595762c771545f18764e07e3c5f30ee",
+  "yield_difference/subtract_water": "ea7e46e4f690426eb1bc403bdb28e662",
+  "yield_difference/subtract_water_weather": "ad023a4d521845c298f35a8eeefe4bc1",
+  "yield_difference/subtract_weather": "5f6759b5900943ccb25b528b63165f56",
+  "yield_difference/zero": "2a4fee188f6e4cf7a7f5fd1a5f127628"
+}

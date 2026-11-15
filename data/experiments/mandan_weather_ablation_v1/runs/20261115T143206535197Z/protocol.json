@@ -1,0 +1,34 @@
+{
+  "version": "mandan-weather-ablation-v1",
+  "purpose": "Frozen retrospective test of whether verified regional realized wheat-season weather explains Mandan yield beyond observed spring profile water",
+  "seed": 42,
+  "exposure": "Mandan eligibility and prior model outcomes are exposed; this is a historical exploratory ablation, not an untouched final test.",
+  "pinned_sha256": {
+    "apps/api/app/ml/prepare_mandan.py": "cc69c282f7027fc3da4a7271260b2f70367cdda38d939ff0cec0f581677e8e69",
+    "apps/api/app/ml/evaluate_mandan.py": "3b72761c2f6ae2dc7b7f1182995d497a63d470ea949712203b659372a143d420",
+    "apps/api/app/ml/mandan_protocol_v1.json": "055913c53cc08ca0529bb0306a043bda5fd111c7cad459190d54db42b5dd13dd",
+    "data/processed/mandan_linkage_v1/inventory.json": "f24b12960a2cc21a4ac5b880b5f756ba5c5f24281b53eca9c0389b9202fef628",
+    "data/processed/mandan_linkage_v1/spring_water_yield.csv": "36e839d30ca4e4ed4a8fe43b8f8b927f9c63663e3dfa681e49d43f5d33ed623c",
+    "data/processed/mandan_linkage_v1/water_yield_pairs.csv": "359a3ac175d46e99022a5fbc19531fe44692ea675d6fc6c72e61679ebcfcfd24",
+    "data/processed/mandan_linkage_v1/fold_memberships.csv": "cb519d4e0c020893f1a18019c9f5ae783a7c927ef34939fdddf135dbf4aeaebf",
+    "data/processed/mandan_linkage_v1/observations.csv": "ab4ff33fff6a034c7075743bd8ffd2667bf11576bd9fd6b276f72e5942043197",
+    "data/analysis/mandan_weather_v1/season_weather.csv": "d9af8e897e60b1100b5072aad97bb47874cce9055e50b42c510b10f875d0d36b",
+    "data/analysis/mandan_weather_v1/verification.json": "5098de54c53721f1d7c602a353f66cc374836eeca84dc07462ca77b125393d9d",
+    "data/raw/mandan_weather_v1/verification_policy.json": "d4f6db820548bcf7024971b7b5b49c917c9a088282dbf6530ebb70d6542b2fb3",
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.json": "48b2bb02a9c8d5609bd4ba27afdd4ac3f1e8d1848db71ef02a2bef57c31c4ae2",
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.source.json": "fe989b027154a846c5463a4c31391f7f39954395a6f45556abf66a20856a7b94"
+  },
+  "years": [2009, 2010, 2011],
+  "estimator": {"alpha": 1.0, "fit_intercept": true, "solver": "svd", "positive": false},
+  "preprocessing": "Ridge; StandardScaler is fitted on numeric predictors in training fold only. No imputation, target transform, clipping, tuning or feature selection.",
+  "weather_source": "Verified season_weather.csv: one study-area proxy for all years, no annual field assignment. Season aggregates are inclusive wheat planting through harvest. Realized future weather is retrospective and unavailable at cover planting.",
+  "weather_features": ["season_rain_mm", "season_mean_tmax_c", "season_mean_tmin_c", "season_mean_rh_pct", "season_mean_wind_m_s", "season_mean_solar_mj_m2_day"],
+  "tasks": {
+    "yield_absolute": {"cohort": "spring_water_yield", "n": 176, "target": "wheat_yield_t_ha", "unit": "t/ha", "methods": {"mean": "train_mean", "water": ["spring_storage_0_210cm_mm"], "weather": "weather_only", "water_weather": ["spring_storage_0_210cm_mm", "weather"]}},
+    "yield_difference": {"cohort": "water_yield_pairs", "n": 142, "target": "delta_yield_t_ha", "unit": "t/ha", "methods": {"zero": "zero", "mean_difference": "train_mean", "direct_water": ["delta_spring_storage_0_210cm_mm"], "direct_water_weather": ["delta_spring_storage_0_210cm_mm", "weather"], "subtract_water": "heldout_arm_predictions", "subtract_weather": "heldout_arm_predictions", "subtract_water_weather": "heldout_arm_predictions"}}
+  },
+  "validation": "Existing frozen leave-one-year-out folds 2009–2011. Same common cohort within each task and year; shared controls stay in year. Arm subtraction uses same-year held-out predictions.",
+  "metrics": "Per year and pooled MAE/RMSE/signed bias; macro-year MAE; paired benefit/harm confusion, harmful cover choices, missed benefits, balanced accuracy, and control-balanced MAE. Baseline metrics included. No inferential claim from three overlapping years.",
+  "decision_tolerance": 1e-12,
+  "limitations": ["Regional weather proxy, not annual plot weather", "Three exposed historical seasons", "Observed spring water and realized season weather are retrospective; unavailable at earlier planting decision", "Spring water is 0–210 cm stored water, not PAW", "No exact soil sampling dates inferred", "No serving refit, promotion, API payload or Colorado changes"]
+}

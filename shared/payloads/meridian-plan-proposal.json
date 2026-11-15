@@ -1,0 +1,11 @@
+{
+  "id": "proposal-2027-01",
+  "fieldId": "field-tribune",
+  "contextVersion": "field-tribune:2027:7d9a1b",
+  "changes": {
+    "coverCrop": "pea",
+    "cashCropPlantingDate": "2027-09-10",
+    "terminationDays": 25,
+    "budget": { "seedCost": "40", "terminationCost": "15" }
+  }
+}

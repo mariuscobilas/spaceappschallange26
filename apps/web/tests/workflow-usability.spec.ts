@@ -50,12 +50,21 @@ test("Ask Meridian opens a field grounded chat with a keyboard ready composer", 
   await page.route("**/api/v1/field-conditions?**", (route) => route.abort());
   await page.goto("/intel");
   await expect(page.getByRole("heading", { name: "Ask Meridian" })).toBeVisible();
-  await expect(page.getByText("Field conversation", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Active field")).toBeVisible();
+  await expect(page.getByLabel("Planning year")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start a new chat" })).toBeVisible();
+  await expect(page.getByText("Field conversation", { exact: true })).toHaveCount(0);
   const composer = page.getByLabel("Message Meridian");
   await expect(composer).toBeVisible();
   await composer.fill("What should I verify before planting?");
   await expect(page.getByRole("button", { name: "Send message" })).toBeEnabled();
   await expect(page.getByText("Enter to send · Shift+Enter for a new line")).toBeVisible();
+  await expect(page.locator('[data-slot="message-scroller-viewport"]')).toHaveCount(1);
+  await page.screenshot({ path: "/private/tmp/meridian-intel-desktop-20261115.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(composer).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+  await page.screenshot({ path: "/private/tmp/meridian-intel-mobile-20261115.png", fullPage: true });
 });
 
 test("research county navigation does not create a field until Select point is used", async ({ page }) => {

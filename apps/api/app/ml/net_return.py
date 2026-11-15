@@ -68,6 +68,8 @@ def policy_gate(*, net_return_lower_bound_usd_per_ha: float | None,
                 yield_lower_bound_t_ha: float | None, uncertainty_independently_validated: bool,
                 max_tolerable_yield_loss_t_ha: float) -> dict:
     """Conservative gate. Missing/unvalidated uncertainty always abstains."""
+    if not isinstance(uncertainty_independently_validated, bool):
+        raise ValueError("uncertainty_independently_validated must be a boolean")
     tolerance = _number(max_tolerable_yield_loss_t_ha, "max_tolerable_yield_loss_t_ha")
     if tolerance < 0:
         raise ValueError("Maximum tolerable yield loss must be nonnegative")
@@ -116,7 +118,7 @@ def evaluate_oof(rows: Iterable[dict], *, benefit_tolerance_t_ha: float = 0.0,
     tol = _number(benefit_tolerance_t_ha, "benefit_tolerance_t_ha")
     if tol < 0:
         raise ValueError("Benefit tolerance must be nonnegative")
-    seen: set[tuple[str, str]] = set()
+    seen: set[str] = set()
     control_year: dict[str, str] = {}
     for r in items:
         for field in ("task", "item_id", "year", "control_id", "unit", "observed", "predicted"):
@@ -136,9 +138,9 @@ def evaluate_oof(rows: Iterable[dict], *, benefit_tolerance_t_ha: float = 0.0,
                 raise ValueError("Held-out year overlaps supplied training years")
         r["observed"] = _number(r["observed"], "observed")
         r["predicted"] = _number(r["predicted"], "predicted")
-        key = (r["year"], str(r["item_id"]))
+        key = str(r["item_id"])
         if key in seen:
-            raise ValueError("Duplicate OOF item prediction")
+            raise ValueError("Duplicate OOF item_id; identities must be unique across years")
         seen.add(key)
         control = str(r["control_id"])
         if not control:

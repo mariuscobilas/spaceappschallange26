@@ -1,0 +1,13 @@
+{
+  "planningYear": 2027,
+  "referenceYear": 2025,
+  "geographicMatch": "national_fallback",
+  "geographicRegion": null,
+  "countyFips": null,
+  "referenceStatus": "stale_fallback",
+  "referenceMessage": "USDA ERS could not be reached; showing the bundled 2025 U.S. reference snapshot.",
+  "provenance": [{ "crop": "wheat", "sourceUrl": "https://www.ers.usda.gov/media/4978/wheat.csv?v=86392", "retrievedAt": "2026-11-14T10:00:00Z", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "rawBytes": 12400, "snapshotPath": "shared/data/crop-references.json" }],
+  "rows": [{ "crop": "wheat", "yieldTHa": 3.2, "priceUsdT": 220, "totalCostUsdHa": 450, "grossRevenueUsdHa": 704, "netReturnUsdHa": 254, "wholeFieldNetReturnUsd": 3048, "wholeFieldGrossRevenueUsd": 8448, "breakEvenPriceUsdT": 140.625, "breakEvenYieldTHa": 2.045454545, "sourceYear": 2025, "sourceRegion": "U.S. total", "geographicMatch": "national_fallback", "provenance": "https://www.ers.usda.gov/media/4978/wheat.csv?v=86392", "inputBasis": ["USDA ERS realized yield", "USDA ERS realized price", "USDA ERS operating plus allocated-overhead cost"] }],
+  "ranking": ["wheat"],
+  "assumptions": ["Historical realized estimates are not forecasts."]
+}

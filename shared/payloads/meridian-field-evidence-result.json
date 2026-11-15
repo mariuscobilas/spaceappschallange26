@@ -1,0 +1,5 @@
+{
+  "conditions": { "ok": false, "error": "NASA POWER is unavailable." },
+  "soil": { "ok": false, "error": "USDA soil profile is unavailable." },
+  "interpretation": "Sources are unavailable; no point evidence was accepted."
+}

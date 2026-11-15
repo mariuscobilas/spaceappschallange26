@@ -7,7 +7,6 @@ export const runtime = "nodejs";
 export const maxDuration = 90;
 
 export async function POST(request: Request) {
-  // The route owns execution settings. Never spread caller parameters into Mastra.
   let body: unknown;
   try {
     const text = await request.text();
@@ -26,14 +25,18 @@ export async function POST(request: Request) {
   const signal = AbortSignal.any([request.signal, AbortSignal.timeout(90_000)]);
   try {
     const stream = await handleChatStream({
-      mastra: createMeridianMastra(parsed.data.context, signal),
+      mastra: createMeridianMastra(parsed.data.context, signal, parsed.data.messages),
       agentId: "meridian", version: "v7",
       sendReasoning: false,
-      onError: () => signal.aborted ? "Meridian was stopped or timed out. Please retry." : "Meridian could not respond. Check the server configuration and retry.",
+      onError: (error) => {
+        if (!signal.aborted) console.error("Meridian stream failed", { error: error instanceof Error ? error.name : "UnknownError" });
+        return signal.aborted ? "Meridian was stopped or timed out. Please retry." : "Meridian could not respond. Check the server configuration and retry.";
+      },
       params: { messages: parsed.data.messages, maxSteps: 6, abortSignal: signal },
     });
     return createUIMessageStreamResponse({ stream, headers: { "Cache-Control": "no-store" } });
-  } catch {
+  } catch (error) {
+    if (!signal.aborted) console.error("Meridian request failed", { error: error instanceof Error ? error.name : "UnknownError" });
     return Response.json({ error: signal.aborted ? "Meridian was stopped or timed out. Please retry." : "Meridian could not respond. Check the server configuration and retry." }, { status: signal.aborted ? 504 : 502 });
   }
 }

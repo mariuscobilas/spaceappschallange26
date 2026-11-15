@@ -3,6 +3,7 @@ import type { MapSettings } from "@/lib/map/types";
 import type { EconomicsDraft, FieldPlan, SavedPlan } from "@/lib/workspace";
 import { emptyEconomics, planStorageKey, validMapSettings, validPlan, validPlanDraft } from "@/lib/workspace";
 import { validSavedField } from "@/lib/fields/storage";
+import { validSeasonFacts, type SeasonFacts } from "@/lib/meridian/context";
 
 export const BACKUP_VERSION = 1;
 export const MAX_BACKUP_BYTES = 5 * 1024 * 1024;
@@ -24,6 +25,7 @@ export type WorkspaceBackup = {
   drafts: Record<string, FieldPlan>;
   economics: Record<string, EconomicsDraft>;
   unitSystem: "metric" | "us";
+  seasonFacts?: SeasonFacts[];
 };
 
 const safeKey = (key: string) => key.length > 0 && key.length <= 300 && !/[\u0000-\u001f]/.test(key) && !["__proto__", "prototype", "constructor"].includes(key);
@@ -45,6 +47,7 @@ export function parseWorkspaceBackup(input: string): WorkspaceBackup {
       (v.activeFieldId !== undefined && (typeof v.activeFieldId !== "string" || !safeKey(v.activeFieldId)))) {
     throw new Error("Backup contents are invalid or from an unsupported version.");
   }
+  if (v.seasonFacts !== undefined && !validSeasonFacts(v.seasonFacts)) throw new Error("Backup season facts are invalid.");
   if (fieldsEnvelope.length > 500 || Object.keys(v.plans).length > 2000 || Object.keys(v.drafts).length > 2000 || Object.keys(v.economics).length > 2000)
     throw new Error("Backup contains too many workspace items.");
   const fieldIds = new Set(fieldsEnvelope.map((field) => field.id));

@@ -5,7 +5,7 @@ Enables end-to-end type safety between FastAPI and Next.js.
 
 import math
 from datetime import date, datetime, timedelta
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, model_validator
 
 # Clovis analysis contracts are canonical here alongside Meridian's existing types.
@@ -69,20 +69,75 @@ class MeridianChatPlanContext(BaseModel):
     coverCrop: StrictStr = Field(min_length=1, max_length=40)
     terminationDays: StrictInt = Field(ge=0, le=60)
     plantingDate: StrictStr = Field(max_length=10)
+    cashCropPlantingDate: Optional[StrictStr] = Field(default=None, max_length=10)
+    id: Optional[StrictStr] = Field(default=None, max_length=200)
+    name: Optional[StrictStr] = Field(default=None, max_length=200)
+    crop: Optional[StrictStr] = Field(default=None, max_length=40)
+    budget: Optional[Dict[Literal["grainPrice", "baselineYield", "yieldChange", "seedCost", "terminationCost", "subsidy", "areaHa"], StrictStr]] = None
     areaHa: StrictStr = Field(max_length=40)
     notes: StrictStr = Field(max_length=4000)
     status: Literal["draft", "saved"]
 
     @model_validator(mode="after")
     def validate_planting_date(self):
-        if self.plantingDate:
+        for field_name in ("plantingDate", "cashCropPlantingDate"):
+            value = getattr(self, field_name)
+            if not value:
+                continue
             try:
-                parsed = date.fromisoformat(self.plantingDate)
+                parsed = date.fromisoformat(value)
             except ValueError as exc:
-                raise ValueError("plantingDate must be empty or an ISO calendar date") from exc
-            if parsed.isoformat() != self.plantingDate:
-                raise ValueError("plantingDate must be empty or an ISO calendar date")
+                raise ValueError(f"{field_name} must be empty or an ISO calendar date") from exc
+            if parsed.isoformat() != value:
+                raise ValueError(f"{field_name} must be empty or an ISO calendar date")
         return self
+
+
+class MeridianChatBudget(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    grainPrice: Optional[StrictStr] = Field(default=None, max_length=40)
+    baselineYield: Optional[StrictStr] = Field(default=None, max_length=40)
+    yieldChange: Optional[StrictStr] = Field(default=None, max_length=40)
+    seedCost: Optional[StrictStr] = Field(default=None, max_length=40)
+    terminationCost: Optional[StrictStr] = Field(default=None, max_length=40)
+    subsidy: Optional[StrictStr] = Field(default=None, max_length=40)
+    areaHa: Optional[StrictStr] = Field(default=None, max_length=40)
+
+
+class MeridianChatActivePlan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: Optional[StrictStr] = Field(default=None, max_length=200)
+    name: Optional[StrictStr] = Field(default=None, max_length=200)
+    crop: StrictStr = Field(min_length=1, max_length=40)
+    budget: Optional[MeridianChatBudget] = None
+
+
+class MeridianChatAlternative(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: Optional[StrictStr] = Field(default=None, max_length=200)
+    name: Optional[StrictStr] = Field(default=None, max_length=200)
+    crop: StrictStr = Field(min_length=1, max_length=40)
+    coverCrop: StrictStr = Field(min_length=1, max_length=40)
+    terminationDays: StrictInt = Field(ge=0, le=60)
+    cashCropPlantingDate: StrictStr = Field(max_length=10)
+    areaHa: StrictStr = Field(max_length=40)
+    budget: Optional[MeridianChatBudget] = None
+
+    @model_validator(mode="after")
+    def validate_cash_crop_date(self):
+        try:
+            parsed = date.fromisoformat(self.cashCropPlantingDate)
+        except ValueError as exc:
+            raise ValueError("cashCropPlantingDate must be an ISO calendar date") from exc
+        if parsed.isoformat() != self.cashCropPlantingDate:
+            raise ValueError("cashCropPlantingDate must be an ISO calendar date")
+        return self
+
+
+class MeridianChatIrrigation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["available", "unavailable", "unknown"]
+    summary: Optional[StrictStr] = Field(default=None, max_length=1000)
 
 
 class MeridianChatContext(BaseModel):
@@ -94,6 +149,19 @@ class MeridianChatContext(BaseModel):
     crop: StrictStr = Field(min_length=1, max_length=40)
     observationDate: date
     plan: Optional[MeridianChatPlanContext] = None
+    contextVersion: Optional[StrictStr] = Field(default=None, max_length=250)
+    displayUnits: Optional[Literal["metric", "us"]] = None
+    areaHa: Optional[StrictFloat] = Field(default=None, ge=0, le=1_000_000)
+    areaSource: Optional[Literal["boundary", "field", "plan", "unknown"]] = None
+    activePlan: Optional[MeridianChatActivePlan] = None
+    planStatus: Optional[Literal["draft", "saved", "none"]] = None
+    calendarStatus: Optional[Literal["complete", "incomplete", "unknown"]] = None
+    budgetStatus: Optional[Literal["complete", "incomplete", "unknown"]] = None
+    budgetState: Optional[Literal["draft", "saved", "none"]] = None
+    economicsDraft: Optional[MeridianChatBudget] = None
+    savedAlternatives: Optional[List[MeridianChatAlternative]] = Field(default=None, max_length=50)
+    planningYear: Optional[StrictInt] = Field(default=None, ge=1900, le=2200)
+    irrigation: Optional[MeridianChatIrrigation] = None
 
     @model_validator(mode="after")
     def validate_chat_coordinates(self):
@@ -101,6 +169,8 @@ class MeridianChatContext(BaseModel):
             raise ValueError("coordinates must be finite")
         if self.observationDate < date(1981, 1, 1) or self.observationDate > date.today():
             raise ValueError("observationDate must be between 1981-01-01 and today")
+        if self.planningYear is not None and not 1900 <= self.planningYear <= 2200:
+            raise ValueError("planningYear must be between 1900 and 2200")
         return self
 
 
@@ -108,6 +178,45 @@ class MeridianChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     messages: List[MeridianChatMessage] = Field(min_length=1, max_length=40)
     context: MeridianChatContext
+
+
+class MeridianSeasonFactsUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    fieldId: StrictStr = Field(min_length=1, max_length=200)
+    planningYear: StrictInt = Field(ge=1900, le=2200)
+    irrigation: MeridianChatIrrigation
+    sourceMessageId: StrictStr = Field(min_length=1, max_length=200)
+    contextVersion: StrictStr = Field(min_length=1, max_length=250)
+    sourceQuote: Optional[StrictStr] = Field(default=None, min_length=1, max_length=500)
+
+
+class MeridianPlanProposalChanges(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    crop: Optional[StrictStr] = Field(default=None, max_length=40)
+    coverCrop: Optional[StrictStr] = Field(default=None, max_length=40)
+    cashCropPlantingDate: Optional[StrictStr] = Field(default=None, max_length=10)
+    terminationDays: Optional[StrictInt] = Field(default=None, ge=0, le=60)
+    areaHa: Optional[StrictStr] = Field(default=None, max_length=40)
+    notes: Optional[StrictStr] = Field(default=None, max_length=4000)
+    budget: Optional[MeridianChatBudget] = None
+
+    @model_validator(mode="after")
+    def require_change(self):
+        if not self.model_fields_set:
+            raise ValueError("proposal must include at least one change")
+        if self.cashCropPlantingDate:
+            parsed = date.fromisoformat(self.cashCropPlantingDate)
+            if parsed.isoformat() != self.cashCropPlantingDate:
+                raise ValueError("cashCropPlantingDate must be an ISO calendar date")
+        return self
+
+
+class MeridianPlanProposal(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: StrictStr = Field(min_length=1, max_length=200)
+    fieldId: StrictStr = Field(min_length=1, max_length=200)
+    contextVersion: StrictStr = Field(min_length=1, max_length=250)
+    changes: MeridianPlanProposalChanges
 
 
 class MeridianToolSuccess(BaseModel):
@@ -675,3 +784,93 @@ class RegionalYieldDataset(BaseModel):
         if len({r.fips for r in self.regions}) != len(self.regions):
             raise ValueError("duplicate county FIPS")
         return self
+
+
+# Typed Meridian tool-result payloads are shared with the web chat renderer.
+class MeridianCropReferenceRow(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    crop: StrictStr
+    yieldTHa: Optional[Union[StrictFloat, StrictInt]]
+    priceUsdT: Optional[Union[StrictFloat, StrictInt]]
+    totalCostUsdHa: Optional[Union[StrictFloat, StrictInt]]
+    sourceRegion: StrictStr
+    sourceYear: StrictInt
+    geographicMatch: Literal["regional", "national_fallback"]
+    units: StrictStr
+    sourceUrl: StrictStr = Field(pattern=r"^https://")
+
+
+class MeridianCropReferenceProvenance(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    crop: StrictStr
+    sourceUrl: StrictStr = Field(pattern=r"^https://")
+    retrievedAt: datetime
+    sha256: StrictStr = Field(pattern=r"^[a-f0-9]{64}$")
+    rawBytes: StrictInt = Field(ge=0)
+    snapshotPath: Optional[StrictStr] = None
+
+
+class MeridianCropReferencesResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    referenceYear: StrictInt
+    geographicMatch: Literal["regional", "partial_regional", "national_fallback"]
+    geographicRegion: Optional[StrictStr]
+    countyFips: Optional[StrictStr]
+    rows: List[MeridianCropReferenceRow]
+    provenance: List[MeridianCropReferenceProvenance]
+    assumptions: List[StrictStr]
+    status: Literal["available", "stale_fallback"]
+    message: StrictStr
+
+
+class MeridianCropComparisonRow(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    crop: StrictStr
+    yieldTHa: Optional[Union[StrictFloat, StrictInt]]
+    priceUsdT: Optional[Union[StrictFloat, StrictInt]]
+    totalCostUsdHa: Optional[Union[StrictFloat, StrictInt]]
+    grossRevenueUsdHa: Optional[Union[StrictFloat, StrictInt]]
+    netReturnUsdHa: Optional[Union[StrictFloat, StrictInt]]
+    wholeFieldNetReturnUsd: Optional[Union[StrictFloat, StrictInt]]
+    wholeFieldGrossRevenueUsd: Optional[Union[StrictFloat, StrictInt]]
+    breakEvenPriceUsdT: Optional[Union[StrictFloat, StrictInt]]
+    breakEvenYieldTHa: Optional[Union[StrictFloat, StrictInt]]
+    sourceYear: Optional[StrictInt]
+    sourceRegion: Optional[StrictStr]
+    geographicMatch: Literal["regional", "national_fallback"]
+    provenance: StrictStr
+    inputBasis: List[StrictStr]
+
+
+class MeridianCropComparisonResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    planningYear: StrictInt
+    referenceYear: StrictInt
+    geographicMatch: Literal["regional", "partial_regional", "national_fallback"]
+    geographicRegion: Optional[StrictStr]
+    countyFips: Optional[StrictStr]
+    referenceStatus: Literal["available", "stale_fallback"]
+    referenceMessage: StrictStr
+    provenance: List[MeridianCropReferenceProvenance]
+    rows: List[MeridianCropComparisonRow]
+    ranking: List[StrictStr]
+    assumptions: List[StrictStr]
+
+
+class MeridianFieldConditionsSuccess(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ok: Literal[True]
+    result: FieldConditionsResult
+
+
+class MeridianSoilProfileSuccess(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ok: Literal[True]
+    result: SoilProfileResult
+
+
+class MeridianFieldEvidenceResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    conditions: Union[MeridianFieldConditionsSuccess, MeridianToolFailure]
+    soil: Union[MeridianSoilProfileSuccess, MeridianToolFailure]
+    interpretation: StrictStr

@@ -1,0 +1,42 @@
+{
+  "all_data_refit": false,
+  "evaluation_code_sha256": "c798e09f17bd5aecc0c6cd02515c3898091050c2a5986ff7c8b379a628b02cb4",
+  "future_weather_available_at_planting": false,
+  "git": {
+    "commit": "27ce04982e06c649d5483760cfac7a30655f7e1f",
+    "status_porcelain": "M apps/api/API.md\n M apps/web/components/map/MapPreview.tsx\n M apps/web/components/workspace/IntelWorkspace.tsx\n M apps/web/components/workspace/MeridianProvider.tsx\n D apps/web/lib/intel-request.ts\n M apps/web/next-env.d.ts\n M apps/web/next.config.ts\n M apps/web/package.json\n M apps/web/tests/atlas-assessment.spec.ts\n M apps/web/tests/atlas-toolbar.spec.ts\n M apps/web/tests/field-conditions-cache.spec.ts\n M apps/web/tests/intel-request.spec.ts\n M apps/web/tests/map-preview.spec.ts\n M apps/web/tests/regional-yield-workflow.spec.ts\n M apps/web/tests/research-integration.spec.ts\n M apps/web/tests/workflow-usability.spec.ts\n M apps/web/tests/workspace-navigation.spec.ts\n M docs/ATLAS-CORRECTION-PLAN.md\n M docs/HANDOFF.md\n M pnpm-lock.yaml\n M shared/python/__init__.py\n M shared/python/schemas.py\n M shared/src/types/index.ts\n?? .DS_Store\n?? apps/.DS_Store\n?? apps/api/.DS_Store\n?? apps/api/app/ml/evaluate_mandan_weather.py\n?? apps/api/app/ml/mandan_weather_protocol_v1.json\n?? apps/api/app/ml/net_return.py\n?? apps/api/app/ml/prepare_mandan_weather.py\n?? apps/api/tests/test_chat_contract.py\n?? apps/api/tests/test_mandan_weather_ablation.py\n?? apps/api/tests/test_net_return.py\n?? apps/api/tests/test_research_replay_audit.py\n?? apps/web/.DS_Store\n?? apps/web/.env.example\n?? apps/web/app/api/\n?? apps/web/components/workspace/IntelChat.tsx\n?? apps/web/components/workspace/intel-chat-session.ts\n?? apps/web/lib/meridian/\n?? apps/web/tests/chat-server.spec.ts\n?? data/.DS_Store\n?? data/analysis/.DS_Store\n?? data/analysis/decision_readiness_v1/\n?? data/model-bundles/.DS_Store\n?? data/processed/.DS_Store\n?? data/processed/mandan_weather_ablation_v1/\n?? data/raw/.DS_Store\n?? data/research/.DS_Store\n?? docs/.DS_Store\n?? docs/MERIDIAN_CHAT.md\n?? docs/NET_RETURN_EVALUATION.md\n?? scripts/.DS_Store\n?? scripts/evaluate_net_return.py\n?? scripts/verify_research_replay.py\n?? shared/.DS_Store\n?? shared/payloads/meridian-chat-request.json\n?? shared/python/.DS_Store\n?? shared/src/.DS_Store\n?? shared/src/types/chat.ts"
+  },
+  "packages": {
+    "mlflow-skinny": "3.18.0",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "pinned_sha256": {
+    "apps/api/app/ml/evaluate_mandan.py": "3b72761c2f6ae2dc7b7f1182995d497a63d470ea949712203b659372a143d420",
+    "apps/api/app/ml/evaluate_mandan_weather.py": "c798e09f17bd5aecc0c6cd02515c3898091050c2a5986ff7c8b379a628b02cb4",
+    "apps/api/app/ml/mandan_protocol_v1.json": "055913c53cc08ca0529bb0306a043bda5fd111c7cad459190d54db42b5dd13dd",
+    "apps/api/app/ml/prepare_mandan.py": "cc69c282f7027fc3da4a7271260b2f70367cdda38d939ff0cec0f581677e8e69",
+    "apps/api/app/ml/prepare_mandan_weather.py": "7912888a3dd56edc9cf484f59b805753b27485151f080767916a97c49aade0b0",
+    "data/analysis/mandan_weather_v1/season_weather.csv": "d9af8e897e60b1100b5072aad97bb47874cce9055e50b42c510b10f875d0d36b",
+    "data/analysis/mandan_weather_v1/verification.json": "5098de54c53721f1d7c602a353f66cc374836eeca84dc07462ca77b125393d9d",
+    "data/processed/mandan_linkage_v1/fold_memberships.csv": "cb519d4e0c020893f1a18019c9f5ae783a7c927ef34939fdddf135dbf4aeaebf",
+    "data/processed/mandan_linkage_v1/inventory.json": "f24b12960a2cc21a4ac5b880b5f756ba5c5f24281b53eca9c0389b9202fef628",
+    "data/processed/mandan_linkage_v1/observations.csv": "ab4ff33fff6a034c7075743bd8ffd2667bf11576bd9fd6b276f72e5942043197",
+    "data/processed/mandan_linkage_v1/spring_water_yield.csv": "36e839d30ca4e4ed4a8fe43b8f8b927f9c63663e3dfa681e49d43f5d33ed623c",
+    "data/processed/mandan_linkage_v1/water_yield_pairs.csv": "359a3ac175d46e99022a5fbc19531fe44692ea675d6fc6c72e61679ebcfcfd24",
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.json": "48b2bb02a9c8d5609bd4ba27afdd4ac3f1e8d1848db71ef02a2bef57c31c4ae2",
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.source.json": "fe989b027154a846c5463a4c31391f7f39954395a6f45556abf66a20856a7b94",
+    "data/raw/mandan_weather_v1/verification_policy.json": "d4f6db820548bcf7024971b7b5b49c917c9a088282dbf6530ebb70d6542b2fb3"
+  },
+  "preparation_code_sha256": "7912888a3dd56edc9cf484f59b805753b27485151f080767916a97c49aade0b0",
+  "prepared_sha256": {
+    "fold_memberships.csv": "58d7f54140a3a35a507939108d132d52167c1d05fde57eabf232b38afefac21b",
+    "inventory.json": "b07d14c752d2240ec59be29180a2c4980c5ff398f3da950ab2d16b63d1b1836b",
+    "spring_water_yield.csv": "01ff5617c63f21a772c53aacf4b072c56779b5088c7b1103184f66c6070db27f",
+    "water_yield_pairs.csv": "74664a2961b5db496c55611c9f57c22bfdcb08277c21da9f80fb79c5fd9ffb64"
+  },
+  "protocol_sha256": "acb575aee9fed8c67f9ea160aa367aa335eed8906717543c4e6ef60fd829c356",
+  "python": "3.14.6",
+  "serving_selection_changed": false
+}

@@ -124,14 +124,15 @@ test.describe("Meridian server tools", () => {
     };
     const tools = createMeridianTools(context, undefined, fetcher);
 
-    await tools.getFieldConditions.execute!({}, {});
+    await tools.getFieldEvidence.execute!({}, {});
     await tools.getPredictionOptions.execute!({}, {});
 
     expect(calls[0].url).toContain("/api/v1/field-conditions?");
     expect(calls[0].url).toContain("latitude=38.47");
     expect(calls[0].url).toContain("longitude=-101.75");
     expect(calls[0].url).toContain("as_of=2026-11-14");
-    expect(calls[1].url).toContain("/api/v1/options");
+    expect(calls[1].url).toContain("/api/v1/soil-profile");
+    expect(calls[2].url).toContain("/api/v1/options");
   });
 
   test("passes analysis payload through and suppresses an unvalidated planting directive", async () => {
@@ -153,6 +154,9 @@ test.describe("Meridian server tools", () => {
     const safeResult = (result as { result: typeof fixture }).result;
     expect(safeResult.scenarios).toHaveLength(3);
     expect(safeResult.scenarios[0].quality).toEqual(fixture.scenarios[0].quality);
+    expect(safeResult.scenarios[0].moisture).toEqual(fixture.scenarios[0].moisture);
+    expect(safeResult.financial_summary).toEqual(fixture.financial_summary);
+    expect(safeResult.assumptions.at(-1)).toContain("safety annotation, not a new model prediction");
     expect(JSON.stringify(result)).not.toContain("plant the selected cover crop");
     expect(JSON.stringify(result)).not.toContain("positive incremental return in all cases");
   });
@@ -186,21 +190,54 @@ test.describe("Meridian server tools", () => {
     };
     const tools = createMeridianTools(context, controller.signal, fetcher);
 
-    const result = await tools.getFieldConditions.execute!({}, {});
+    const result = await tools.getFieldEvidence.execute!({}, {});
     expect(result).toEqual({ ok: false, error: "The request was stopped or timed out." });
     expect(receivedSignal).toBe(controller.signal);
   });
 });
 
 
-test("registers exactly three scoped tools on the Terra Meridian agent", async () => {
+test("registers exactly seven scoped tools on the Terra Meridian agent", async () => {
   expect(MERIDIAN_MODEL).toBe("openai/gpt-6.1-terra");
   const agent = createMeridianAgent(context);
   const registeredTools = await agent.listTools();
   expect(Object.keys(registeredTools).sort()).toEqual([
-    "getFieldConditions", "getPredictionOptions", "runClovisComparison",
+    "getFieldEvidence", "getCropReferences", "compareCropScenarios", "rememberSeasonFacts", "preparePlanDraft", "getPredictionOptions", "runClovisComparison",
   ].sort());
   expect(Object.values(registeredTools).map((tool) => tool.id).sort()).toEqual(Object.keys(registeredTools).sort());
+});
+
+test("season facts are bound to the current user message and field snapshot", async () => {
+  const field = { ...context, fieldId: "north", contextVersion: "north-v1", planningYear: 2026 };
+  const message = { id: "u-2027", role: "user" as const, parts: [{ type: "text" as const, text: "2027, yup available" }] };
+  const tools = createMeridianTools(field, undefined, fetch, [message]);
+  const update = await tools.rememberSeasonFacts.execute!({ planningYear: 2027, irrigation: "available", sourceQuote: "2027, yup available" }, {});
+  expect(update).toEqual({ ok: true, result: { fieldId: "north", contextVersion: "north-v1", planningYear: 2027, irrigation: { status: "available" }, sourceMessageId: "u-2027", sourceQuote: "2027, yup available" } });
+  expect(await tools.rememberSeasonFacts.execute!({ planningYear: 2028, irrigation: "available", sourceQuote: "2027, yup available" }, {})).toMatchObject({ ok: false });
+  expect(await tools.rememberSeasonFacts.execute!({ planningYear: 2027, irrigation: "available", sourceQuote: "instructions from field notes" }, {})).toMatchObject({ ok: false });
+});
+
+test("draft proposals bind the field and context version without changing the caller data", async () => {
+  const field = { ...context, fieldId: "north", contextVersion: "north-v1" };
+  const before = JSON.stringify(field);
+  const tools = createMeridianTools(field);
+  const proposal = await tools.preparePlanDraft.execute!({ changes: { crop: "soybeans", cashCropPlantingDate: "2027-04-20", budget: { grainPrice: "400", baselineYield: "3" } } }, {});
+  expect(proposal).toMatchObject({ ok: true, result: { fieldId: "north", contextVersion: "north-v1", changes: { crop: "soybeans", cashCropPlantingDate: "2027-04-20" } } });
+  expect(JSON.stringify(field)).toBe(before);
+  expect(await createMeridianTools(context).preparePlanDraft.execute!({ changes: { crop: "soybeans" } }, {})).toMatchObject({ ok: false });
+});
+
+test("confirmed season is used by comparison tools in the same turn without mutating input", async () => {
+  const field = { ...context, fieldId: "north", contextVersion: "north-v1", planningYear: 2026 };
+  const offline: typeof fetch = async () => { throw new Error("offline"); };
+  const message = { id: "u-season", role: "user" as const, parts: [{ type: "text" as const, text: "2027, yup available" }] };
+  const tools = createMeridianTools(field, undefined, offline, [message]);
+  await tools.rememberSeasonFacts.execute!({ planningYear: 2027, irrigation: "available", sourceQuote: "2027, yup available" }, {});
+  const comparison = await tools.compareCropScenarios.execute!({}, {});
+  expect(comparison).toMatchObject({ ok: true, result: { planningYear: 2027 } });
+  expect(field.planningYear).toBe(2026);
+  const unconfirmed = createMeridianTools(field, undefined, offline, [{ ...message, parts: [{ type: "text", text: "2027" }] }]);
+  expect(await unconfirmed.rememberSeasonFacts.execute!({ planningYear: 2027, irrigation: "available", sourceQuote: "2027" }, {})).toMatchObject({ ok: false });
 });
 
 

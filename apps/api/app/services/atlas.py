@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,7 @@ from pydantic import ValidationError
 from shared.python.schemas import AtlasDataset
 
 MAX_DATASET_BYTES = 10 * 1024 * 1024
+logger = logging.getLogger(__name__)
 UNAVAILABLE_MESSAGE = "No validated regional dataset is configured on this service."
 
 
@@ -61,5 +63,6 @@ def load_dataset(path_value: str | None = None) -> AtlasDataset:
         if any(len(values) > 1 for values in resolutions.values()):
             return unavailable("Configured atlas dataset mixes H3 resolutions within a crop/scenario group.")
         return dataset
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError, ValidationError, TypeError):
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError, ValidationError, TypeError) as exc:
+        logger.warning("Configured atlas dataset rejected (%s)", type(exc).__name__)
         return unavailable("Configured atlas dataset failed validation and was withheld.")

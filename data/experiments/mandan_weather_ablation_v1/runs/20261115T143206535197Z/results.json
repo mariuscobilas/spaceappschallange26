@@ -1,0 +1,764 @@
+{
+  "farmer_ready": false,
+  "model_promoted": false,
+  "tasks": {
+    "yield_absolute": {
+      "mean": {
+        "macro_year_mae": 2.05192177497335,
+        "per_year": {
+          "2009": {
+            "bias": -2.2964363636363636,
+            "mae": 2.2964363636363636,
+            "n": 55,
+            "rmse": 2.374285493218072
+          },
+          "2010": {
+            "bias": -0.9930618672665921,
+            "mae": 0.9930618672665921,
+            "n": 49,
+            "rmse": 1.0593523024897993
+          },
+          "2011": {
+            "bias": 2.8662670940170942,
+            "mae": 2.8662670940170942,
+            "n": 72,
+            "rmse": 2.8704553586651254
+          }
+        },
+        "pooled": {
+          "bias": 0.1784499958702713,
+          "mae": 2.166677626507351,
+          "n": 176,
+          "rmse": 2.3334059692848594
+        },
+        "unit": "t/ha"
+      },
+      "water": {
+        "macro_year_mae": 1.6357243820720289,
+        "per_year": {
+          "2009": {
+            "bias": -1.6773532434884888,
+            "mae": 1.6940528356758389,
+            "n": 55,
+            "rmse": 1.8001825195994743
+          },
+          "2010": {
+            "bias": -0.5648921916820232,
+            "mae": 0.6448444973952263,
+            "n": 49,
+            "rmse": 0.8627908307036669
+          },
+          "2011": {
+            "bias": 2.5682758131450214,
+            "mae": 2.5682758131450214,
+            "n": 72,
+            "rmse": 2.5825179455230503
+          }
+        },
+        "pooled": {
+          "bias": 0.369214277057702,
+          "mae": 1.7595803686419251,
+          "n": 176,
+          "rmse": 1.9870444835017618
+        },
+        "unit": "t/ha"
+      },
+      "water_weather": {
+        "macro_year_mae": 5.523662311451365,
+        "per_year": {
+          "2009": {
+            "bias": -2.216399663202669,
+            "mae": 2.2181123411400785,
+            "n": 55,
+            "rmse": 2.2967242253125733
+          },
+          "2010": {
+            "bias": -2.24941758518979,
+            "mae": 2.24941758518979,
+            "n": 49,
+            "rmse": 2.2794926459192544
+          },
+          "2011": {
+            "bias": 12.103457008024227,
+            "mae": 12.103457008024227,
+            "n": 72,
+            "rmse": 12.114417813025263
+          }
+        },
+        "pooled": {
+          "bias": 3.6325310308369207,
+          "mae": 6.270832642129252,
+          "n": 176,
+          "rmse": 7.945620088832003
+        },
+        "unit": "t/ha"
+      },
+      "weather": {
+        "macro_year_mae": 4.84136248859877,
+        "per_year": {
+          "2009": {
+            "bias": -2.1999385301769996,
+            "mae": 2.202125228253208,
+            "n": 55,
+            "rmse": 2.2810833320226855
+          },
+          "2010": {
+            "bias": -2.2505312549291836,
+            "mae": 2.2505312549291836,
+            "n": 49,
+            "rmse": 2.280558343473053
+          },
+          "2011": {
+            "bias": 10.071430982613919,
+            "mae": 10.071430982613919,
+            "n": 72,
+            "rmse": 10.072623737110389
+          }
+        },
+        "pooled": {
+          "bias": 2.806081705096233,
+          "mae": 5.434863351100333,
+          "n": 176,
+          "rmse": 6.676786473619288
+        },
+        "unit": "t/ha"
+      }
+    },
+    "yield_difference": {
+      "direct_water": {
+        "control_balanced_year_mae": {
+          "2009": 0.47404707924465844,
+          "2010": 0.3584992640143686,
+          "2011": 0.4828716938251196
+        },
+        "macro_control_balanced_mae": 0.4384726790280489,
+        "macro_year_mae": 0.42999925243710857,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": -0.010688697355002203,
+            "detected_benefits": 17,
+            "harmful_cover_choices": 12,
+            "mae": 0.4696099390418986,
+            "missed_benefits": 0,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5500825549858117
+          },
+          "2010": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": 0.00653986488275761,
+            "detected_benefits": 27,
+            "harmful_cover_choices": 18,
+            "mae": 0.34114944148719667,
+            "missed_benefits": 0,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.4091157885232542
+          },
+          "2011": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.38461538461538464,
+            "bias": 0.2455477034138676,
+            "detected_benefits": 40,
+            "harmful_cover_choices": 16,
+            "mae": 0.47923837678223047,
+            "missed_benefits": 12,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.6361586309263026
+          }
+        },
+        "pooled": {
+          "avoided_harms": 0,
+          "balanced_accuracy": 0.4375,
+          "bias": 0.11747581358149317,
+          "detected_benefits": 84,
+          "harmful_cover_choices": 46,
+          "mae": 0.4335114276079619,
+          "missed_benefits": 12,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.5555513194451234
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "direct_water_weather": {
+        "control_balanced_year_mae": {
+          "2009": 0.474043316184633,
+          "2010": 0.3591147788607884,
+          "2011": 1.99131309525196
+        },
+        "macro_control_balanced_mae": 0.9414903967657938,
+        "macro_year_mae": 0.9276506715094017,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": -0.010720300839171974,
+            "detected_benefits": 17,
+            "harmful_cover_choices": 12,
+            "mae": 0.46960738190762663,
+            "missed_benefits": 0,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5500678551814663
+          },
+          "2010": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": 0.009582290960507367,
+            "detected_benefits": 27,
+            "harmful_cover_choices": 18,
+            "mae": 0.3410832395843496,
+            "missed_benefits": 0,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.40953004456608466
+          },
+          "2011": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": 1.972261393036229,
+            "detected_benefits": 52,
+            "harmful_cover_choices": 16,
+            "mae": 1.972261393036229,
+            "missed_benefits": 0,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 2.0953429304374347
+          }
+        },
+        "pooled": {
+          "avoided_harms": 0,
+          "balanced_accuracy": 0.5,
+          "bias": 0.9453104865869746,
+          "detected_benefits": 96,
+          "harmful_cover_choices": 46,
+          "mae": 1.1484586942470456,
+          "missed_benefits": 0,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 1.4890994750917699
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "mean_difference": {
+        "control_balanced_year_mae": {
+          "2009": 0.4743447324062368,
+          "2010": 0.35424913457651097,
+          "2011": 0.11684988517929694
+        },
+        "macro_control_balanced_mae": 0.3151479173873482,
+        "macro_year_mae": 0.3089613075737196,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": -0.00479340860543198,
+            "detected_benefits": 17,
+            "harmful_cover_choices": 12,
+            "mae": 0.469815685077815,
+            "missed_benefits": 0,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5506626571883249
+          },
+          "2010": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": 0.003139977090492569,
+            "detected_benefits": 27,
+            "harmful_cover_choices": 18,
+            "mae": 0.33830790378006864,
+            "missed_benefits": 0,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.40493310613456035
+          },
+          "2011": {
+            "avoided_harms": 0,
+            "balanced_accuracy": 0.5,
+            "bias": 0.00039785373608909846,
+            "detected_benefits": 52,
+            "harmful_cover_choices": 16,
+            "mae": 0.11876033386327502,
+            "missed_benefits": 0,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.15288247100254643
+          }
+        },
+        "pooled": {
+          "avoided_harms": 0,
+          "balanced_accuracy": 0.5,
+          "bias": 0.00020664910963871718,
+          "detected_benefits": 96,
+          "harmful_cover_choices": 46,
+          "mae": 0.260029670704665,
+          "missed_benefits": 0,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.35366995251709576
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "subtract_water": {
+        "control_balanced_year_mae": {
+          "2009": 0.5169566945682016,
+          "2010": 0.6173057170662549,
+          "2011": 0.3024734773194618
+        },
+        "macro_control_balanced_mae": 0.47891196298463945,
+        "macro_year_mae": 0.47254442709906685,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 1,
+            "balanced_accuracy": 0.5122549019607843,
+            "bias": 0.07170532569964856,
+            "detected_benefits": 16,
+            "harmful_cover_choices": 11,
+            "mae": 0.5102200670226427,
+            "missed_benefits": 1,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.6138777394035699
+          },
+          "2010": {
+            "avoided_harms": 4,
+            "balanced_accuracy": 0.24074074074074073,
+            "bias": -0.18373667882644618,
+            "detected_benefits": 7,
+            "harmful_cover_choices": 14,
+            "mae": 0.6079102577588019,
+            "missed_benefits": 20,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.7717031636936769
+          },
+          "2011": {
+            "avoided_harms": 13,
+            "balanced_accuracy": 0.6274038461538461,
+            "bias": -0.22455375903919464,
+            "detected_benefits": 23,
+            "harmful_cover_choices": 3,
+            "mae": 0.29950295651575604,
+            "missed_benefits": 29,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.37806046780429187
+          }
+        },
+        "pooled": {
+          "avoided_harms": 18,
+          "balanced_accuracy": 0.43523550724637683,
+          "bias": -0.15111515293355993,
+          "detected_benefits": 46,
+          "harmful_cover_choices": 28,
+          "mae": 0.44027144074559244,
+          "missed_benefits": 50,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.578039492809284
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "subtract_water_weather": {
+        "control_balanced_year_mae": {
+          "2009": 0.48303011140747415,
+          "2010": 0.34773564602278184,
+          "2011": 0.49012170089133794
+        },
+        "macro_control_balanced_mae": 0.4402958194405313,
+        "macro_year_mae": 0.44062713883986077,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 11,
+            "balanced_accuracy": 0.4877450980392157,
+            "bias": -0.10727961357914491,
+            "detected_benefits": 1,
+            "harmful_cover_choices": 1,
+            "mae": 0.47989137320901765,
+            "missed_benefits": 16,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5598034032321205
+          },
+          "2010": {
+            "avoided_harms": 4,
+            "balanced_accuracy": 0.24074074074074073,
+            "bias": -0.096587911214411,
+            "detected_benefits": 7,
+            "harmful_cover_choices": 14,
+            "mae": 0.35339970706377727,
+            "missed_benefits": 20,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.4165478294916423
+          },
+          "2011": {
+            "avoided_harms": 3,
+            "balanced_accuracy": 0.3629807692307692,
+            "bias": 0.14187340567180806,
+            "detected_benefits": 28,
+            "harmful_cover_choices": 13,
+            "mae": 0.4885903362467874,
+            "missed_benefits": 24,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.6480374710886255
+          }
+        },
+        "pooled": {
+          "avoided_harms": 18,
+          "balanced_accuracy": 0.38315217391304346,
+          "bias": 0.015421315403093308,
+          "detected_benefits": 36,
+          "harmful_cover_choices": 28,
+          "mae": 0.44397168665995096,
+          "missed_benefits": 60,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.5657653064832525
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "subtract_weather": {
+        "control_balanced_year_mae": {
+          "2009": 0.4828928571428571,
+          "2010": 0.34746997549019604,
+          "2011": 0.14654444444444442
+        },
+        "macro_control_balanced_mae": 0.3256357590258325,
+        "macro_year_mae": 0.32718521899181124,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 12,
+            "balanced_accuracy": 0.5,
+            "bias": -0.10244827586206909,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.4796206896551723,
+            "missed_benefits": 17,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5600910948075846
+          },
+          "2010": {
+            "avoided_harms": 18,
+            "balanced_accuracy": 0.5,
+            "bias": -0.09648888888888886,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.35315555555555556,
+            "missed_benefits": 27,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.4162584133283875
+          },
+          "2011": {
+            "avoided_harms": 16,
+            "balanced_accuracy": 0.5,
+            "bias": -0.09842647058823525,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.14877941176470588,
+            "missed_benefits": 52,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.18182591059776343
+          }
+        },
+        "pooled": {
+          "avoided_harms": 46,
+          "balanced_accuracy": 0.5,
+          "bias": -0.09863380281690141,
+          "detected_benefits": 0,
+          "harmful_cover_choices": 0,
+          "mae": 0.281112676056338,
+          "missed_benefits": 96,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.3671615716797032
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      },
+      "zero": {
+        "control_balanced_year_mae": {
+          "2009": 0.4828928571428571,
+          "2010": 0.34746997549019604,
+          "2011": 0.14654444444444442
+        },
+        "macro_control_balanced_mae": 0.3256357590258325,
+        "macro_year_mae": 0.32718521899181124,
+        "per_year": {
+          "2009": {
+            "avoided_harms": 12,
+            "balanced_accuracy": 0.5,
+            "bias": -0.10244827586206909,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.4796206896551723,
+            "missed_benefits": 17,
+            "n": 29,
+            "observed_benefits": 17,
+            "observed_harms": 12,
+            "rmse": 0.5600910948075846
+          },
+          "2010": {
+            "avoided_harms": 18,
+            "balanced_accuracy": 0.5,
+            "bias": -0.09648888888888886,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.35315555555555556,
+            "missed_benefits": 27,
+            "n": 45,
+            "observed_benefits": 27,
+            "observed_harms": 18,
+            "rmse": 0.4162584133283875
+          },
+          "2011": {
+            "avoided_harms": 16,
+            "balanced_accuracy": 0.5,
+            "bias": -0.09842647058823525,
+            "detected_benefits": 0,
+            "harmful_cover_choices": 0,
+            "mae": 0.14877941176470588,
+            "missed_benefits": 52,
+            "n": 68,
+            "observed_benefits": 52,
+            "observed_harms": 16,
+            "rmse": 0.18182591059776343
+          }
+        },
+        "pooled": {
+          "avoided_harms": 46,
+          "balanced_accuracy": 0.5,
+          "bias": -0.09863380281690141,
+          "detected_benefits": 0,
+          "harmful_cover_choices": 0,
+          "mae": 0.281112676056338,
+          "missed_benefits": 96,
+          "n": 142,
+          "observed_benefits": 96,
+          "observed_harms": 46,
+          "rmse": 0.3671615716797032
+        },
+        "unique_controls": 10,
+        "unit": "t/ha"
+      }
+    }
+  },
+  "versus_baselines": {
+    "yield_absolute": {
+      "mean": {
+        "mean": {
+          "macro_mae_change": 0.0,
+          "per_year_mae_change": {
+            "2009": 0.0,
+            "2010": 0.0,
+            "2011": 0.0
+          }
+        }
+      },
+      "water": {
+        "mean": {
+          "macro_mae_change": -0.4161973929013212,
+          "per_year_mae_change": {
+            "2009": -0.6023835279605247,
+            "2010": -0.34821736987136576,
+            "2011": -0.29799128087207283
+          }
+        }
+      },
+      "water_weather": {
+        "mean": {
+          "macro_mae_change": 3.471740536478015,
+          "per_year_mae_change": {
+            "2009": -0.07832402249628512,
+            "2010": 1.2563557179231981,
+            "2011": 9.237189914007132
+          }
+        }
+      },
+      "weather": {
+        "mean": {
+          "macro_mae_change": 2.7894407136254196,
+          "per_year_mae_change": {
+            "2009": -0.09431113538315561,
+            "2010": 1.2574693876625915,
+            "2011": 7.205163888596824
+          }
+        }
+      }
+    },
+    "yield_difference": {
+      "direct_water": {
+        "mean_difference": {
+          "macro_mae_change": 0.12103794486338898,
+          "per_year_mae_change": {
+            "2009": -0.00020574603591638763,
+            "2010": 0.002841537707128028,
+            "2011": 0.36047804291895547
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.10281403344529733,
+          "per_year_mae_change": {
+            "2009": -0.010010750613273667,
+            "2010": -0.012006114068358886,
+            "2011": 0.3304589650175246
+          }
+        }
+      },
+      "direct_water_weather": {
+        "mean_difference": {
+          "macro_mae_change": 0.6186893639356821,
+          "per_year_mae_change": {
+            "2009": -0.00020830317018838418,
+            "2010": 0.002775335804280965,
+            "2011": 1.853501059172954
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.6004654525175905,
+          "per_year_mae_change": {
+            "2009": -0.010013307747545663,
+            "2010": -0.012072315971205949,
+            "2011": 1.823481981271523
+          }
+        }
+      },
+      "mean_difference": {
+        "mean_difference": {
+          "macro_mae_change": 0.0,
+          "per_year_mae_change": {
+            "2009": 0.0,
+            "2010": 0.0,
+            "2011": 0.0
+          }
+        },
+        "zero": {
+          "macro_mae_change": -0.018223911418091654,
+          "per_year_mae_change": {
+            "2009": -0.00980500457735728,
+            "2010": -0.014847651775486914,
+            "2011": -0.030019077901430866
+          }
+        }
+      },
+      "subtract_water": {
+        "mean_difference": {
+          "macro_mae_change": 0.16358311952534726,
+          "per_year_mae_change": {
+            "2009": 0.04040438194482765,
+            "2010": 0.2696023539787333,
+            "2011": 0.18074262265248103
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.1453592081072556,
+          "per_year_mae_change": {
+            "2009": 0.03059937736747037,
+            "2010": 0.25475470220324636,
+            "2011": 0.15072354475105015
+          }
+        }
+      },
+      "subtract_water_weather": {
+        "mean_difference": {
+          "macro_mae_change": 0.13166583126614118,
+          "per_year_mae_change": {
+            "2009": 0.010075688131202631,
+            "2010": 0.015091803283708627,
+            "2011": 0.3698300023835124
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.11344191984804952,
+          "per_year_mae_change": {
+            "2009": 0.00027068355384535225,
+            "2010": 0.0002441515082217127,
+            "2011": 0.3398109244820815
+          }
+        }
+      },
+      "subtract_weather": {
+        "mean_difference": {
+          "macro_mae_change": 0.018223911418091654,
+          "per_year_mae_change": {
+            "2009": 0.00980500457735728,
+            "2010": 0.014847651775486914,
+            "2011": 0.030019077901430866
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.0,
+          "per_year_mae_change": {
+            "2009": 0.0,
+            "2010": 0.0,
+            "2011": 0.0
+          }
+        }
+      },
+      "zero": {
+        "mean_difference": {
+          "macro_mae_change": 0.018223911418091654,
+          "per_year_mae_change": {
+            "2009": 0.00980500457735728,
+            "2010": 0.014847651775486914,
+            "2011": 0.030019077901430866
+          }
+        },
+        "zero": {
+          "macro_mae_change": 0.0,
+          "per_year_mae_change": {
+            "2009": 0.0,
+            "2010": 0.0,
+            "2011": 0.0
+          }
+        }
+      }
+    }
+  },
+  "weather_only_subtraction_expected_zero": true,
+  "weather_rank_warning": "Each year has one regional vector; each training fold has two distinct vectors. Six weather variables cannot support independent weather-effect inference.",
+  "weather_vectors": {
+    "2009": 1,
+    "2010": 1,
+    "2011": 1
+  }
+}

@@ -36,6 +36,10 @@ class NetReturnTests(unittest.TestCase):
             yield_lower_bound_t_ha=0.1, uncertainty_independently_validated=False,
             max_tolerable_yield_loss_t_ha=0)
         self.assertEqual(abstain["action"], "abstain")
+        with self.assertRaisesRegex(ValueError, "must be a boolean"):
+            economics.policy_gate(net_return_lower_bound_usd_per_ha=2,
+                yield_lower_bound_t_ha=0.1, uncertainty_independently_validated="false",
+                max_tolerable_yield_loss_t_ha=0)
         ok = economics.policy_gate(net_return_lower_bound_usd_per_ha=2,
             yield_lower_bound_t_ha=0, uncertainty_independently_validated=True,
             max_tolerable_yield_loss_t_ha=0)
@@ -78,6 +82,14 @@ class NetReturnTests(unittest.TestCase):
                 {"task": "yield_difference", "unit": "t/ha", "item_id": "b", "year": 2,
                  "control_id": "c2", "observed": 1, "predicted": 1}]
         with self.assertRaisesRegex(ValueError, "overlaps"):
+            economics.evaluate_oof(rows)
+
+    def test_rejects_same_pair_identity_reappearing_in_another_year(self):
+        rows = [{"task": "yield_difference", "unit": "t/ha", "item_id": "pair-a", "year": 1,
+                 "control_id": "c1", "observed": 0, "predicted": 0},
+                {"task": "yield_difference", "unit": "t/ha", "item_id": "pair-a", "year": 2,
+                 "control_id": "c2", "observed": 1, "predicted": 1}]
+        with self.assertRaisesRegex(ValueError, "identities must be unique"):
             economics.evaluate_oof(rows)
 
     def test_sensitivity_unconfigured_and_field_area(self):

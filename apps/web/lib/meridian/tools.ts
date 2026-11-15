@@ -1,7 +1,9 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
-import type { AnalyzeResult, FieldConditionsResult, MeridianChatContext, MeridianToolResultEnvelope, OptionsResult } from "@spaceapps/shared";
-import { analyzePayloadSchema, chatContextSchema } from "./validation";
+import type { AnalyzeResult, FieldConditionsResult, MeridianChatContext, MeridianChatMessage, MeridianToolResultEnvelope, MeridianPlanProposal, MeridianSeasonFactsUpdate, OptionsResult } from "@spaceapps/shared";
+import { analyzePayloadSchema, calendarDate, chatContextSchema } from "./validation";
+import { getCropReferences } from "./crop-references";
+import { compareCropScenarios } from "./crop-comparison";
 
 // Check the shapes consumed by chat before allowing upstream JSON into result cards.
 const measure = z.object({ status: z.enum(["available", "unavailable"]), value: z.number().nullable(), unit: z.string(), periodStart: z.string().nullable(), periodEnd: z.string().nullable(), source: z.string(), sourceUrl: z.string(), spatialResolution: z.string(), message: z.string() });
@@ -26,7 +28,7 @@ const analysisResponse = z.object({
   assumptions: z.array(z.string()),
 });
 
-export function createMeridianTools(context: MeridianChatContext, signal?: AbortSignal, fetcher: typeof fetch = fetch) {
+export function createMeridianTools(context: MeridianChatContext, signal?: AbortSignal, fetcher: typeof fetch = fetch, messages: MeridianChatMessage[] = []) {
   const field = chatContextSchema.parse(context);
   const base = (process.env.API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
 
@@ -40,22 +42,96 @@ export function createMeridianTools(context: MeridianChatContext, signal?: Abort
       });
       const result = await response.json();
       if (!response.ok) {
-        const message = typeof result?.error?.message === "string" ? result.error.message : typeof result?.detail === "string" ? result.detail : `Prediction service returned HTTP ${response.status}.`;
+        console.warn("Meridian evidence service rejected request", { path: path.split("?")[0], status: response.status });
+        const message = typeof result?.error?.message === "string" ? result.error.message : `Prediction service returned HTTP ${response.status}. Please retry or check the service status.`;
         return { ok: false, error: message.slice(0, 500) };
       }
       if (!schema.safeParse(result).success) return { ok: false, error: "Prediction service returned an invalid response. Please retry; no prediction was accepted." };
       return { ok: true, result: result as T };
-    } catch {
+    } catch (error) {
+      if (!signal?.aborted) console.error("Meridian evidence request failed", { path: path.split("?")[0], error: error instanceof Error ? error.name : "UnknownError" });
       return { ok: false, error: signal?.aborted ? "The request was stopped or timed out." : "The local prediction service is unavailable. Start FastAPI and retry." };
     }
   }
 
   return {
-    getFieldConditions: createTool({
-      id: "getFieldConditions",
-      description: "Read observations for the selected field location and observation date. Preserve source, units and unavailable states. These are selected-location context, never Clovis initial 5 cm moisture inputs.",
+    getFieldEvidence: createTool({
+      id: "getFieldEvidence",
+      description: "Read selected-location weather/moisture observations and mapped soil context. These are point/grid evidence, not field-wide measurements or compatible Clovis starting moisture. Partial availability is explicit.",
       inputSchema: z.strictObject({}),
-      execute: async () => request<FieldConditionsResult>(`/api/v1/field-conditions?${new URLSearchParams({ latitude: String(field.latitude), longitude: String(field.longitude), as_of: field.observationDate })}`, conditionsResponse),
+      execute: async () => {
+        const query = new URLSearchParams({ latitude: String(field.latitude), longitude: String(field.longitude) });
+        const [conditions, soil] = await Promise.all([
+          request<FieldConditionsResult>(`/api/v1/field-conditions?${query}&as_of=${field.observationDate}`, conditionsResponse),
+          request(`/api/v1/soil-profile?${query}`, z.object({ status: z.enum(["available", "unavailable"]), message: z.string(), source: z.string(), sourceUrl: z.string(), components: z.array(z.unknown()) })),
+        ]);
+        if (!conditions.ok && !soil.ok) return { ok: false as const, error: conditions.error };
+        return { ok: true as const, result: { conditions, soil, interpretation: "Selected-point observations and mapped soil context; not plot-level forecasts or profile-water measurements." } };
+      },
+    }),
+    getCropReferences: createTool({
+      id: "getCropReferences",
+      description: "Read public USDA ERS historical yield, crop price and production-cost references for supported cash crops. Source year differs from planning year. Geography and irrigation applicability are explicit. Read this before asking the user to enter reference numbers.",
+      inputSchema: z.strictObject({}),
+      execute: async () => {
+        try { return { ok: true as const, result: await getCropReferences(field, signal, fetcher) }; }
+        catch (error) {
+          if (!signal?.aborted) console.error("Crop reference lookup failed", { error: error instanceof Error ? error.name : "UnknownError" });
+          return { ok: false as const, error: signal?.aborted ? "The request was stopped." : "Crop references are unavailable. Your saved values remain usable; retry the reference lookup." };
+        }
+      },
+    }),
+    compareCropScenarios: createTool({
+      id: "compareCropScenarios",
+      description: "Calculate preliminary cash-crop revenue/net-return comparisons using USDA references plus compatible saved/draft budgets and explicit user overrides. Supply overrides only if the user stated them. Not a field yield prediction or agronomic crop recommendation. Cover seed/termination costs are additional costs, not total cash-crop production costs.",
+      inputSchema: z.strictObject({ overrides: z.array(z.strictObject({ crop: z.enum(["corn", "wheat", "soybeans", "cotton", "sorghum"]), yieldTHa: z.number().min(0).max(100).optional(), priceUsdT: z.number().min(0).max(1_000_000).optional(), totalCostUsdHa: z.number().min(0).max(1_000_000).optional() })).max(5).optional() }),
+      execute: async ({ overrides }) => {
+        try {
+          const references = await getCropReferences(field, signal, fetcher);
+          return { ok: true as const, result: compareCropScenarios(field, overrides, references) };
+        } catch (error) {
+          if (!signal?.aborted) console.error("Crop comparison failed", { error: error instanceof Error ? error.name : "UnknownError" });
+          return { ok: false as const, error: signal?.aborted ? "The request was stopped." : "The comparison could not be calculated. Check the reference data and entered values, then retry." };
+        }
+      },
+    }),
+    rememberSeasonFacts: createTool({
+      id: "rememberSeasonFacts",
+      description: "Remember a planning year and irrigation status explicitly stated in the latest user message for this saved field. Quote the user's exact words. Irrigation availability does not establish quantity, cost or yield. Updates are shown in the UI and saved on this device.",
+      inputSchema: z.strictObject({ planningYear: z.number().int().min(1900).max(2200), irrigation: z.enum(["available", "unavailable", "unknown"]), sourceQuote: z.string().min(1).max(500) }),
+      execute: async (input) => {
+        const latest = messages.at(-1);
+        const text = latest?.parts.map((part) => part.text).join("\n") ?? "";
+        if (!field.fieldId || !field.contextVersion) return { ok: false as const, error: "Select a saved field before remembering seasonal facts." };
+        if (latest?.role !== "user" || !text.includes(input.sourceQuote) || (input.planningYear !== field.planningYear && !text.includes(String(input.planningYear)))) return { ok: false as const, error: "Seasonal facts must be explicitly supported by the current user message." };
+        const previousQuestion = messages.slice(0, -1).reverse().find((message) => message.role === "assistant")?.parts.map((part) => part.text).join(" ") ?? "";
+        const hasIrrigationStatement = /\b(irrigat\w*|dryland|rainfed|available|unavailable)\b/i.test(input.sourceQuote);
+        const isAnswerToIrrigationQuestion = /irrigat|water availability/i.test(previousQuestion) && /\b(yes|yup|yeah|no|available|unavailable)\b/i.test(input.sourceQuote);
+        if (input.irrigation !== "unknown" && input.irrigation !== field.irrigation?.status && ((!hasIrrigationStatement && !isAnswerToIrrigationQuestion) || input.sourceQuote.includes("?"))) return { ok: false as const, error: "Confirm irrigation availability explicitly before remembering it." };
+        const result: MeridianSeasonFactsUpdate = { fieldId: field.fieldId, contextVersion: field.contextVersion, planningYear: input.planningYear, irrigation: { status: input.irrigation }, sourceMessageId: latest.id, sourceQuote: input.sourceQuote };
+        // Subsequent tools in this turn must use the just-confirmed season,
+        // even before the browser persists the corresponding facts event.
+        field.planningYear = input.planningYear;
+        field.irrigation = { status: input.irrigation };
+        return { ok: true as const, result };
+      },
+    }),
+    preparePlanDraft: createTool({
+      id: "preparePlanDraft",
+      description: "Prepare a visible draft proposal for the selected field. Does not save or apply anything. The user reviews changes and clicks Apply. cashCropPlantingDate is the cash crop date; cover planting is not inferred. budget uses canonical metric strings and includes only known or explicitly labeled assumptions; empty means missing.",
+      inputSchema: z.strictObject({ changes: z.strictObject({
+        crop: z.enum(["corn", "wheat", "soybeans", "cotton", "sorghum"]).optional(),
+        coverCrop: z.enum(["rye", "pea", "radish", "mix"]).optional(),
+        cashCropPlantingDate: calendarDate.optional(), terminationDays: z.number().int().min(0).max(60).multipleOf(5).optional(),
+        areaHa: z.string().max(40).refine((value) => value.trim() !== "" && Number.isFinite(Number(value)) && Number(value) > 0 && Number(value) <= 5000, "Use a positive area in hectares up to 5000.").optional(),
+        notes: z.string().max(4000).optional(),
+        budget: z.strictObject(Object.fromEntries(["grainPrice", "baselineYield", "yieldChange", "seedCost", "terminationCost", "subsidy", "areaHa"].map((key) => [key, z.string().max(40)]))).partial().optional(),
+      }).refine((changes) => Object.keys(changes).length > 0, "Supply at least one draft change.") }),
+      execute: async ({ changes }) => {
+        if (!field.fieldId || !field.contextVersion) return { ok: false as const, error: "Select a saved field before preparing a plan draft." };
+        const result: MeridianPlanProposal = { id: crypto.randomUUID(), fieldId: field.fieldId, contextVersion: field.contextVersion, changes };
+        return { ok: true as const, result };
+      },
     }),
     getPredictionOptions: createTool({
       id: "getPredictionOptions",

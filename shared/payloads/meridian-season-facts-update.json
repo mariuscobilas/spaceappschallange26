@@ -1,0 +1,8 @@
+{
+  "fieldId": "field-tribune",
+  "planningYear": 2027,
+  "irrigation": { "status": "unknown" },
+  "sourceMessageId": "message-42",
+  "contextVersion": "field-tribune:2027:7d9a1b",
+  "sourceQuote": "We have no irrigation available for this field."
+}

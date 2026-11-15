@@ -153,7 +153,7 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
       <a href="#workspace-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:p-3 focus:ring-2 focus:ring-ring">Skip to workspace</a>
       <AppNavigation />
       <SidebarInset id="workspace-content" tabIndex={-1} className="h-dvh min-h-0 min-w-0 overflow-hidden">
-        {!mapRoutes.has(pathname) && (
+        {!mapRoutes.has(pathname) && pathname !== "/intel" && (
           <header className={cn("flex shrink-0 flex-wrap items-center gap-3 border-b px-4 py-2 md:px-6", isPlanEditor ? "min-h-14" : "min-h-16")}>
             <SidebarTrigger aria-label="Toggle navigation" />
             <Separator orientation="vertical" className="my-4" />
@@ -184,7 +184,7 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
                 </div>
               )}
               {!mapRoutes.has(pathname) && (
-                <div className="absolute inset-0 overflow-y-auto bg-background">
+                <div className={cn("absolute inset-0 bg-background", pathname === "/intel" ? "overflow-hidden" : "overflow-y-auto")}>
 
                   {children}
                 </div>

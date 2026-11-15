@@ -1,0 +1,739 @@
+{
+  "yield_absolute": {
+    "mean": {
+      "2009": {
+        "training_n": 121,
+        "training_target_mean": 1.7636363636363637
+      },
+      "2010": {
+        "training_n": 127,
+        "training_target_mean": 2.2047952755905507
+      },
+      "2011": {
+        "training_n": 104,
+        "training_target_mean": 3.6538365384615386
+      }
+    },
+    "water": {
+      "2009": {
+        "coefficients": [
+          -0.601792563546567
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 1.7636363636363641,
+        "training_mae": 0.9169497291878689,
+        "training_n": 121,
+        "training_scaler_mean": [
+          899.0305785123966
+        ],
+        "training_scaler_scale": [
+          150.36310972919495
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2010": {
+        "coefficients": [
+          -1.070823511138748
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 2.2047952755905507,
+        "training_mae": 1.1129362058171528,
+        "training_n": 127,
+        "training_scaler_mean": [
+          868.8850393700787
+        ],
+        "training_scaler_scale": [
+          163.42660327519908
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2011": {
+        "coefficients": [
+          -0.08995801605766923
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 3.6538365384615386,
+        "training_mae": 0.5190564368055662,
+        "training_n": 104,
+        "training_scaler_mean": [
+          772.2355769230769
+        ],
+        "training_scaler_scale": [
+          57.89555735292323
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      }
+    },
+    "water_weather": {
+      "2009": {
+        "coefficients": [
+          0.016694820457605775,
+          -0.19837980954469062,
+          0.19837980954469056,
+          0.19837980954469012,
+          -0.19837980954469,
+          0.1983798095446901,
+          0.19837980954469048
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 1.763636363636337,
+        "training_mae": 0.19849698704143748,
+        "training_n": 121,
+        "training_scaler_mean": [
+          899.0305785123965,
+          359.513553719008,
+          25.67040262767541,
+          13.264399320228215,
+          67.64978597160437,
+          3.142196668453352,
+          21.591657089197145
+        ],
+        "training_scaler_scale": [
+          150.36310972919492,
+          9.547694703327108,
+          0.44091456786968153,
+          0.19845017965059336,
+          3.343864364062226,
+          0.07765173552175311,
+          0.16707950537033228
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2010": {
+        "coefficients": [
+          -0.001215336621967049,
+          -0.2697654309019662,
+          -0.26976543090196436,
+          -0.26976543090196436,
+          -0.2697654309019657,
+          -0.2697654309019658,
+          0.26976543090196553
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 2.204795275590397,
+        "training_mae": 0.26693424639624375,
+        "training_n": 127,
+        "training_scaler_mean": [
+          868.8850393700785,
+          310.33291338582643,
+          24.925764800233353,
+          12.418462851457306,
+          67.51770559930029,
+          3.0211610742284662,
+          21.545839294597936
+        ],
+        "training_scaler_scale": [
+          163.42660327519908,
+          65.28215704555149,
+          0.4358108157816409,
+          0.7805694136651664,
+          3.307326484603742,
+          0.06518958810032932,
+          0.10528030767103454
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2011": {
+        "coefficients": [
+          0.17138955726985222,
+          -0.0861713722200093,
+          -0.08617137222000983,
+          -0.08617137222000894,
+          0.08617137222001012,
+          -0.08617137222000908,
+          -0.08617137222000981
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 3.6538365384615994,
+        "training_mae": 0.36040882488859505,
+        "training_n": 104,
+        "training_scaler_mean": [
+          772.2355769230772,
+          288.5505769230764,
+          25.26471968825339,
+          12.458060349550745,
+          63.66896840072325,
+          3.0830912365768097,
+          21.72655298049528
+        ],
+        "training_scaler_scale": [
+          57.89555735292322,
+          56.05647721832604,
+          0.8873905893673623,
+          0.9881448589323868,
+          0.06848616728293742,
+          0.1446340534307723,
+          0.06383936145628204
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      }
+    },
+    "weather": {
+      "2009": {
+        "coefficients": [
+          -0.1969240511654498,
+          0.196924051165452,
+          0.19692405116545153,
+          -0.19692405116545317,
+          0.19692405116545184,
+          0.19692405116545172
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 1.7636363636363372,
+        "training_mae": 0.19806822698220614,
+        "training_n": 121,
+        "training_scaler_mean": [
+          359.513553719008,
+          25.67040262767541,
+          13.264399320228215,
+          67.64978597160437,
+          3.142196668453352,
+          21.591657089197145
+        ],
+        "training_scaler_scale": [
+          9.547694703327108,
+          0.44091456786968153,
+          0.19845017965059336,
+          3.343864364062226,
+          0.07765173552175311,
+          0.16707950537033228
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2010": {
+        "coefficients": [
+          -0.26990016241385784,
+          -0.26990016241385,
+          -0.26990016241385617,
+          -0.269900162413854,
+          -0.26990016241385184,
+          0.26990016241385045
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 2.204795275590397,
+        "training_mae": 0.2669542173626148,
+        "training_n": 127,
+        "training_scaler_mean": [
+          310.33291338582643,
+          24.925764800233353,
+          12.418462851457306,
+          67.51770559930029,
+          3.0211610742284662,
+          21.545839294597936
+        ],
+        "training_scaler_scale": [
+          65.28215704555149,
+          0.4358108157816409,
+          0.7805694136651664,
+          3.307326484603742,
+          0.06518958810032932,
+          0.10528030767103454
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2011": {
+        "coefficients": [
+          -0.07161685342216446,
+          -0.0716168534221638,
+          -0.07161685342216186,
+          0.07161685342216378,
+          -0.07161685342216353,
+          -0.07161685342216306
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 3.6538365384615883,
+        "training_mae": 0.3892412032052563,
+        "training_n": 104,
+        "training_scaler_mean": [
+          288.5505769230764,
+          25.26471968825339,
+          12.458060349550745,
+          63.66896840072325,
+          3.0830912365768097,
+          21.72655298049528
+        ],
+        "training_scaler_scale": [
+          56.05647721832604,
+          0.8873905893673623,
+          0.9881448589323868,
+          0.06848616728293742,
+          0.1446340534307723,
+          0.06383936145628204
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      }
+    }
+  },
+  "yield_difference": {
+    "direct_water": {
+      "2009": {
+        "coefficients": [
+          0.009707985591955761
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.09765486725663713,
+        "training_mae": 0.20740125991075947,
+        "training_n": 113,
+        "training_scaler_mean": [
+          54.150442477876105
+        ],
+        "training_scaler_scale": [
+          160.82723546696246
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2010": {
+        "coefficients": [
+          -0.01934840502562493
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.09962886597938143,
+        "training_mae": 0.22124718354275927,
+        "training_n": 97,
+        "training_scaler_mean": [
+          43.89587628865979
+        ],
+        "training_scaler_scale": [
+          174.0293996477546
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2011": {
+        "coefficients": [
+          0.17464662504188494
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.09882432432432435,
+        "training_mae": 0.3488939932704239,
+        "training_n": 74,
+        "training_scaler_mean": [
+          -8.955405405405363
+        ],
+        "training_scaler_scale": [
+          64.20854144976289
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      }
+    },
+    "direct_water_weather": {
+      "2009": {
+        "coefficients": [
+          0.009933529866083864,
+          -0.00018360453438152175,
+          0.00018360453438365606,
+          0.00018360453438161283,
+          -0.0001836045343819425,
+          0.00018360453438283342,
+          0.00018360453438137904
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.0976548672566371,
+        "training_mae": 0.20737744643953596,
+        "training_n": 113,
+        "training_scaler_mean": [
+          54.15044247787612,
+          359.6444247787608,
+          25.664358974359015,
+          13.261679146811908,
+          67.69562060358541,
+          3.1411322895393696,
+          21.589366916269523
+        ],
+        "training_scaler_scale": [
+          160.82723546696252,
+          9.52142334660249,
+          0.4397013510401198,
+          0.197904125799515,
+          3.334663414903631,
+          0.07743806965710513,
+          0.16661977080368023
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2010": {
+        "coefficients": [
+          -0.020982229375854415,
+          0.0008387394244403062,
+          0.0008387394244403036,
+          0.0008387394244407717,
+          0.0008387394244406645,
+          0.0008387394244405656,
+          -0.0008387394244409669
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.09962886597938174,
+        "training_mae": 0.22090823512975544,
+        "training_n": 97,
+        "training_scaler_mean": [
+          43.89587628865977,
+          328.0008247422677,
+          25.04371229476899,
+          12.629715540282566,
+          68.41279782359695,
+          3.0388039327987824,
+          21.517346315387528
+        ],
+        "training_scaler_scale": [
+          174.02939964775456,
+          60.31597394324218,
+          0.40265755603827263,
+          0.7211894726865199,
+          3.055729575969146,
+          0.060230446957911604,
+          0.09727136145014001
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      },
+      "2011": {
+        "coefficients": [
+          0.21548631503579066,
+          -0.015966411575840635,
+          -0.015966411575840656,
+          -0.015966411575840767,
+          0.015966411575840635,
+          -0.015966411575840358,
+          -0.01596641157584063
+        ],
+        "estimator_parameters": {
+          "alpha": 1.0,
+          "copy_X": true,
+          "fit_intercept": true,
+          "max_iter": null,
+          "positive": false,
+          "random_state": null,
+          "solver": "svd",
+          "tol": 0.0001
+        },
+        "features": [
+          "delta_spring_storage_0_210cm_mm",
+          "season_rain_mm",
+          "season_mean_tmax_c",
+          "season_mean_tmin_c",
+          "season_mean_rh_pct",
+          "season_mean_wind_m_s",
+          "season_mean_solar_mj_m2_day"
+        ],
+        "independent_weather_vectors_train": 2,
+        "intercept": 0.09882432432433526,
+        "training_mae": 0.344377049397803,
+        "training_n": 74,
+        "training_scaler_mean": [
+          -8.955405405405362,
+          303.9305405405404,
+          25.508189054439097,
+          12.729173211673224,
+          63.65017815892818,
+          3.1227738315238316,
+          21.74406829906827
+        ],
+        "training_scaler_scale": [
+          64.2085414497629,
+          54.82180018371783,
+          0.8678452872758308,
+          0.9663803845178034,
+          0.06697771897992977,
+          0.14144840293943423,
+          0.062433261797412536
+        ],
+        "warning": "only two distinct weather vectors in each training fold"
+      }
+    },
+    "mean_difference": {
+      "2009": {
+        "training_n": 113,
+        "training_target_mean": 0.09765486725663713
+      },
+      "2010": {
+        "training_n": 97,
+        "training_target_mean": 0.09962886597938143
+      },
+      "2011": {
+        "training_n": 74,
+        "training_target_mean": 0.09882432432432435
+      }
+    },
+    "subtract_water": {
+      "2009": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water"
+      },
+      "2010": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water"
+      },
+      "2011": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water"
+      }
+    },
+    "subtract_water_weather": {
+      "2009": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water_weather"
+      },
+      "2010": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water_weather"
+      },
+      "2011": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/water_weather"
+      }
+    },
+    "subtract_weather": {
+      "2009": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/weather"
+      },
+      "2010": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/weather"
+      },
+      "2011": {
+        "new_fit": false,
+        "same_year_out_of_fold": true,
+        "source": "yield_absolute/weather"
+      }
+    },
+    "zero": {
+      "2009": {},
+      "2010": {},
+      "2011": {}
+    }
+  }
+}

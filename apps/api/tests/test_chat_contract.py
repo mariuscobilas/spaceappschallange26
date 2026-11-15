@@ -9,7 +9,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from shared.python.schemas import MeridianChatRequest
+from shared.python.schemas import (MeridianChatRequest, MeridianPlanProposal, MeridianSeasonFactsUpdate,
+    MeridianCropReferencesResult, MeridianCropComparisonResult, MeridianFieldEvidenceResult)
 
 
 class MeridianChatContractTests(unittest.TestCase):
@@ -81,6 +82,65 @@ class MeridianChatContractTests(unittest.TestCase):
         oversized_text["messages"][0]["parts"][0]["text"] = "x" * 16001
         with self.assertRaises(ValueError):
             MeridianChatRequest.model_validate(oversized_text)
+
+    def test_accepts_extended_context_and_rejects_out_of_range_planning_year(self):
+        payload = deepcopy(self.fixture)
+        payload["context"].update({
+            "contextVersion": "field-1:2027:abc", "displayUnits": "metric", "areaHa": 12.5,
+            "areaSource": "boundary", "activePlan": {"id": "plan-1", "crop": "wheat", "budget": {"seedCost": "20"}},
+            "planStatus": "draft", "calendarStatus": "complete", "budgetStatus": "incomplete",
+            "economicsDraft": {"seedCost": "20"}, "planningYear": 2027,
+            "irrigation": {"status": "unknown"},
+            "savedAlternatives": [{"id": "alt-1", "crop": "corn", "coverCrop": "pea", "terminationDays": 20, "cashCropPlantingDate": "2027-09-10", "areaHa": "12"}],
+        })
+        payload["context"]["plan"].update({"cashCropPlantingDate": "2027-09-10", "id": "plan-1", "name": "Plan", "crop": "wheat", "budget": {"seedCost": "20"}})
+        parsed = MeridianChatRequest.model_validate(payload)
+        self.assertEqual(parsed.context.planningYear, 2027)
+
+        payload["context"]["planningYear"] = 2300
+        with self.assertRaises(ValueError):
+            MeridianChatRequest.model_validate(payload)
+        payload["context"]["planningYear"] = 2027
+        payload["context"]["plan"]["cashCropPlantingDate"] = "2027-02-30"
+        with self.assertRaises(ValueError):
+            MeridianChatRequest.model_validate(payload)
+
+    def test_season_fact_and_plan_proposal_fixtures_are_strict_contracts(self):
+        facts = json.loads((REPO_ROOT / "shared/payloads/meridian-season-facts-update.json").read_text())
+        proposal = json.loads((REPO_ROOT / "shared/payloads/meridian-plan-proposal.json").read_text())
+        self.assertEqual(MeridianSeasonFactsUpdate.model_validate(facts).planningYear, 2027)
+        self.assertEqual(MeridianPlanProposal.model_validate(proposal).changes.coverCrop, "pea")
+        facts["planningYear"] = 2300
+        with self.assertRaises(ValueError):
+            MeridianSeasonFactsUpdate.model_validate(facts)
+        proposal["changes"]["providerOverride"] = True
+        with self.assertRaises(ValueError):
+            MeridianPlanProposal.model_validate(proposal)
+
+    def test_context_nested_metadata_rejects_unknown_keys_and_invalid_irrigation(self):
+        payload = deepcopy(self.fixture)
+        payload["context"]["activePlan"] = {"crop": "wheat", "unexpected": True}
+        with self.assertRaises(ValueError):
+            MeridianChatRequest.model_validate(payload)
+        payload["context"]["activePlan"] = None
+        payload["context"]["irrigation"] = {"status": "maybe"}
+        with self.assertRaises(ValueError):
+            MeridianChatRequest.model_validate(payload)
+
+    def test_shared_meridian_tool_result_fixtures_match_typed_models(self):
+        complete = json.loads((REPO_ROOT / "shared/payloads/meridian-chat-context-complete.json").read_text())
+        parsed_context = MeridianChatRequest.model_validate(complete).context
+        self.assertEqual(parsed_context.budgetState, "draft")
+        self.assertEqual(parsed_context.areaSource, "boundary")
+        payloads = {
+            "meridian-crop-references-result.json": MeridianCropReferencesResult,
+            "meridian-crop-comparison-result.json": MeridianCropComparisonResult,
+            "meridian-field-evidence-result.json": MeridianFieldEvidenceResult,
+        }
+        for filename, model in payloads.items():
+            value = json.loads((REPO_ROOT / "shared/payloads" / filename).read_text())
+            with self.subTest(filename=filename):
+                self.assertIsInstance(model.model_validate(value), model)
 
 
 if __name__ == "__main__":

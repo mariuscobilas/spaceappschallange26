@@ -17,7 +17,15 @@ apps/web/public/vendor/maplibre/
 
 data/*.sqlite3
 data/benchmark_results.json
-data/experiments/
+data/experiments/*
+# Preserve the two immutable Mandan weather runs referenced by tests and reports.
+# Mutable latest pointers, MLflow databases and subsequent runs remain local.
+!data/experiments/mandan_weather_ablation_v1/
+data/experiments/mandan_weather_ablation_v1/*
+!data/experiments/mandan_weather_ablation_v1/runs/
+data/experiments/mandan_weather_ablation_v1/runs/*
+!data/experiments/mandan_weather_ablation_v1/runs/20261115T143206535197Z/
+!data/experiments/mandan_weather_ablation_v1/runs/20261115T143248469336Z/
 data/local-backups/
 
 # Original five-minute moisture source exceeds the repository's 10 MB data limit.
