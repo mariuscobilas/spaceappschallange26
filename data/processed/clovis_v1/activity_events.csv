@@ -1,0 +1,25 @@
+date,irrigation_mm,activity,source_sheet,source_row
+2022-06-21,10.16,Irrigation to sorghum (1st)- before planting,Sheet1,3
+2022-06-22,,Planting of sorghum,Sheet1,4
+2022-06-24,25.4,Irrigation to sorghum (2nd),Sheet1,5
+2022-06-28,25.4,Irrigation to sorghum (3rd),Sheet1,6
+2022-07-13,45.72,Irrigation to sorghum (4th),Sheet1,7
+2022-07-15,,Install moisture and tem sensors,Sheet1,8
+2022-08-11,45.72,Irrigation to sorghum (5th),Sheet1,9
+2022-11-03,,Harvest,Sheet1,10
+2023-02-23,,Soil sensors unistall for cover crop planting,Sheet1,15
+2023-02-24,25.4,Cover crop planting+ irrigation,Sheet1,16
+2023-03-09,,Install soil moisture and temperature sensors,Sheet1,19
+2023-05-22,,Cover crop termination,Sheet1,20
+2023-10-09,,Planting of winter wheat,Sheet1,28
+2023-10-09,20.32,Irrigation to winter wheat,Sheet1,29
+2023-10-12,20.32,Irrigation to winter wheat,Sheet1,30
+2023-10-19,20.32,Irrigation to winter wheat,Sheet1,31
+2023-10-26,,Soil Moisture and temp sensors installed,Sheet1,32
+2024-03-04,30.48,Irrigation to winter wheat,Sheet1,33
+2024-04-03,25.4,Irrigation to winter wheat,Sheet1,34
+2024-04-21,38.1,irrigation to winter wheat,Sheet1,35
+2024-05-04,45.72,irrigation to winter wheat,Sheet1,36
+2024-05-16,45.72,irrigation to winter wheat,Sheet1,37
+2024-05-25,45.72,irrigation to winter wheat,Sheet1,38
+2024-06-24,,Uninstall- soil sensors,Sheet1,39

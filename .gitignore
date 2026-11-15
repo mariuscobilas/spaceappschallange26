@@ -14,3 +14,11 @@ __pycache__/
 apps/web/test-results/
 apps/web/playwright-report/
 apps/web/public/vendor/maplibre/
+
+data/*.sqlite3
+data/benchmark_results.json
+data/experiments/
+data/local-backups/
+
+# Original five-minute moisture source exceeds the repository's 10 MB data limit.
+/5min.csv

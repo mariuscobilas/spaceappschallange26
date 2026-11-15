@@ -1,5 +1,17 @@
 # API Endpoints
 
+Task 6 and the Clovis analysis API are implemented. The frontend should start with the [API handoff](../../docs/API_HANDOFF.md), [OpenAPI export](../../docs/openapi.json), and [example payloads](../../examples/api/analyze.request.json).
+
+| Route | Purpose |
+| --- | --- |
+| `GET /ready` | Model/weather readiness (200 or 503), separate from recommendation validity. |
+| `GET /api/v1/options` | Supported sites/crops/calendar, editable defaults, and example request. |
+| `POST /api/v1/analyze` | Three historical moisture cases plus Task 6 illustrative finances and relative water-risk labels. |
+| `GET /api/v1/examples/analysis` | Explicit saved request/response pair, also available without model artifacts. |
+
+All new analysis payloads are typed and validated against the canonical shared schemas. Errors use a stable envelope; CORS permits local web development. The [TypeScript client](../web/lib/field-shift-api.ts) imports `@spaceapps/shared` contracts. Planting advice supports `plant`, `do_not_plant`, `review`, and `insufficient_evidence`, with explicit provisional status and `validated: false`. See the [handoff](../../docs/API_HANDOFF.md) for the rule and all four shared fixtures. The routes below remain available.
+
+
 Local base URL: `http://localhost:8000`. Interactive OpenAPI docs: `http://localhost:8000/docs`.
 
 All schemas and contracts are defined in `@spaceapps/shared` (`shared/src/types` and `shared/python/schemas.py`).
@@ -183,3 +195,19 @@ curl -X POST http://localhost:8000/api/v1/field-shift/analyze \
   -H "Content-Type: application/json" \
   -d @shared/payloads/field-analysis-request.json
 ```
+
+## Water-debt benchmark
+
+From the repository root, install the API requirements and run:
+
+```powershell
+apps/api/.venv/Scripts/python.exe apps/api/app/ml/benchmark.py --fetch-weather
+```
+
+The command imports the Colorado Dryad workbook, fetches NASA POWER daily weather for the trial site, pairs cover-crop plots with fallow plots in the same trial/block/tillage/cycle, and evaluates treatment mean, Ridge, Random Forest, LightGBM, CatBoost, and SVR by leaving whole wheat-planting years out. It writes `data/water_debt.sqlite3` and `data/benchmark_results.json`.
+
+`GET /api/v1/benchmark` returns the saved dataset size, model metrics (RÂ˛, MAE, RMSE, mean error), per-year and planting-window errors, and the water-loss confusion matrix. Before the command runs, it returns `{"status":"not_run",...}`. The benchmark is a one-site research exercise; it is not a validated Kansas farm forecast.
+
+`GET /api/v1/benchmark/predictions?model=LightGBM` returns held-out observed and predicted water differences for a scatterplot. Valid model names are `Treatment mean`, `Ridge`, `Random Forest`, `LightGBM`, `CatBoost`, and `SVR`.
+
+For the separate Australian phase-level experiment, run `apps/api/.venv/Scripts/python.exe apps/api/app/ml/australia_benchmark.py`. `GET /api/v1/benchmark/australia` returns its two-year held-out results. The experiment uses no NASA weather and is not a Kansas forecast.

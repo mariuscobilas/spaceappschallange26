@@ -1,0 +1,14 @@
+{
+  "version": "clovis-final-test-v1",
+  "authorization": "User requested: Okay try the test. Evaluate the existing frozen model without retraining or tuning.",
+  "candidate": "forest_depth_4",
+  "reference": "persistence",
+  "partition": "test",
+  "horizons_days": [7, 30, 90],
+  "metrics": ["next_day_moisture_mae", "next_day_moisture_rmse", "daily_change_r2", "by_treatment", "by_phase", "by_water_event", "recursive_endpoint_mae", "recursive_trajectory_mae", "clipping", "unseen_phases"],
+  "weather": "Observed target-day historical NASA weather; hindcast evaluation, not a test of weather forecasts.",
+  "rollout": "All contiguous held-out rolling origins; observe initial moisture only, then recurse. Never cross missing dates or partition boundaries. Windows and treatments are correlated.",
+  "selection": "No test-based candidate selection, refitting, threshold changes, or automatic promotion. Preserve the earlier failed validation adoption status.",
+  "checks": "Apply existing Task 4 comparison thresholds as diagnostics only; passing would not establish recommendation validity.",
+  "test_reuse": "After this evaluation the test set is exposed. Future tuning requires new independent evaluation data."
+}

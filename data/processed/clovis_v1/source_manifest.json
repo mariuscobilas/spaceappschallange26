@@ -1,0 +1,81 @@
+{
+  "duplicate_checks": [
+    {
+      "canonical": "data/figshare_yin_daily.csv",
+      "copy": "daily.csv",
+      "identical": true
+    },
+    {
+      "canonical": "data/figshare_yin_activity.xlsx",
+      "copy": "W14_Irrigation+fied activity7312025 (1).xlsx",
+      "identical": true
+    }
+  ],
+  "excluded_channels": {
+    "30cm": "Not validated for this MVP",
+    "PO": "Reported sensor malfunction"
+  },
+  "files": [
+    {
+      "available": true,
+      "bytes": 136600,
+      "path": "data/figshare_yin_daily.csv",
+      "role": "primary_moisture_and_irrigation",
+      "sha256": "50b4daa47ea01f7dde810fa65606f15ac1ec34934fbd789fde3bf30c6860eb09"
+    },
+    {
+      "available": true,
+      "bytes": 10897,
+      "path": "data/figshare_yin_activity.xlsx",
+      "role": "primary_management_log",
+      "sha256": "448f37b58d01be1d58f7961199f678d9adf9ef0022b76bf5b5af8432fd5c9c10"
+    },
+    {
+      "available": true,
+      "bytes": 16596173,
+      "path": "5min.csv",
+      "role": "reference_only_not_used",
+      "sha256": "6beef159ba38d3bd97fe6fee4085c5e4806687d8d8df64b8f24d946f841511a0"
+    },
+    {
+      "available": true,
+      "bytes": 5928370,
+      "path": "5minSoilT.csv",
+      "role": "reference_only_not_used",
+      "sha256": "48ea13c6406467119a2db967f115e2341c92d80554f30edad9b7d0d9c0d718fb"
+    },
+    {
+      "available": true,
+      "bytes": 9256311,
+      "path": "5minWeather.csv",
+      "role": "reference_only_not_used",
+      "sha256": "1da260ae8fdab555aae5579cb080da4ff82af807764f3a9cc7043e72b5b68981"
+    },
+    {
+      "available": true,
+      "bytes": 37338,
+      "path": "data/dryad_eash_2025/Cover_Crop_Trials_Data.xlsx",
+      "role": "separate_wheat_evidence_not_pooled",
+      "sha256": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb"
+    }
+  ],
+  "nasa_weather": {
+    "reason": "Separate next task",
+    "status": "not_fetched"
+  },
+  "protocol_version": "clovis-data-v1",
+  "redistribution_license": "Not independently verified here; retain source attribution and check before redistribution.",
+  "site": {
+    "coordinate_precision": "Published coordinates rounded to arcminutes; not a surveyed plot boundary.",
+    "latitude": 34.583333,
+    "longitude": -103.2,
+    "moisture_unit": "m3/m3",
+    "sensor_depth_cm": 5,
+    "site_id": "clovis_nm"
+  },
+  "source_ids": {
+    "activity": "doi:10.6084/m9.figshare.30263209",
+    "daily": "doi:10.6084/m9.figshare.30263209",
+    "paper": "https://doi.org/10.1002/vzj2.70077"
+  }
+}

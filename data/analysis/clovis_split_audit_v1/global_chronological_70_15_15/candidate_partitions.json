@@ -1,0 +1,41 @@
+{
+  "context_policy": "A target requires real eligible moisture for every day from D-lookback through D. Historical context may come from its own partition or the preceding unscored buffer; never from another non-gap partition. No imputation. All four treatments on a date share the same assignment.",
+  "cutoffs": [
+    {
+      "group": "all",
+      "preliminary_eligible_dates": 666,
+      "training_target_cutoff": "2023-12-02",
+      "validation_target_cutoff": "2024-03-10"
+    }
+  ],
+  "fresh_independent_test": false,
+  "partitions": [
+    {
+      "end": "2023-12-02",
+      "name": "train",
+      "start": "2022-07-16"
+    },
+    {
+      "end": "2023-12-05",
+      "name": "gap",
+      "start": "2023-12-03"
+    },
+    {
+      "end": "2024-03-10",
+      "name": "validation",
+      "start": "2023-12-06"
+    },
+    {
+      "end": "2024-03-13",
+      "name": "gap",
+      "start": "2024-03-11"
+    },
+    {
+      "end": "2024-06-23",
+      "name": "test",
+      "start": "2024-03-14"
+    }
+  ],
+  "status": "allocation_audit_only_no_model_training",
+  "variant": "global_chronological_70_15_15"
+}

@@ -4,4 +4,5 @@ export * from "./field-selection";
 export * from "./field-conditions";
 export * from "./nasa";
 export * from "./prediction";
+export * from "./clovis";
 

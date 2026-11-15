@@ -1,0 +1,17 @@
+{
+  "request_id": "2784e601-059e-4592-b866-3afb7f30d8e0",
+  "error": {
+    "code": "validation_error",
+    "message": "Some request fields are invalid.",
+    "details": [
+      {
+        "location": [
+          "body",
+          "area_ha"
+        ],
+        "message": "Input should be greater than 0",
+        "type": "greater_than"
+      }
+    ]
+  }
+}

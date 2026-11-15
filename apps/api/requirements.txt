@@ -2,3 +2,11 @@ fastapi==0.162.7
 uvicorn[standard]==0.54.0
 httpx==0.28.1
 pyproj==3.7.2
+pandas>=2.3,<4
+openpyxl>=3.1,<4
+scikit-learn==1.9.1
+lightgbm>=4.7,<5
+catboost>=1.2.10,<2
+mlflow-skinny>=3.7,<4
+SQLAlchemy>=2,<3
+alembic>=1.13,<2

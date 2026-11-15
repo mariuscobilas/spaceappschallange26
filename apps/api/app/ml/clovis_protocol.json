@@ -1,0 +1,55 @@
+{
+  "protocol_version": "clovis-data-v1",
+  "site": {
+    "site_id": "clovis_nm",
+    "latitude": 34.583333,
+    "longitude": -103.2,
+    "coordinate_precision": "Published coordinates rounded to arcminutes; not a surveyed plot boundary.",
+    "sensor_depth_cm": 5,
+    "moisture_unit": "m3/m3"
+  },
+  "source_ids": {
+    "daily": "doi:10.6084/m9.figshare.30263209",
+    "activity": "doi:10.6084/m9.figshare.30263209",
+    "paper": "https://doi.org/10.1002/vzj2.70077"
+  },
+  "observation_start": "2022-07-16",
+  "observation_end": "2024-06-23",
+  "partitions": [
+    {"name": "train", "start": "2022-07-16", "end": "2023-04-23"},
+    {"name": "gap", "start": "2023-04-24", "end": "2023-04-24"},
+    {"name": "validation", "start": "2023-04-25", "end": "2023-05-08"},
+    {"name": "gap", "start": "2023-05-09", "end": "2023-05-09"},
+    {"name": "test", "start": "2023-05-10", "end": "2024-06-23"}
+  ],
+  "treatments": {"F5": "fallow", "Pea5": "pea", "Oat5": "oat", "SSM5": "six_species_mix"},
+  "operation_dates": {
+    "cover_planting": "2023-02-24",
+    "cover_termination": "2023-05-22",
+    "wheat_planting": "2023-10-09"
+  },
+  "phases": [
+    {"name": "sorghum", "start": "2022-07-16", "end": "2022-11-03"},
+    {"name": "fallow_before_cover", "start": "2022-11-04", "end": "2023-02-23"},
+    {"name": "cover_period", "start": "2023-02-24", "end": "2023-05-22"},
+    {"name": "fallow_after_cover", "start": "2023-05-23", "end": "2023-10-08"},
+    {"name": "winter_wheat", "start": "2023-10-09", "end": "2024-06-23"}
+  ],
+  "sensor_windows": [
+    {"start": "2022-07-16", "end": "2022-11-03", "source": "Activity workbook Sheet1 row 2"},
+    {"start": "2022-11-06", "end": "2023-02-22", "source": "Activity workbook Sheet1 row 13"},
+    {"start": "2023-03-10", "end": "2023-05-22", "source": "Activity workbook Sheet1 row 18"},
+    {"start": "2023-05-23", "end": "2023-10-08", "source": "Activity workbook Sheet1 row 23"},
+    {"start": "2023-10-27", "end": "2024-06-23", "source": "Activity workbook Sheet1 row 27"}
+  ],
+  "rules": {
+    "moisture_min": 0.0,
+    "moisture_max": 1.0,
+    "missing_tokens": ["", "NA", "N/A", "NE", "NONE", "NULL", "NAN", "-888.88", "-999", "-999.0"],
+    "irrigation_source_unit": "cm",
+    "irrigation_output_unit": "mm",
+    "irrigation_multiplier": 10.0,
+    "cover_active_on_termination_date": false,
+    "pair_endpoints_must_share_partition": true
+  }
+}

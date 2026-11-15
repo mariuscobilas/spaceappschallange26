@@ -1,0 +1,104 @@
+{
+  "checks": {
+    "date_grouped_split": "passed",
+    "no_fitted_preprocessing": "passed",
+    "operation_date_agreement": "passed",
+    "same_partition_pair_endpoints": "passed",
+    "sensor_window_heading_agreement": "passed",
+    "source_coverage": "passed"
+  },
+  "duplicate_dates": 0,
+  "excluded_pairs_by_primary_reason": {
+    "invalid_or_unobserved_endpoint": 168,
+    "no_previous_calendar_day": 4,
+    "partition_boundary": 8,
+    "purge_gap": 8
+  },
+  "flags": {
+    "missing_moisture": 136,
+    "outside_documented_sensor_window": 140
+  },
+  "irrigation_check": {
+    "event_dates_outside_coverage": [
+      "2022-06-21",
+      "2022-06-24",
+      "2022-06-28",
+      "2022-07-13"
+    ],
+    "events_in_coverage": 11,
+    "status": "passed",
+    "total_irrigation_mm": 363.22
+  },
+  "limitations": [
+    "Only one site and one cover-crop season; plot-days are correlated observations.",
+    "5 cm volumetric moisture is not rooting-profile plant-available water.",
+    "Known operation gaps are excluded; the release has no per-value original/interpolated provenance.",
+    "Final test includes management phases absent from the initial training window; report phase metrics separately.",
+    "No target-distribution summaries or fitted statistics are calculated from held-out partitions.",
+    "Time-zone alignment and NASA weather availability remain to be checked in the next task."
+  ],
+  "observation_rows": 2836,
+  "pair_rows": 2648,
+  "partitions": {
+    "gap": {
+      "dates": 2,
+      "eligible_observations": 8,
+      "eligible_pairs": 0,
+      "pairs_by_phase": {},
+      "pairs_by_treatment": {},
+      "rows": 8
+    },
+    "test": {
+      "dates": 411,
+      "eligible_observations": 1560,
+      "eligible_pairs": 1548,
+      "pairs_by_phase": {
+        "cover_period": 48,
+        "fallow_after_cover": 556,
+        "winter_wheat": 944
+      },
+      "pairs_by_treatment": {
+        "fallow": 387,
+        "oat": 387,
+        "pea": 387,
+        "six_species_mix": 387
+      },
+      "rows": 1644
+    },
+    "train": {
+      "dates": 282,
+      "eligible_observations": 1060,
+      "eligible_pairs": 1048,
+      "pairs_by_phase": {
+        "cover_period": 176,
+        "fallow_before_cover": 432,
+        "sorghum": 440
+      },
+      "pairs_by_treatment": {
+        "fallow": 262,
+        "oat": 262,
+        "pea": 262,
+        "six_species_mix": 262
+      },
+      "rows": 1128
+    },
+    "validation": {
+      "dates": 14,
+      "eligible_observations": 56,
+      "eligible_pairs": 52,
+      "pairs_by_phase": {
+        "cover_period": 52
+      },
+      "pairs_by_treatment": {
+        "fallow": 13,
+        "oat": 13,
+        "pea": 13,
+        "six_species_mix": 13
+      },
+      "rows": 56
+    }
+  },
+  "preparation_script_sha256": "4fb176f4d527b54fe307a767b0b96082ba669f095048cac75fef231dbe483dc0",
+  "protocol_version": "clovis-data-v1",
+  "source_dates": 709
+}

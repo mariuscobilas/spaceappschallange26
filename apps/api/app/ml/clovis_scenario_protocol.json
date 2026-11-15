@@ -1,0 +1,18 @@
+{
+  "version": "clovis-scenarios-v1",
+  "scenarios": {"dry": 10, "typical": 50, "very_rainy": 90},
+  "selection": "Nearest linear rainfall quantile among unused eligible seasons; ties prefer earlier historical start year.",
+  "calendar_policy": "Require contiguous month/day-aligned historical dates with the same leap-day structure. Exclude incompatible seasons instead of fabricating days or dropping rain events.",
+  "maximum_horizon_days": 365,
+  "cover_planting_months": [2, 3, 4],
+  "cover_termination_months": [5, 6],
+  "wheat_planting_months": [9, 10, 11],
+  "following_crop": "winter_wheat",
+  "initial_moisture_default": "Median of training-only fallow readings on 16-22 February 2023.",
+  "irrigation_default_mm": 0,
+  "simulation_starts": "Day after decision_date; initial moisture represents end of decision_date.",
+  "simulation_ends": "End of next_crop_planting_date; no following-crop growth simulated.",
+  "pre_cover_treatment": "Both choices use fallow until the cover is planted.",
+  "model_policy": "Use selected regression if available, otherwise saved best experimental regression. Preserve adoption status and baseline metrics; do not retrain or promote it.",
+  "outputs_exclude": ["yield", "profit", "risk_category", "plant_or_do_not_plant_recommendation"]
+}

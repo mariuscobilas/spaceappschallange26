@@ -8,6 +8,9 @@ from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field, model_validator
 
+# Clovis analysis contracts are canonical here alongside Meridian's existing types.
+from .clovis_schemas import *  # noqa: F403
+
 # ==========================================
 # API Envelope & Common Schemas
 # ==========================================

@@ -1,0 +1,11 @@
+{
+  "cover_crop": "pea",
+  "cover_planting_date": "2027-02-24",
+  "cover_termination_date": "2027-05-22",
+  "decision_date": "2027-02-23",
+  "initial_soil_moisture_m3_m3": 0.25,
+  "irrigation_schedule": [],
+  "next_crop": "winter_wheat",
+  "next_crop_planting_date": "2027-10-09",
+  "site_id": "clovis_nm"
+}

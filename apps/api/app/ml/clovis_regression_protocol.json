@@ -1,0 +1,28 @@
+{
+  "version": "clovis-regression-v1",
+  "seed": 42,
+  "target": "moisture_change_m3_m3",
+  "selection": "Lowest validation moisture MAE among candidates passing every adoption check; fixed candidate order breaks ties.",
+  "candidate_order": ["ridge_alpha_1", "ridge_alpha_10", "forest_depth_4", "forest_depth_8"],
+  "candidates": {
+    "ridge_alpha_1": {"family": "ridge", "alpha": 1.0},
+    "ridge_alpha_10": {"family": "ridge", "alpha": 10.0},
+    "forest_depth_4": {"family": "random_forest", "n_estimators": 150, "max_depth": 4, "min_samples_leaf": 10, "max_features": 1.0},
+    "forest_depth_8": {"family": "random_forest", "n_estimators": 150, "max_depth": 8, "min_samples_leaf": 10, "max_features": 1.0}
+  },
+  "adoption": {
+    "minimum_relative_mae_improvement": 0.05,
+    "maximum_treatment_mae_ratio": 1.25,
+    "maximum_seven_day_endpoint_mae_ratio": 1.0,
+    "maximum_clipped_validation_predictions": 0,
+    "maximum_clipped_seven_day_steps": 0
+  },
+  "feature_policy": {
+    "not_applicable_age": -1.0,
+    "categorical_encoding": "One-hot learned on train only; ignore unseen phases and report them.",
+    "numeric_scaling": "StandardScaler fitted on train only.",
+    "season_encoding": "sin/cos of zero-based day of year divided by days in that year.",
+    "physical_moisture_bounds": [0.0, 1.0]
+  },
+  "final_test": "No final-test file access or evaluation in this task. No all-data refit."
+}

@@ -1,0 +1,421 @@
+{
+  "blocks": [
+    {
+      "cache_file": "clovis_2001_2005_lst.json",
+      "cache_sha256": "41b31abe8a96d152201459c730349c81d792e93311103f956fa028809d76c2da",
+      "conversions": {
+        "ALLSKY_SFC_SW_DWN": {
+          "column": "solar_radiation_mj_m2_day",
+          "multiplier": 1.0,
+          "output_unit": "MJ/m^2/day",
+          "source_unit": "MJ/m^2/day"
+        },
+        "PRECTOTCORR": {
+          "column": "rain_mm",
+          "multiplier": 1.0,
+          "output_unit": "mm/day",
+          "source_unit": "mm/day"
+        },
+        "RH2M": {
+          "column": "humidity_pct",
+          "multiplier": 1.0,
+          "output_unit": "%",
+          "source_unit": "%"
+        },
+        "T2M_MAX": {
+          "column": "temperature_max_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "T2M_MIN": {
+          "column": "temperature_min_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "WS2M": {
+          "column": "wind_speed_m_s",
+          "multiplier": 1.0,
+          "output_unit": "m/s",
+          "source_unit": "m/s"
+        }
+      },
+      "fetched_at_utc": "2026-11-14T19:14:33.008892+00:00",
+      "geometry": {
+        "coordinates": [
+          -103.2,
+          34.583,
+          1299.85
+        ],
+        "type": "Point"
+      },
+      "header": {
+        "api": {
+          "name": "POWER Daily API",
+          "version": "v2.10.3"
+        },
+        "end": "20051231",
+        "fill_value": -999.0,
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "start": "20010101",
+        "time_standard": "LST",
+        "title": "NASA/POWER Source Native Resolution Daily Data"
+      },
+      "messages": [],
+      "request": {
+        "community": "AG",
+        "end": "20051231",
+        "format": "JSON",
+        "latitude": 34.583333,
+        "longitude": -103.2,
+        "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+        "start": "20010101",
+        "time-standard": "LST"
+      },
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&longitude=-103.2&latitude=34.583333&start=20010101&end=20051231&format=JSON&time-standard=LST"
+    },
+    {
+      "cache_file": "clovis_2006_2010_lst.json",
+      "cache_sha256": "516dd4e229bee67089defc069c88374704be3f538967927a01f067b25a3eb28e",
+      "conversions": {
+        "ALLSKY_SFC_SW_DWN": {
+          "column": "solar_radiation_mj_m2_day",
+          "multiplier": 1.0,
+          "output_unit": "MJ/m^2/day",
+          "source_unit": "MJ/m^2/day"
+        },
+        "PRECTOTCORR": {
+          "column": "rain_mm",
+          "multiplier": 1.0,
+          "output_unit": "mm/day",
+          "source_unit": "mm/day"
+        },
+        "RH2M": {
+          "column": "humidity_pct",
+          "multiplier": 1.0,
+          "output_unit": "%",
+          "source_unit": "%"
+        },
+        "T2M_MAX": {
+          "column": "temperature_max_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "T2M_MIN": {
+          "column": "temperature_min_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "WS2M": {
+          "column": "wind_speed_m_s",
+          "multiplier": 1.0,
+          "output_unit": "m/s",
+          "source_unit": "m/s"
+        }
+      },
+      "fetched_at_utc": "2026-11-14T19:14:35.438570+00:00",
+      "geometry": {
+        "coordinates": [
+          -103.2,
+          34.583,
+          1299.85
+        ],
+        "type": "Point"
+      },
+      "header": {
+        "api": {
+          "name": "POWER Daily API",
+          "version": "v2.10.3"
+        },
+        "end": "20101231",
+        "fill_value": -999.0,
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "start": "20060101",
+        "time_standard": "LST",
+        "title": "NASA/POWER Source Native Resolution Daily Data"
+      },
+      "messages": [],
+      "request": {
+        "community": "AG",
+        "end": "20101231",
+        "format": "JSON",
+        "latitude": 34.583333,
+        "longitude": -103.2,
+        "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+        "start": "20060101",
+        "time-standard": "LST"
+      },
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&longitude=-103.2&latitude=34.583333&start=20060101&end=20101231&format=JSON&time-standard=LST"
+    },
+    {
+      "cache_file": "clovis_2011_2015_lst.json",
+      "cache_sha256": "f5ce684d29e2a049d156deeff826cb9c76f418b5a77948541df4a25092d24283",
+      "conversions": {
+        "ALLSKY_SFC_SW_DWN": {
+          "column": "solar_radiation_mj_m2_day",
+          "multiplier": 1.0,
+          "output_unit": "MJ/m^2/day",
+          "source_unit": "MJ/m^2/day"
+        },
+        "PRECTOTCORR": {
+          "column": "rain_mm",
+          "multiplier": 1.0,
+          "output_unit": "mm/day",
+          "source_unit": "mm/day"
+        },
+        "RH2M": {
+          "column": "humidity_pct",
+          "multiplier": 1.0,
+          "output_unit": "%",
+          "source_unit": "%"
+        },
+        "T2M_MAX": {
+          "column": "temperature_max_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "T2M_MIN": {
+          "column": "temperature_min_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "WS2M": {
+          "column": "wind_speed_m_s",
+          "multiplier": 1.0,
+          "output_unit": "m/s",
+          "source_unit": "m/s"
+        }
+      },
+      "fetched_at_utc": "2026-11-14T19:14:36.503099+00:00",
+      "geometry": {
+        "coordinates": [
+          -103.2,
+          34.583,
+          1299.85
+        ],
+        "type": "Point"
+      },
+      "header": {
+        "api": {
+          "name": "POWER Daily API",
+          "version": "v2.10.3"
+        },
+        "end": "20151231",
+        "fill_value": -999.0,
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "start": "20110101",
+        "time_standard": "LST",
+        "title": "NASA/POWER Source Native Resolution Daily Data"
+      },
+      "messages": [],
+      "request": {
+        "community": "AG",
+        "end": "20151231",
+        "format": "JSON",
+        "latitude": 34.583333,
+        "longitude": -103.2,
+        "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+        "start": "20110101",
+        "time-standard": "LST"
+      },
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&longitude=-103.2&latitude=34.583333&start=20110101&end=20151231&format=JSON&time-standard=LST"
+    },
+    {
+      "cache_file": "clovis_2016_2020_lst.json",
+      "cache_sha256": "0d8c3c8f0ff6059cffd8267c09d18527766e452273f79551478bbb9d465d2635",
+      "conversions": {
+        "ALLSKY_SFC_SW_DWN": {
+          "column": "solar_radiation_mj_m2_day",
+          "multiplier": 1.0,
+          "output_unit": "MJ/m^2/day",
+          "source_unit": "MJ/m^2/day"
+        },
+        "PRECTOTCORR": {
+          "column": "rain_mm",
+          "multiplier": 1.0,
+          "output_unit": "mm/day",
+          "source_unit": "mm/day"
+        },
+        "RH2M": {
+          "column": "humidity_pct",
+          "multiplier": 1.0,
+          "output_unit": "%",
+          "source_unit": "%"
+        },
+        "T2M_MAX": {
+          "column": "temperature_max_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "T2M_MIN": {
+          "column": "temperature_min_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "WS2M": {
+          "column": "wind_speed_m_s",
+          "multiplier": 1.0,
+          "output_unit": "m/s",
+          "source_unit": "m/s"
+        }
+      },
+      "fetched_at_utc": "2026-11-14T19:14:37.756363+00:00",
+      "geometry": {
+        "coordinates": [
+          -103.2,
+          34.583,
+          1299.85
+        ],
+        "type": "Point"
+      },
+      "header": {
+        "api": {
+          "name": "POWER Daily API",
+          "version": "v2.10.3"
+        },
+        "end": "20201231",
+        "fill_value": -999.0,
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "start": "20160101",
+        "time_standard": "LST",
+        "title": "NASA/POWER Source Native Resolution Daily Data"
+      },
+      "messages": [],
+      "request": {
+        "community": "AG",
+        "end": "20201231",
+        "format": "JSON",
+        "latitude": 34.583333,
+        "longitude": -103.2,
+        "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+        "start": "20160101",
+        "time-standard": "LST"
+      },
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&longitude=-103.2&latitude=34.583333&start=20160101&end=20201231&format=JSON&time-standard=LST"
+    },
+    {
+      "cache_file": "clovis_2021_2025_lst.json",
+      "cache_sha256": "5d5533ba02f03e83e115d2ac1ba660c4a9bfaf0d67b1722c7554b00aec03514e",
+      "conversions": {
+        "ALLSKY_SFC_SW_DWN": {
+          "column": "solar_radiation_mj_m2_day",
+          "multiplier": 1.0,
+          "output_unit": "MJ/m^2/day",
+          "source_unit": "MJ/m^2/day"
+        },
+        "PRECTOTCORR": {
+          "column": "rain_mm",
+          "multiplier": 1.0,
+          "output_unit": "mm/day",
+          "source_unit": "mm/day"
+        },
+        "RH2M": {
+          "column": "humidity_pct",
+          "multiplier": 1.0,
+          "output_unit": "%",
+          "source_unit": "%"
+        },
+        "T2M_MAX": {
+          "column": "temperature_max_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "T2M_MIN": {
+          "column": "temperature_min_c",
+          "multiplier": 1.0,
+          "output_unit": "C",
+          "source_unit": "C"
+        },
+        "WS2M": {
+          "column": "wind_speed_m_s",
+          "multiplier": 1.0,
+          "output_unit": "m/s",
+          "source_unit": "m/s"
+        }
+      },
+      "fetched_at_utc": "2026-11-14T19:14:39.286058+00:00",
+      "geometry": {
+        "coordinates": [
+          -103.2,
+          34.583,
+          1299.85
+        ],
+        "type": "Point"
+      },
+      "header": {
+        "api": {
+          "name": "POWER Daily API",
+          "version": "v2.10.3"
+        },
+        "end": "20251231",
+        "fill_value": -999.0,
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "start": "20210101",
+        "time_standard": "LST",
+        "title": "NASA/POWER Source Native Resolution Daily Data"
+      },
+      "messages": [],
+      "request": {
+        "community": "AG",
+        "end": "20251231",
+        "format": "JSON",
+        "latitude": 34.583333,
+        "longitude": -103.2,
+        "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+        "start": "20210101",
+        "time-standard": "LST"
+      },
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&longitude=-103.2&latitude=34.583333&start=20210101&end=20251231&format=JSON&time-standard=LST"
+    }
+  ],
+  "calendar_alignment": "Same source date joined to NASA LST date without shifting. Station time zone is undocumented; alignment is an MVP assumption, not independently verified.",
+  "end_date": "2025-12-31",
+  "input_label_sha256": {
+    "split_manifest.json": "051edd66afe8f90ecf009fdddd2027327cdcc7cbb80087ec80775ee4da8f8354",
+    "test_pairs.csv": "a0f10ab034eca8fb6173ebf2f4abdb809d0b5cb24383969cc13f5ffa1bc83558",
+    "train_pairs.csv": "a99bef9d8de3be4a63beae98025f452a0b3909877cdbc0492b07f9dd9bf91448",
+    "validation_pairs.csv": "f43727e7fe2d5cfcc452539f097ee5a065ee717a5945eaf0ae6570e2799804ef"
+  },
+  "protocol_version": "clovis-data-v1",
+  "site": {
+    "coordinate_precision": "Published coordinates rounded to arcminutes; not a surveyed plot boundary.",
+    "latitude": 34.583333,
+    "longitude": -103.2,
+    "moisture_unit": "m3/m3",
+    "sensor_depth_cm": 5,
+    "site_id": "clovis_nm"
+  },
+  "source": "NASA POWER daily point API",
+  "start_date": "2001-01-01",
+  "time_standard": "LST",
+  "weather_join_date": "Target day: prior end-of-day moisture + this day's weather predicts this day's moisture change.",
+  "weather_version": "clovis-power-v1"
+}

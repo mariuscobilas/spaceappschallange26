@@ -1,0 +1,8 @@
+{
+  "status": "unavailable",
+  "inference_available": false,
+  "recommendation_ready": false,
+  "model_name": null,
+  "model_status": null,
+  "reason": "model_or_weather_unavailable"
+}

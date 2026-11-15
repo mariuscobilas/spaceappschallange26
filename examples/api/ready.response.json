@@ -1,0 +1,8 @@
+{
+  "status": "ready",
+  "inference_available": true,
+  "recommendation_ready": false,
+  "model_name": "forest_depth_4",
+  "model_status": "experimental_not_selected",
+  "reason": null
+}

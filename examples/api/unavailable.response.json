@@ -1,0 +1,8 @@
+{
+  "request_id": "191d6439-51cd-4acf-ad5c-02cbdcf7595d",
+  "error": {
+    "code": "service_unavailable",
+    "message": "Model or weather artifacts are unavailable. Metadata and the explicit example route can still be used.",
+    "details": []
+  }
+}

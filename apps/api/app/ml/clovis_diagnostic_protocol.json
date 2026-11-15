@@ -1,0 +1,27 @@
+{
+  "version": "clovis-diagnostics-v1",
+  "purpose": "Diagnose data, model capacity, evaluation design, and recursive drift without replacing the frozen model.",
+  "source_model": "forest_depth_4",
+  "descriptive_eda": "Training data only. Exposed validation/test metrics and range/phase shifts are explicitly postmortem error analysis, not fresh validation.",
+  "sanity_check": {
+    "rows": 64,
+    "selection": "First 64 training rows sorted by date and treatment.",
+    "family": "random_forest",
+    "n_estimators": 1,
+    "max_depth": null,
+    "min_samples_leaf": 1,
+    "max_features": 1.0,
+    "bootstrap": false,
+    "seed": 42,
+    "score": "Same small training batch only; intentional memorization to test feature/label wiring. Never score this diagnostic model on held-out data."
+  },
+  "uncertainty": {
+    "kind": "Moving date-block bootstrap of existing held-out paired absolute-error differences, averaged over treatments per date.",
+    "block_days": 14,
+    "replicates": 1000,
+    "seed": 42,
+    "limits": "Conditional uncertainty within one exposed site/sequence, not independent-season or recommendation uncertainty. Blocks must not cross missing dates."
+  },
+  "checks": ["training shape/types/missingness/target/feature distributions", "feature-target correlations and leakage allowlist", "training/validation/exposed-test phase and range coverage", "training error against persistence", "tree split use and importance", "training-only memorization", "daily-mean versus end-of-day target identity", "training station/NASA rain association without choosing a date shift", "fixed-weather moisture-state probes", "existing seasonal drift"],
+  "promotion": "None; no production model, preprocessing, split, selection, or payload changes."
+}
