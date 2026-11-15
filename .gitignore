@@ -1,7 +1,5 @@
-# macOS metadata
 .DS_Store
 **/.DS_Store
-
 node_modules/
 .npm-cache/
 .next/
