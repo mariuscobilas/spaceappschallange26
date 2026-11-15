@@ -224,6 +224,10 @@ curl 'http://localhost:8000/api/v1/atlas/regional-yield'
 
 Source: [Deines et al. data and analysis archive, Zenodo 7199708](https://zenodo.org/records/7199708).
 
+## Meridian chat
+
+`POST /api/chat` is implemented by the Next.js application, not this FastAPI service. It streams AI SDK UI message responses and accepts the shared text-only request contract in `shared/src/types/chat.ts` (`MeridianChatRequest` in `shared/python/schemas.py`). See `docs/MERIDIAN_CHAT.md` for configuration and the local Clovis simulation limits.
+
 ## Testing Endpoints with curl
 
 ```sh

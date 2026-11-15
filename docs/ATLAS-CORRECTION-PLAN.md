@@ -1,6 +1,6 @@
 # Atlas correction plan
 
-15 November 2026. **Proposed; not implemented.** Prepared with UI/UX Pro Max and
+15 November 2026. **Implemented; final regression verification pending.** Prepared with UI/UX Pro Max and
 review of the current desktop/phone Atlas, source methods, PRD and React/Next.js
 implementation. This is an implementation plan, not new scientific validation.
 
@@ -177,4 +177,16 @@ shared-context descriptions are stale relative to the recent Planner work. Updat
 those sections during implementation; do not regenerate/overwrite the entire
 system or treat old six-destination navigation as a reason to retain Atlas.
 
-Planning only in this change: application code, datasets and models are unchanged.
+The implementation now follows this plan: primary Atlas navigation is removed,
+`/atlas` redirects to URL-backed Explore research, filters are in Map options, and
+county information/legend use the supported data scale. Planner context is isolated
+from H3 and county inspection. The existing dataset and models are unchanged.
+
+Verification status: production build/TypeScript and 23 contract fixtures pass. The broad frontend run reported 116 passed, 3 failed, and 4 not run. After correcting sheet-transition and navigation test assumptions, follow-up suites passed 8/8 county research checks and 5/5 workspace navigation checks. This is verification across the broad run and focused follow-ups, not a single 123/123 green run. Native history updates merge rapid filter changes against the current URL state, independent H3/research inspection preserves planning context, and county map clicks are ignored while Map options are open. Software rendering does not certify 60fps hardware throughput.
+
+Three Luna workers implemented navigation/URL parsing, research information, and regression coverage. Gemini CLI was rejected by its upstream authentication service. At the user's direction Antigravity CLI (`agy --mode plan`) was run as an independent read-only reviewer; it timed out after three minutes with no review findings. Neither external run is counted as a successful audit.
+
+The local baseline was already committed by the time work resumed (`27ce049`).
+This finishing pass preserves that baseline and does not commit or push changes.
+
+A Luna read-only review found no actionable issue in planning-context isolation, query/filter history, camera restoration, or invalid-value fallback. The API was restarted separately after a stopped process caused connection refusal; the exact reported field-conditions request returned HTTP 200 with all three metrics available.

@@ -22,6 +22,13 @@ from .schemas import (
     FieldShiftPrediction,
     FieldAnalysisRequest,
     FieldAnalysisResponse,
+    MeridianChatTextPart,
+    MeridianChatMessage,
+    MeridianChatPlanContext,
+    MeridianChatContext,
+    MeridianChatRequest,
+    MeridianToolSuccess,
+    MeridianToolFailure,
 )
 
 __all__ = [
@@ -44,5 +51,12 @@ __all__ = [
     "FieldShiftPrediction",
     "FieldAnalysisRequest",
     "FieldAnalysisResponse",
+    "MeridianChatTextPart",
+    "MeridianChatMessage",
+    "MeridianChatPlanContext",
+    "MeridianChatContext",
+    "MeridianChatRequest",
+    "MeridianToolSuccess",
+    "MeridianToolFailure",
 ]
 

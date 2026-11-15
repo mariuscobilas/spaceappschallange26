@@ -47,7 +47,7 @@ test("reuses field conditions across Planner and Intel and shared retry makes on
 
   await page.getByRole("link", { name: "Ask Meridian", exact: true }).click();
   await expect(page).toHaveURL(/\/intel$/);
-  await expect(page.getByLabel("Prepared request", { exact: true })).toHaveValue(/Field conditions requested for/);
+  await expect(page.getByLabel("Message Meridian", { exact: true })).toBeVisible();
   expect(requests).toBe(1);
 
   await page.getByRole("link", { name: "Field Planner", exact: true }).click();

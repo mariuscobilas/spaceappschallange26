@@ -1,0 +1,84 @@
+{
+  "snapshot_id": "decision_candidates_v1",
+  "audit_date": "2026-11-15",
+  "question": "Do independent paired cover-versus-fallow following-crop-yield data add evidence for the plant-versus-fallow decision?",
+  "status": "discovery_only_no_training_labels_accepted",
+  "existing_data_modified": false,
+  "training_or_model_runs": 0,
+  "candidates": [
+    {
+      "id": "dryad_sone_2026",
+      "source_doi": "10.5061/dryad.pvmcvdp2f",
+      "source_url": "https://datadryad.org/dataset/doi:10.5061/dryad.pvmcvdp2f",
+      "related_article_doi": "10.1111/1365-2664.70576",
+      "design_site": "NRCS Plant Materials Research Center, Pullman, Washington",
+      "design_years": [2019, 2020, 2021, 2022],
+      "cash_crop": "winter wheat",
+      "following_crop_yield_seasons": [2022],
+      "paper_reported_experimental_units": 55,
+      "paper_reported_treatments": 11,
+      "paper_reported_replicates_per_treatment": 5,
+      "design_cover_units": 50,
+      "design_fallow_controls": 5,
+      "raw_csv_sample_rows_observed": null,
+      "raw_csv_unique_plot_yield_rows_verified": null,
+      "raw_csv_repeated_yield_mapping_verified": false,
+      "within_block_pair_candidates_by_design": 50,
+      "independent_blocks": 5,
+      "independent_yield_seasons": 1,
+      "accepted_training_labels": 0,
+      "accepted_paired_contrasts": 0,
+      "yield_definition": "Winter wheat Yield column reported as kg m^-2; source README says yield is July 2022 wheat yield and lists repeated sample collection times July 2019, July 2020, July 2022.",
+      "yield_units": "kg m^-2",
+      "yield_unit_conversion_if_later_verified": "1 kg m^-2 = 10 t ha^-1",
+      "water_measurement": "README says field volumetric water content (VWC), average of three measurements per plot; measurement depth and exact sample dates are not specified in accessible source metadata.",
+      "identity_gate": "SimpleID is explicitly a sample ID, not a documented plot ID. Do not treat it as a plot key or assume repeated rows are independent yields.",
+      "decision_context_gaps": [
+        "CSV could not be retrieved; observed row count, missing outcomes, unique plot IDs, repeated lab sample multiplicity, block mapping and treatment-control joins remain unverified.",
+        "One following-wheat yield season at one Pullman site; no independent season-level validation cohort.",
+        "Initial soil water at the cover-planting decision is not established; VWC depth and exact observation dates are unspecified.",
+        "Exact cover termination timing and plot-level weather linkage are not present in accessible metadata.",
+        "Five control plots would be reused across multiple cover-treatment comparisons; pair dependence must be modeled at block level."
+      ],
+      "download_status": "public metadata accessible; public file requests blocked (file stream HTTP 403; Dryad per-file download API HTTP 401 without bearer token)",
+      "provider_advertised_files": [
+        {
+          "name": "DRYAD_JAE_data_20260815.csv",
+          "size_bytes": 41519,
+          "sha256": "3414ec73f6004a6369b7d508153b907d75c5c046aa4726f94e9a4d6beab7cc6b",
+          "status": "not downloaded"
+        },
+        {
+          "name": "README.md",
+          "size_bytes": 7207,
+          "sha256": "0229ae469599ad7614ff18bd0ac290125031d1d1f77f9f32af4451ed17fa3723",
+          "status": "not downloaded"
+        }
+      ],
+      "raw_metadata_snapshots": [
+        {
+          "path": "data/raw/decision_candidates_v1/dryad_dataset_metadata.json",
+          "sha256": "4cc657da4c6cd663b14a5fc8401a9955fdac1a40706c240b6ef6f9e623e48e6f"
+        },
+        {
+          "path": "data/raw/decision_candidates_v1/dryad_version_files_metadata.json",
+          "sha256": "de0c8f8f81141e1cba4d8dafdc4fb6024ec68fd05432e6cbd74795fb7be4717e"
+        }
+      ]
+    },
+    {
+      "id": "nielsen_et_al_2016_usda_ars",
+      "source_url": "https://www.ars.usda.gov/ARSUserFiles/30100500/Publications%202010-2019/615%202015%20Nielsen%20-%20Cover%20Crop%20Effect.pdf",
+      "article_doi": "10.2134/agronj2015.0372",
+      "design_sites": ["Akron, Colorado", "Sidney, Nebraska"],
+      "wheat_seasons": ["2012-2013", "2013-2014"],
+      "water_regimes": ["dryland", "irrigated"],
+      "published_location_year_water_sets": 8,
+      "raw_replicate_yield_rows_available": false,
+      "accepted_training_labels": 0,
+      "accepted_paired_contrasts": 0,
+      "source_evidence": "Paper reports aggregate tables and orthogonal contrasts; available PDF contains no row-level plot yields or reusable plot identifiers.",
+      "role": "published aggregate evidence/context only; not row-level training labels"
+    }
+  ]
+}

@@ -100,7 +100,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(map).toHaveAttribute("data-test-map-instance", "stable");
   await expect(canvas).toHaveAttribute("data-hex-resolution", resolution!);
   await openMapOptions(page);
-  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
+  await expect(page.getByLabel("Field or location")).toHaveCount(0);
   await expect(page.getByLabel("Data view", { exact: true })).toHaveValue("conditions");
   await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
@@ -117,7 +117,7 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(page).toHaveURL(/\/$/);
   await page.reload();
   await openMapOptions(page);
-  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
+  await expect(page.getByLabel("Field or location")).toHaveCount(0);
   await expect(page.getByLabel("Data view", { exact: true })).toHaveValue("conditions");
   await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
@@ -163,7 +163,7 @@ test("Explore H3 details can close before zooming", async ({
   );
   await page.goto("/");
   const canvas = page.locator(".map-canvas");
-  await expect(canvas).toHaveAttribute("data-hex-resolution", "2", {
+  await expect(canvas).toHaveAttribute("data-hex-resolution", "4", {
     timeout: 30000,
   });
   const details = page.getByRole("dialog", { name: "Hexagon information" });
@@ -171,20 +171,13 @@ test("Explore H3 details can close before zooming", async ({
     await page.mouse.click(800, 400);
     await expect(details).toBeVisible();
   }).toPass({ timeout: 20000 });
-  await expect(details).toContainText("Selected region");
+  await expect(details).toContainText("Region at a glance");
   await details.getByRole("button", { name: "Close" }).click();
   await expect(details).toBeHidden();
 
-  await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-  await expect(canvas).toHaveAttribute("data-hex-resolution", "3");
-  for (let i = 0; i < 2; i++)
+  for (let i = 0; i < 7; i++)
     await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-  await expect(canvas).toHaveAttribute("data-hex-resolution", "4");
-  for (let i = 0; i < 3; i++)
-    await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-  await expect(canvas).toHaveAttribute("data-hex-resolution", "5", {
-    timeout: 15000,
-  });
+  await expect(canvas).toHaveAttribute("data-hex-resolution", "5", { timeout: 15000 });
 });
 
 test("field plan inputs save for the selected field and survive reload", async ({
@@ -294,7 +287,7 @@ test("legacy map settings migrate without old scenarios or external imagery", as
   const migrated = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"));
   expect(migrated.crop).toBe("corn");
   await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
-  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
+  await expect(page.getByLabel("Field or location")).toHaveCount(0);
   await expect(page.getByLabel("Observation period")).toHaveValue("latest");
   await expect(page.getByRole("button", { name: "No overlay", exact: true })).toHaveAttribute("aria-pressed", "true");
   await closeMapOptions(page);

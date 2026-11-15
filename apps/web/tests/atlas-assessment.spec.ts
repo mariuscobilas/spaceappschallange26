@@ -33,9 +33,9 @@ test("historical research renders a county estimate with source details and the 
   await enterResearch(page);
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-regional-ready", "true");
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-regional-county-count", "1");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend" })).toContainText("Historical research · Corn · 2019–2020");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend" })).toContainText("Lower");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend" })).toContainText("No estimate");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Historical research · Corn · 2019–2020");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Lower");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("No estimate");
 
   const details = await inspectCounty(page);
   await expect(details).toContainText("Adams, IL");
@@ -60,14 +60,14 @@ test("study loading and explicit unavailability have distinct research controls"
   const stalled = () => {};
   await page.route("**/api/v1/atlas/regional-yield", stalled);
   await page.goto("/?view=research");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend" })).toContainText("Loading estimates");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Loading estimates");
   await openMapOptions(page);
   await expect(page.getByLabel("County", { exact: true })).toBeDisabled();
 
   await page.unroute("**/api/v1/atlas/regional-yield", stalled);
   await page.route("**/api/v1/atlas/regional-yield", route => route.fulfill({ status: 503, json: unavailable }));
   await page.reload();
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend" })).toContainText("Data unavailable");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Data unavailable");
   await openMapOptions(page);
   await expect(page.getByRole("button", { name: "Retry study data", exact: true })).toBeVisible();
   await expect(page.getByLabel("County", { exact: true })).toBeDisabled();

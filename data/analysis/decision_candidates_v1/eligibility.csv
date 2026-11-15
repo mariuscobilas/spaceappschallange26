@@ -1,0 +1,3 @@
+candidate,source,site_or_sites,following_crop,independent_yield_seasons,design_plot_units,possible_control_units,raw_plot_yield_rows_verified,accepted_training_labels,accepted_paired_contrasts,decision_relevant_initial_water,reason
+Dryad Sone 2026,10.5061/dryad.pvmcvdp2f,Pullman WA,winter wheat,1,55,5,0,0,0,unknown,"CSV inaccessible; SimpleID is sample ID; actual plot-yield row mapping, repeated samples, block IDs, VWC depth and dates unverified"
+Nielsen et al. 2016,10.2134/agronj2015.0372,"Akron CO; Sidney NE",winter wheat,2,unknown,unknown,0,0,0,reported aggregate only,"Eight published location-year-water-regime aggregates; no raw replicate yields or plot IDs"

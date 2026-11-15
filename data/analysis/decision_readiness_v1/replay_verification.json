@@ -1,0 +1,19 @@
+{
+  "current_python": "3.14.6",
+  "data_replay_verified": true,
+  "exact_export_reproduced": false,
+  "exact_prepared_replay": false,
+  "interpretation": "Data bytes and frozen weights verified. Exact export reproduction requires the recorded Python and package versions; this check does not bypass the frozen exporter or claim cross-runtime refit parity.",
+  "metadata_differences": [
+    {
+      "current": "3.14.6",
+      "field": "python",
+      "file": "manifest.json",
+      "recorded": "3.14.4"
+    }
+  ],
+  "model_fitted": false,
+  "recorded_python": "3.14.4",
+  "version": "research-replay-audit-v1",
+  "weights_hash_verified": true
+}

@@ -525,3 +525,38 @@ regressions plus production build/TypeScript. The 100-acre, $4/bu, 150bu/ac, −
 yield and $25/ac cover-cost case displays $515/ac and $51,500 total in both unit
 systems. See PLANNER-REDESIGN.md for calculation scope and method references.
 No API/model changes or commit/push.
+
+
+## Unified Explore research — finishing pass
+
+Regional Atlas is now optional Historical research inside Explore's Map options.
+The standalone navigation item and stacked toolbar are removed; /atlas preserves
+compatible links through a redirect. Research uses county geometry, a compact
+purple/teal signed legend and county information with study-record counts and
+collapsed methods. Loading, missing estimates, explicit unavailable responses and
+bundled fallback are distinct. Financial research controls remain hidden without
+validated regional economic coverage; renderer/API code is retained.
+
+H3 and county inspection no longer mutate the planning field/crop/drafts. Rapid
+filter changes merge against current URL state synchronously using Next's
+native-history integration, avoiding lost crop/year updates. County selection is
+keyboard reachable from Map options; county clicks are ignored while that sheet is
+open. Mobile opens one information sheet. Fields are created only through explicit
+tools after a geographic handoff.
+
+Production build/TypeScript and 23 contract fixtures pass. The broad run reported 116 passed, 3 failed, and 4 not run. Corrected test sheet/navigation assumptions were followed by 8/8 county research and 5/5 navigation checks passing; this was not a single fully green 123-test run. A separate Luna read-only review found no actionable state/history/camera issue. The phone layout was inspected at
+375×667: map viewport 604px, research footer 63px, no overlaps.
+Antigravity CLI was invoked in read-only plan mode as requested, but timed out
+without delivering findings. It is not counted as independent verification.
+Baseline commit 27ce049 was already present when this turn resumed; finishing
+changes are local, with no commit/push performed in this pass.
+
+### Local API connection restored
+
+The API process was not listening on port 8000, causing ERR_CONNECTION_REFUSED.
+Restarted it with `pnpm --filter @spaceapps/api dev`. `/health` and the exact
+field-conditions request at latitude 39.18182844622709, longitude -102.2059684892383,
+as_of 2026-11-15 return HTTP 200. Precipitation, root-zone wetness and mapped water
+storage all reported available. No backend or model source changes were needed.
+The local analysis model remains unloaded because its previously missing artifact
+pointer is absent; that does not prevent this independent field-conditions route.

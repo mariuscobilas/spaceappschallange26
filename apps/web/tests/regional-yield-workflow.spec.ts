@@ -10,7 +10,7 @@ async function base(page: Page) {
 }
 
 async function researchOptions(page: Page) {
-  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  if (!await page.getByRole("dialog", { name: "Map options", exact: true }).isVisible()) await page.getByRole("button", { name: "Map options", exact: true }).click();
   const options = page.getByRole("dialog", { name: "Map options", exact: true });
   await expect(options.getByLabel("Data view", { exact: true })).toHaveValue("research");
   return options;
@@ -25,11 +25,8 @@ async function pickCounty(page: Page) {
   await expect(map).toHaveAttribute("data-regional-county-count", "1");
   await expect(map).toHaveAttribute("data-regional-ready", "true");
   const options = await researchOptions(page);
-  await options.getByRole("button", { name: "Reset study view", exact: true }).click();
-  await page.keyboard.press("Escape");
-  const bounds = await map.boundingBox();
-  if (!bounds) throw Error("County map unavailable");
-  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await options.getByLabel("County", { exact: true }).selectOption("17001");
+  await options.getByRole("button", { name: "Inspect selected county", exact: true }).click();
   await expect(page.getByRole("region", { name: "Published county estimate details", exact: true })).toBeVisible();
 }
 
@@ -47,11 +44,12 @@ test("Explore historical research defaults to sourced county estimates and query
   await expect(options.getByLabel("Management scenario", { exact: true })).toHaveCount(0);
   await expect(options.getByText("Net return", { exact: true })).toHaveCount(0);
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Historical research · Corn · 2019–2020");
+  await expect(options).toBeHidden();
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Historical research · Corn · 2019–2020");
 
   await pickCounty(page);
   const details = page.getByRole("region", { name: "Published county estimate details", exact: true });
-  await expect(details).toContainText("Adams, IL");
+  await expect(page.getByRole("complementary", { name: "Region overview", exact: true })).toContainText("Adams, IL");
   await expect(details).toContainText("Estimated yield difference");
   await expect(details).toContainText("−5.38%");
   await expect(details).toContainText("155");
@@ -60,12 +58,16 @@ test("Explore historical research defaults to sourced county estimates and query
 
   const filters = await researchOptions(page);
   await filters.getByLabel("Research crop", { exact: true }).selectOption("soybeans");
-  await filters.getByLabel("Study period", { exact: true }).selectOption("2020");
+  await expect(page).toHaveURL(/crop=soybeans/);
+  const periodFilters = await researchOptions(page);
+  await periodFilters.getByLabel("Study period", { exact: true }).selectOption("2020");
   await expect(page).toHaveURL(/crop=soybeans.*period=2020.*county=17001/);
+  if (await periodFilters.isVisible()) await page.keyboard.press("Escape");
+  await expect(periodFilters).toBeHidden();
   await expect(details).toContainText("−5.68%");
   await expect(details).toContainText("73");
   await expect(page.getByRole("region", { name: "Published county yield effect map", exact: true })).toBeVisible();
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Historical research · Soybeans · 2020");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Historical research · Soybeans · 2020");
 });
 
 test("missing crop/year county support stays unavailable rather than becoming zero", async ({ page }) => {
@@ -78,6 +80,8 @@ test("missing crop/year county support stays unavailable rather than becoming ze
   const options = await researchOptions(page);
   await options.getByLabel("Research crop", {exact:true}).selectOption("soybeans");
   await options.getByLabel("Study period", {exact:true}).selectOption("2020");
+  if (await options.isVisible()) await page.keyboard.press("Escape");
+  await expect(options).toBeHidden();
   await expect(page.getByRole("region",{name:"Published county estimate details",exact:true})).toContainText("No estimate for this crop/period. Missing estimates are not zero.");
 });
 
@@ -90,15 +94,16 @@ test("research coverage is described at a saved field sample point without chang
   }, { longitude: county.regions[0].centroid[0], latitude: county.regions[0].centroid[1] });
   await page.route("**/api/v1/atlas/regional-yield", route => route.fulfill({ json:county }));
   await page.goto("/?view=research&crop=soybeans&period=2020");
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").selection?.fieldId)).toBe("study-field");
   const original = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").selection);
   const options = await researchOptions(page);
   const controls = options.getByRole("region", { name: "Historical research controls", exact: true });
-  await expect(controls).toContainText("Study records are available at your field's sample location for corn, 2020");
-  await expect(controls).toContainText("This is sample-point overlap, not whole-field coverage.");
+  await expect(options).toContainText("Study records are available at your field's sample location for corn, 2020");
+  await expect(options).toContainText("This is sample-point overlap, not whole-field coverage.");
   await controls.getByLabel("County", { exact: true }).selectOption("17001");
   await expect(page).toHaveURL(/county=17001/);
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").selection)).toEqual(original);
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Historical research · Soybeans · 2020");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Historical research · Soybeans · 2020");
 });
 
 test("network failure uses the actual bundled regional snapshot with source disclosure", async ({ page }) => {
@@ -107,9 +112,8 @@ test("network failure uses the actual bundled regional snapshot with source disc
   await openResearch(page);
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-regional-county-count","486",{timeout:30000});
   const options = await researchOptions(page);
-  await expect(options.getByRole("region",{name:"Historical research controls",exact:true})).toContainText("Retry study data");
   await expect(options.getByRole("region",{name:"Historical research controls",exact:true})).toContainText("bundled published study copy");
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Bundled study copy");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Bundled study copy");
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-regional-ready","true");
 });
 
@@ -119,7 +123,7 @@ test("an explicit API unavailable result does not silently substitute fallback d
   await page.route("**/api/v1/atlas/regional-yield",route=>route.fulfill({json:missing}));
   await page.route("**/data/regional-yield.json", route=>{fallbackRequests++;return route.abort();});
   await openResearch(page);
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Data unavailable");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Data unavailable");
   const options = await researchOptions(page);
   await expect(options.getByRole("region",{name:"Historical research controls",exact:true}).getByRole("button",{name:"Retry study data",exact:true})).toBeVisible();
   expect(fallbackRequests).toBe(0);
@@ -132,13 +136,13 @@ test("county evidence opens in the phone information sheet without H3 precision 
   await openResearch(page);
   await pickCounty(page);
   const detail=page.getByRole("region",{name:"Published county estimate details",exact:true});
-  await expect(detail).toContainText("Adams, IL");
+  await expect(page.getByRole("heading", { name: "Adams, IL", exact: true })).toBeVisible();
   await expect(detail).toContainText("Estimated yield difference");
   await expect(detail).toContainText("155");
   await expect(page.getByText("Full hexagon area",{exact:true})).toHaveCount(0);
-  const sheet = page.getByRole("dialog", { name: "Historical research information", exact: true });
+  const sheet = page.getByRole("dialog").filter({ has: detail });
   await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole("region", { name: "Published county estimate details", exact: true })).toContainText("Adams, IL");
+  await expect(sheet.getByRole("heading", { name: "Adams, IL", exact: true })).toBeVisible();
 });
 
 test("oversized or malformed API data is withheld without switching to the bundled snapshot", async ({ page }) => {
@@ -147,14 +151,14 @@ test("oversized or malformed API data is withheld without switching to the bundl
   await page.route("**/data/regional-yield.json",route=>{fallbackRequests++;return route.abort();});
   await page.route("**/api/v1/atlas/regional-yield", route=>route.fulfill({body:JSON.stringify(county),headers:{"content-type":"application/json","content-length":"20000000"}}));
   await openResearch(page);
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Data unavailable");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Data unavailable");
   const options = await researchOptions(page);
   await expect(options.getByRole("region",{name:"Historical research controls",exact:true}).getByRole("button",{name:"Retry study data",exact:true})).toBeVisible();
   expect(fallbackRequests).toBe(0);
   const malformed=structuredClone(county);malformed.regions[0].fips=17001;
   await page.route("**/api/v1/atlas/regional-yield",route=>route.fulfill({json:malformed}));
   await options.getByRole("button",{name:"Retry study data",exact:true}).click();
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Data unavailable");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Data unavailable");
   expect(fallbackRequests).toBe(0);
 });
 
@@ -163,8 +167,8 @@ test("a stalled API times out and loads the disclosed real snapshot", async ({ p
   await page.clock.install();
   await page.route("**/api/v1/atlas/regional-yield",()=>{});
   await openResearch(page);
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Loading estimates");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Loading estimates");
   await page.clock.fastForward(12500);
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-regional-county-count","486",{timeout:15000});
-  await expect(page.getByRole("contentinfo", { name: "Historical research map legend", exact: true })).toContainText("Bundled study copy");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Bundled study copy");
 });

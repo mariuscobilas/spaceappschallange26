@@ -6,7 +6,7 @@ Enables end-to-end type safety between FastAPI and Next.js.
 import math
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Literal, Optional
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, model_validator
 
 # Clovis analysis contracts are canonical here alongside Meridian's existing types.
 from .clovis_schemas import *  # noqa: F403
@@ -45,6 +45,81 @@ class MockResponse(BaseModel):
     message: str
     mock: bool = True
     timestamp: Optional[str] = None
+
+
+# ==========================================
+# Meridian Chat
+# ==========================================
+
+class MeridianChatTextPart(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["text"]
+    text: StrictStr = Field(min_length=1, max_length=16000)
+
+
+class MeridianChatMessage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: StrictStr = Field(min_length=1, max_length=200)
+    role: Literal["user", "assistant"]
+    parts: List[MeridianChatTextPart] = Field(min_length=1, max_length=8)
+
+
+class MeridianChatPlanContext(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    coverCrop: StrictStr = Field(min_length=1, max_length=40)
+    terminationDays: StrictInt = Field(ge=0, le=60)
+    plantingDate: StrictStr = Field(max_length=10)
+    areaHa: StrictStr = Field(max_length=40)
+    notes: StrictStr = Field(max_length=4000)
+    status: Literal["draft", "saved"]
+
+    @model_validator(mode="after")
+    def validate_planting_date(self):
+        if self.plantingDate:
+            try:
+                parsed = date.fromisoformat(self.plantingDate)
+            except ValueError as exc:
+                raise ValueError("plantingDate must be empty or an ISO calendar date") from exc
+            if parsed.isoformat() != self.plantingDate:
+                raise ValueError("plantingDate must be empty or an ISO calendar date")
+        return self
+
+
+class MeridianChatContext(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    latitude: StrictFloat = Field(ge=24, le=50)
+    longitude: StrictFloat = Field(ge=-125, le=-66)
+    locationName: StrictStr = Field(min_length=1, max_length=200)
+    fieldId: Optional[StrictStr] = Field(default=None, min_length=1, max_length=200)
+    crop: StrictStr = Field(min_length=1, max_length=40)
+    observationDate: date
+    plan: Optional[MeridianChatPlanContext] = None
+
+    @model_validator(mode="after")
+    def validate_chat_coordinates(self):
+        if not math.isfinite(self.latitude) or not math.isfinite(self.longitude):
+            raise ValueError("coordinates must be finite")
+        if self.observationDate < date(1981, 1, 1) or self.observationDate > date.today():
+            raise ValueError("observationDate must be between 1981-01-01 and today")
+        return self
+
+
+class MeridianChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    messages: List[MeridianChatMessage] = Field(min_length=1, max_length=40)
+    context: MeridianChatContext
+
+
+class MeridianToolSuccess(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ok: Literal[True]
+    result: Any
+
+
+class MeridianToolFailure(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ok: Literal[False]
+    error: str
 
 
 # ==========================================

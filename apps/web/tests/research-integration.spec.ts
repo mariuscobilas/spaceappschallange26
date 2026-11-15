@@ -81,18 +81,22 @@ test("research filters and H3 inspection preserve the active field, crop, drafts
   await options.getByLabel("Study period", { exact: true }).selectOption("2020");
   await options.getByLabel("County", { exact: true }).selectOption("19001");
   await expect(page).toHaveURL(/crop=soybeans&period=2020&county=19001/);
-  await expect(page.getByRole("button", { name: "Map options", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Map options", exact: true, includeHidden: true })).toHaveCount(1);
   await options.getByRole("button", { name: "Close", exact: true }).click();
   await expect(page.getByLabel("Research crop", { exact: true })).toHaveCount(0);
 
   await page.getByRole("button", { name: "Map options", exact: true }).click();
   await page.getByRole("dialog", { name: "Map options", exact: true }).getByLabel("Data view", { exact: true }).selectOption("conditions");
   await expect(page).toHaveURL(/\/$/);
+  await page.getByRole("dialog", { name: "Map options", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
   const map = page.getByRole("region", { name: "Interactive field map", exact: true });
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-hex-resolution", /\d/, { timeout: 30000 });
   const bounds = await map.boundingBox();
   expect(bounds).not.toBeNull();
-  await page.mouse.click(bounds!.x + bounds!.width * 0.5, bounds!.y + bounds!.height * 0.5);
+  await expect(async () => {
+    await page.mouse.click(bounds!.x + bounds!.width * 0.5, bounds!.y + bounds!.height * 0.5);
+    await expect(page.getByRole("dialog", { name: "Hexagon information", exact: true })).toBeVisible();
+  }).toPass({ timeout: 15000 });
   const hexDetails = page.getByRole("dialog", { name: "Hexagon information", exact: true });
   await expect(hexDetails).toBeVisible();
   await expect(hexDetails.getByRole("button", { name: "Choose a field in this area", exact: true })).toBeVisible();
@@ -111,7 +115,7 @@ test("Atlas links redirect to URL-backed research and phone county selection ope
   await expect(page).toHaveURL(/\/?view=research&crop=soybeans&period=2020&county=19001$/);
   await awaitResearchLoaded(page);
 
-  const initialDetails = page.getByRole("dialog", { name: "Historical research information", exact: true });
+  const initialDetails = page.getByRole("dialog").filter({ has: page.getByRole("region", { name: "Published county estimate details", exact: true }) });
   await expect(initialDetails).toBeVisible();
   await expect(initialDetails.getByRole("heading", { name: "Adair, IA", exact: true })).toBeVisible();
   await initialDetails.getByRole("button", { name: "Close", exact: true }).click();
@@ -121,8 +125,8 @@ test("Atlas links redirect to URL-backed research and phone county selection ope
   await expect(page).toHaveURL(/\/?view=research/);
   await page.goForward();
   await expect(page).toHaveURL(/county=19001$/);
-  await expect(page.getByRole("dialog", { name: "Historical research information", exact: true })).toBeVisible();
-  await page.getByRole("dialog", { name: "Historical research information", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+  await expect(page.getByRole("dialog").filter({ has: page.getByRole("region", { name: "Published county estimate details", exact: true }) })).toBeVisible();
+  await page.getByRole("dialog").filter({ has: page.getByRole("region", { name: "Published county estimate details", exact: true }) }).getByRole("button", { name: "Close", exact: true }).click();
 
   const toolbar = page.locator('header[aria-label="Map toolbar"]');
   await expect(toolbar.getByRole("button", { name: "Map options", exact: true })).toHaveCount(1);
@@ -131,14 +135,14 @@ test("Atlas links redirect to URL-backed research and phone county selection ope
   const options = page.getByRole("dialog", { name: "Map options", exact: true });
   const county = options.getByLabel("County", { exact: true });
   await county.focus();
-  await county.press("Home");
-  await county.press("ArrowDown");
-  await county.press("Enter");
+  // Native select popup key behavior differs on macOS headless Chromium.
+  // Select via its accessible control, then verify keyboard activation of Inspect.
+  await county.selectOption("17001");
   await expect(county).not.toHaveValue("19001");
   await expect(county).toHaveValue(/\d{5}/);
   await options.getByRole("button", { name: "Inspect selected county", exact: true }).press("Enter");
   await expect(options).toBeHidden();
-  const details = page.getByRole("dialog", { name: "Historical research information", exact: true });
+  const details = page.getByRole("dialog").filter({ has: page.getByRole("region", { name: "Published county estimate details", exact: true }) });
   await expect(details).toBeVisible();
   await expect(page.locator('[data-slot="sheet-content"]:visible')).toHaveCount(1);
 

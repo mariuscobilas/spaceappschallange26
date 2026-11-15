@@ -128,9 +128,12 @@ export default function MapPreview() {
   const view = parseResearchView(new URLSearchParams(query.toString()));
   const isAtlas = isExplore && view.view === "research";
   const updateView = (patch: Partial<ResearchView>, replace = false) => {
-    const href = researchViewHref({ ...view, ...patch });
-    if (replace) router.replace(href, { scroll: false });
-    else router.push(href, { scroll: false });
+    const current = parseResearchView(new URLSearchParams(window.location.search));
+    const href = researchViewHref({ ...current, ...patch });
+    // Native history is integrated with Next's search params and updates filters
+    // synchronously, avoiding stale concurrent route transitions between selects.
+    if (replace) window.history.replaceState(null, "", href);
+    else window.history.pushState(null, "", href);
   };
   // Financial rendering remains implemented separately, without an unavailable UI entry.
   const atlas = useAtlas(false);
@@ -160,13 +163,9 @@ export default function MapPreview() {
       ? `Study records are available at your field's sample location for ${settings.crop}, ${countyPeriod}.`
       : "No qualifying estimate for your field's crop and the selected study period.";
   useEffect(() => { setDetailsOpen(false); }, [isAtlas]);
-  const handledResearchEntry = useRef(false);
   useEffect(() => {
-    if (!isAtlas) { handledResearchEntry.current = false; return; }
-    if (!regional.data || handledResearchEntry.current) return;
-    handledResearchEntry.current = true;
-    if (selectedFips && !mapOptionsOpen) setDetailsOpen(true);
-  }, [isAtlas, regional.data, selectedFips]);
+    if (isAtlas && selectedFips && !mapOptionsOpen) setDetailsOpen(true);
+  }, [isAtlas, selectedFips, regional.data]);
   useEffect(() => {
     if (isAtlas && view.county && regional.data?.status === "available" && !selectedFips) updateView({ county: undefined }, true);
   }, [isAtlas, view.county, regional.data, selectedFips]);
@@ -204,6 +203,7 @@ export default function MapPreview() {
   }, [pathname]);
   const select = (selection: Selection) =>
     requestTransition(() => {
+      if (mapOptionsOpen) return;
       if (isFields && selectPointArmed) {
         beginField(selection);
         setSelectPointArmed(false);
@@ -447,7 +447,7 @@ export default function MapPreview() {
           atlasCells={isAtlas && layerMode==="returns" && atlas.data?.status === "available" && atlasCells.length ? atlasCells : undefined}
           regionalYield={regionalLayer??undefined}
           regionalYieldActive={isAtlas}
-          onRegionalSelect={fips=> { setSelectedFips(fips??undefined); setMapOptionsOpen(false); setDetailsOpen(true); }}
+          onRegionalSelect={fips=> { if (mapOptionsOpen) return; setSelectedFips(fips??undefined); setMapOptionsOpen(false); setDetailsOpen(true); }}
           atlasSelectedH3={browseSelection.hexId}
           onAtlasHover={setAtlasHover}
           onAtlasRenderStatus={setAtlasRenderer}

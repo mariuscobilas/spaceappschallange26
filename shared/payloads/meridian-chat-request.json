@@ -1,0 +1,30 @@
+{
+  "messages": [
+    {
+      "id": "msg-user-1",
+      "role": "user",
+      "parts": [
+        {
+          "type": "text",
+          "text": "What should I check before planting a cover crop?"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "latitude": 38.5,
+    "longitude": -98.2,
+    "locationName": "North field",
+    "fieldId": "field-north",
+    "crop": "wheat",
+    "observationDate": "2026-11-14",
+    "plan": {
+      "coverCrop": "cereal rye",
+      "terminationDays": 14,
+      "plantingDate": "2027-04-20",
+      "areaHa": "100",
+      "notes": "Confirm available soil water before committing.",
+      "status": "draft"
+    }
+  }
+}

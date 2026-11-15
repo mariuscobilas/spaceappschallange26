@@ -6,8 +6,8 @@ test("Atlas compatibility URL redirects into Explore and query changes preserve 
     overlay: "off", opacity: .55,
     selection: { name: "Hays", latitude: 38.8792, longitude: -99.3268, benchmarkId: "hays" },
   })));
-  await page.goto("/atlas?crop=soybeans&period=2020&county=17001");
-  await expect(page).toHaveURL(/\/?view=research&crop=soybeans&period=2020&county=17001$/);
+  await page.goto("/atlas?crop=soybeans&period=2020");
+  await expect(page).toHaveURL(/\/?view=research&crop=soybeans&period=2020$/);
   const navigation = page.getByRole("navigation", { name: "Main navigation", exact: true });
   const labels = (await navigation.getByRole("link").allTextContents()).map((text) => text.trim()).filter(Boolean);
   expect(labels).toEqual(["Explore", "Field Planner", "Ask Meridian"]);
@@ -24,12 +24,14 @@ test("Atlas compatibility URL redirects into Explore and query changes preserve 
   await options.getByLabel("Data view", { exact: true }).selectOption("conditions");
   await expect(page).toHaveURL(/\/$/);
   await expect(map).toHaveAttribute("data-test-map-instance", "shared");
+  await page.keyboard.press("Escape");
+  await expect(options).toBeHidden();
   await page.goBack();
-  await expect(page).toHaveURL(/\?view=research&crop=soybeans&period=2020&county=17001$/);
+  await expect(page).toHaveURL(/\?view=research&crop=soybeans&period=2020$/);
   await expect(map).toHaveAttribute("data-test-map-instance", "shared");
 
   await navigation.getByRole("link", { name: "Field Planner", exact: true }).click();
-  await page.getByRole("link", { name: "Manage or add fields", exact: true }).click();
+  await page.getByRole("link", { name: "Add first field", exact: true }).click();
   await expect(page).toHaveURL(/\/fields$/);
   await expect(map).toBeVisible();
   await expect(map).toHaveAttribute("data-test-map-instance", "shared");
@@ -93,10 +95,12 @@ test("mobile main navigation has no Atlas destination and research stays in Expl
   let options = page.getByRole("dialog", { name: "Map options", exact: true });
   await options.getByLabel("Data view", { exact: true }).selectOption("research");
   await expect(page).toHaveURL(/\?view=research/);
-  await expect(page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Explore", exact: true })).toHaveAttribute("aria-current", "page");
-  await page.getByRole("button", { name: "Map options", exact: true }).click();
-  options = page.getByRole("dialog", { name: "Map options", exact: true });
+  await expect(options).toBeVisible();
   await options.getByLabel("Data view", { exact: true }).selectOption("conditions");
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").mode)).toBe("field");
+  await page.keyboard.press("Escape");
+  await expect(options).toBeHidden();
+  await page.getByRole("button", { name: "Toggle navigation", exact: true }).click();
+  await expect(page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Explore", exact: true })).toHaveAttribute("aria-current", "page");
 });

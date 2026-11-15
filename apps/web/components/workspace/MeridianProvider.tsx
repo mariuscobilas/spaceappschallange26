@@ -70,8 +70,6 @@ interface MeridianContextValue {
   fieldActionNotice: string | null;
   dismissFieldNotice: () => void;
   getFieldDeletionImpact: (id: string) => { savedPlans: number; planDrafts: number; economicsInputs: number };
-  question: string;
-  setQuestion: (question: string) => void;
   fields: SavedField[];
   activeField?: SavedField;
   boundaryArea?: number;
@@ -131,8 +129,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
   const hasUnsavedChanges = useCallback(() => dirtyRef.current, []);
   const previousSelection = useRef<Selection>(initialSettings.selection),
     legacyOrigin = useRef("");
-  const [storageAvailable, setStorageAvailable] = useState(true),
-    [question, setQuestion] = useState("");
+  const [storageAvailable, setStorageAvailable] = useState(true);
   const [fieldActionNotice, setFieldActionNotice] = useState<string | null>(null);
   const [navigation, setNavigation] = useState<MapCanvasProps["navigation"]>({
     action: "reset",
@@ -814,8 +811,6 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         fieldActionNotice,
         dismissFieldNotice: () => setFieldActionNotice(null),
         getFieldDeletionImpact,
-        question,
-        setQuestion,
         fields,
         activeField,
         boundaryArea,

@@ -46,27 +46,16 @@ test("working calendar drafts follow each field through navigation, reload and u
   expect(saved.areaHa).toBe("100");
 });
 
-test("Ask Meridian exports the prepared question with explicit unavailable evidence context", async ({ page }) => {
+test("Ask Meridian opens a field grounded chat with a keyboard ready composer", async ({ page }) => {
   await page.route("**/api/v1/field-conditions?**", (route) => route.abort());
   await page.goto("/intel");
-  await page.getByLabel("Your question").fill("What should I verify before planting?");
-  const prepared = page.getByLabel("Prepared request");
-  await expect(prepared).toHaveValue(/30-day precipitation: Unavailable/);
-  await expect(prepared).toHaveValue(/NASA POWER/);
-  await expect(prepared).toHaveValue(/period unavailable/);
-  await expect(prepared).toHaveValue(/not field-wide measurements/);
-  await expect(page.getByRole("note").filter({ hasText: "Analysis is not connected yet" })).toBeVisible();
-
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export .txt" }).click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("meridian-request.txt");
-  const path = await download.path();
-  const { readFile } = await import("node:fs/promises");
-  const text = await readFile(path!, "utf8");
-  expect(text).toContain("What should I verify before planting?");
-  expect(text).toContain("NASA POWER (https://power.larc.nasa.gov/");
-  expect(text).toContain("Field conditions requested for");
+  await expect(page.getByRole("heading", { name: "Ask Meridian" })).toBeVisible();
+  await expect(page.getByText("Field conversation", { exact: true })).toBeVisible();
+  const composer = page.getByLabel("Message Meridian");
+  await expect(composer).toBeVisible();
+  await composer.fill("What should I verify before planting?");
+  await expect(page.getByRole("button", { name: "Send message" })).toBeEnabled();
+  await expect(page.getByText("Enter to send · Shift+Enter for a new line")).toBeVisible();
 });
 
 test("research county navigation does not create a field until Select point is used", async ({ page }) => {

@@ -19,7 +19,6 @@ test("Explore switches between Conditions and historical research inside Map opt
   await expect(options.getByLabel("Observation date", { exact: true })).toBeVisible();
   await options.getByLabel("Data view", { exact: true }).selectOption("research");
   await expect(page).toHaveURL(/\?view=research/);
-  await page.getByRole("button", { name: "Map options", exact: true }).click();
   const researchOptions = page.getByRole("dialog", { name: "Map options", exact: true });
   await expect(researchOptions.getByLabel("Research crop", { exact: true })).toHaveValue("corn");
   await expect(researchOptions.getByLabel("Study period", { exact: true })).toHaveValue("2019-2020");
@@ -39,6 +38,7 @@ test("Explore switches between Conditions and historical research inside Map opt
 });
 
 test("Historical research selects a county aggregate without changing field context", async ({ page }) => {
+  await page.route("**/api/v1/atlas/regional-yield", route => route.fulfill({ json: JSON.parse(readFileSync("../../shared/payloads/regional-yield-available.json", "utf8")) }));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
   const example = JSON.parse(readFileSync("../../shared/payloads/field-conditions-available.json", "utf8"));
@@ -72,7 +72,7 @@ test("Historical research selects a county aggregate without changing field cont
   await expect(panel).toContainText("−5.38%");
   await expect(panel).toContainText("155");
   await expect(panel).toContainText("not a county-wide measured yield, current field forecast, or farm prediction");
-  await expect(page.getByRole("region", { name: "Historical research map legend", exact: true })).toContainText("Historical research");
+  await expect(page.locator('footer[aria-label="Historical research map legend"]')).toContainText("Historical research");
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").selection)).toEqual(fieldContext);
   const mapBounds = await canvas.boundingBox();
   const panelBounds = await panel.boundingBox();
@@ -81,9 +81,9 @@ test("Historical research selects a county aggregate without changing field cont
   await expect(panel).toBeVisible();
   await expect(page).toHaveURL(/county=17001/);
   await page.setViewportSize({ width: 390, height: 844 });
-  const mobile = page.getByRole("dialog", { name: "Historical research information", exact: true });
+  const mobile = page.getByRole("dialog").filter({ has: page.getByRole("region", { name: "Published county estimate details", exact: true }) });
   await expect(mobile).toBeVisible();
-  await expect(mobile.getByRole("region", { name: "Published county estimate details", exact: true })).toContainText("Adams, IL");
+  await expect(mobile.getByRole("heading", { name: "Adams, IL", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await expect(mobile.getByRole("button", { name: "Inspect field here", exact: true })).toHaveCount(0);
 });
@@ -99,10 +99,12 @@ test("phone navigation keeps research inside Explore rather than a primary desti
   const options = page.getByRole("dialog", { name: "Map options", exact: true });
   await options.getByLabel("Data view", { exact: true }).selectOption("research");
   await expect(page).toHaveURL(/\?view=research/);
-  await expect(page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Explore", exact: true })).toHaveAttribute("aria-current", "page");
   await options.getByLabel("Data view", { exact: true }).selectOption("conditions");
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").mode)).toBe("field");
+  await options.getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("button", { name: "Toggle navigation", exact: true }).click();
+  await expect(page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Explore", exact: true })).toHaveAttribute("aria-current", "page");
 });
 
 test("phone My fields panel closes before placing and saving a point", async ({ page }) => {

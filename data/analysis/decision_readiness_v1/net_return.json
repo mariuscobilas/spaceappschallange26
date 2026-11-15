@@ -1,0 +1,60 @@
+{
+  "area_ha": null,
+  "decision_gate": {
+    "action": "abstain",
+    "max_tolerable_yield_loss_t_ha": 0.0,
+    "reasons": [
+      "uncertainty_not_independently_validated",
+      "conservative_bounds_unavailable"
+    ],
+    "recommend_cover": false
+  },
+  "evaluation": {
+    "method": "direct_water_weather",
+    "n_pairs": 142,
+    "n_shared_controls": 10,
+    "n_years": 3,
+    "scores": {
+      "always_fallow": {
+        "benefits_detected_n": 0,
+        "harmful_cover_calls_n": 0,
+        "macro_year_mae_t_ha": 0.32718521899181124,
+        "n_pairs": 142,
+        "observed_benefit_n": 96,
+        "pooled_mae_t_ha": 0.281112676056338,
+        "predicted_cover_n": 0
+      },
+      "model": {
+        "benefits_detected_n": 96,
+        "harmful_cover_calls_n": 46,
+        "macro_year_mae_t_ha": 0.9276506715094017,
+        "n_pairs": 142,
+        "observed_benefit_n": 96,
+        "pooled_mae_t_ha": 1.1484586942470456,
+        "predicted_cover_n": 142
+      },
+      "training_mean": {
+        "benefits_detected_n": 96,
+        "harmful_cover_calls_n": 46,
+        "macro_year_mae_t_ha": 0.3089613075737196,
+        "n_pairs": 142,
+        "observed_benefit_n": 96,
+        "pooled_mae_t_ha": 0.260029670704665,
+        "predicted_cover_n": 142
+      }
+    },
+    "training_mean_by_held_out_year_t_ha": {
+      "2009": 0.09765486725663713,
+      "2010": 0.09962886597938146,
+      "2011": 0.09882432432432435
+    },
+    "uncertainty_intervals": "not estimated; pairs share controls and years"
+  },
+  "evaluator_sha256": "dead58e587aae243e354eba216d3a882f40f176c0e1d000023af3e083c29ae0a",
+  "financial_configuration": "configuration_missing",
+  "input_oof_csv": "data/experiments/mandan_weather_ablation_v1/runs/20261115T143248469336Z/oof_predictions.csv",
+  "input_oof_sha256": "4fe5aff6ff1c8df39ea5a32b4eb5c13c5085fcf3e4b77ad6afe6fda446830e72",
+  "interpretation": "Research-only retrospective paired contrasts. No calibrated forecast probabilities or validated uncertainty bounds are available; abstain.",
+  "monetary_sensitivity": {},
+  "net_return_module_sha256": "9607da93098e467617dc36d445d7dec379c1fd58f2f5d4bbccc5602296ee5790"
+}
