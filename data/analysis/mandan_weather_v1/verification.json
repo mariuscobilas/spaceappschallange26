@@ -1,0 +1,84 @@
+{
+  "annual_field_assignment_verified": false,
+  "calendar_verified_against_management_workbook": true,
+  "catalog_endpoint_minus_2011_wheat_sowing_days": 1,
+  "daily_dates": 1461,
+  "exact_soil_sampling_dates_verified": false,
+  "feature_definitions": [
+    {
+      "aggregation": "sum",
+      "feature": "season_rain_mm",
+      "parameter": "PRECTOTCORR",
+      "source_unit": "mm/day",
+      "unit": "mm"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_tmax_c",
+      "parameter": "T2M_MAX",
+      "source_unit": "C",
+      "unit": "C"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_tmin_c",
+      "parameter": "T2M_MIN",
+      "source_unit": "C",
+      "unit": "C"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_rh_pct",
+      "parameter": "RH2M",
+      "source_unit": "%",
+      "unit": "%"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_wind_m_s",
+      "parameter": "WS2M",
+      "source_unit": "m/s",
+      "unit": "m/s"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_solar_mj_m2_day",
+      "parameter": "ALLSKY_SFC_SW_DWN",
+      "source_unit": "MJ/m^2/day",
+      "unit": "MJ/m^2/day"
+    }
+  ],
+  "initial_to_spring_exact_weather_window_supported": false,
+  "limitations": [
+    "Crop-season aggregates use verified wheat planting through harvest inclusive",
+    "Do not aggregate PREPLANT-to-SPRING weather without exact sampling dates or a separately declared approximate-horizon experiment",
+    "Realized weather is retrospective or scenario input, unavailable at cover planting",
+    "No cross-site pooling, model search, production promotion or payload changes"
+  ],
+  "missing_values": 0,
+  "models_fitted": false,
+  "output_sha256": {
+    "season_weather.csv": "d9af8e897e60b1100b5072aad97bb47874cce9055e50b42c510b10f875d0d36b"
+  },
+  "parameter_count": 6,
+  "regional_wheat_season_weather_supported": true,
+  "soil_timing_caution": "Catalog extent endpoint is not proof that every SPRING row was sampled on that day; no row-level ordering is inferred",
+  "source_sha256": {
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.json": "48b2bb02a9c8d5609bd4ba27afdd4ac3f1e8d1848db71ef02a2bef57c31c4ae2",
+    "data/raw/mandan_weather_v1/mandan_area_20080101_20111231.source.json": "fe989b027154a846c5463a4c31391f7f39954395a6f45556abf66a20856a7b94",
+    "data/raw/mandan_weather_v1/verification_policy.json": "d4f6db820548bcf7024971b7b5b49c917c9a088282dbf6530ebb70d6542b2fb3",
+    "data/raw/usda_mandan_cover_2009_2012/management.xlsx": "f27812c72383f6162fe4b57a004ccab1004fce019e322507bccc10f76e88f4a9",
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water_metadata.csv": "bd6a37a57b4d623f56ab16c81f4cae1934556466c32eb13bf9f49dbe57bfbb72"
+  },
+  "verification_code_sha256": "2accfd9e7236d6cc2d064591c9419f252d85a73aca26c0699105c365d340f62d",
+  "version": "mandan-weather-verification-v1",
+  "weather_geometry": {
+    "coordinates": [
+      -100.935,
+      46.78,
+      571.53
+    ],
+    "type": "Point"
+  },
+  "wheat_seasons": 3
+}

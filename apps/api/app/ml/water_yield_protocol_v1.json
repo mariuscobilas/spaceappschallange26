@@ -1,0 +1,55 @@
+{
+  "version": "water-yield-v1",
+  "frozen_before_first_fit": true,
+  "purpose": "Retrospective measured-water-to-wheat-yield component feasibility; not an early cover-planting forecast",
+  "seed": 42,
+  "target": "wheat_yield_t_ha",
+  "water": "profile_water_at_wheat_sowing_mm",
+  "nitrate": "nitrate_0_30cm_mg_kg",
+  "source_sha256": {
+    "data/dryad_eash_2025/Cover_Crop_Trials_Data.xlsx": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb",
+    "data/analysis/water_yield_research_v1/inventory.json": "4d79e73f9857163064f9477881e3c3bb67edaff40edc75f31488ec1022abc9ea",
+    "data/analysis/water_yield_research_v1/eash_plot_cycles.csv": "b08447797a0fa376208d8a0075f9c68ffd3a041e0f2804416945c18a181b68cb",
+    "data/analysis/water_yield_research_v1/eash_matched_water_yield_pairs.csv": "0deccea8d0702135032d49edc10fce8da33378076279ce1d8129b0a25e3e2bfb",
+    "data/raw/water_yield_calendar_v1/eash_calendar_evidence.json": "86b7b9b6d6d7ff97d689622a57ed1cf49d55908dec7963f95a087dc19619e8bd",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.json": "cde7b2e1b37adca1df2465d33ba0601a15b4d5b96fb9f7e2bc219eb1eec7e8b6",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.source.json": "d60c67e9c2755dcefafe743bc6cb13fc05791cfa8e8fe2730526d93de497d3db",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.json": "10f94761b472009068d6542fe269fbdeaf8e30c2926e50713824d0ac225c07aa",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.source.json": "9ec1863219caaa11b0d74fd572c7602784dbde8178f0d41381198036a17c0f9e"
+  },
+  "calendar_path": "data/raw/water_yield_calendar_v1/eash_calendar_evidence.json",
+  "observation_path": "data/analysis/water_yield_research_v1/eash_plot_cycles.csv",
+  "audit_pairs_path": "data/analysis/water_yield_research_v1/eash_matched_water_yield_pairs.csv",
+  "weather_paths": [
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.json",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.json"
+  ],
+  "weather_window": "Exact wheat sowing through harvest inclusive; no interpolation or window search",
+  "weather_features": [
+    {"parameter": "PRECTOTCORR", "feature": "season_rain_mm", "aggregation": "sum", "source_unit": "mm/day", "unit": "mm"},
+    {"parameter": "T2M_MAX", "feature": "season_mean_tmax_c", "aggregation": "mean", "source_unit": "C", "unit": "C"},
+    {"parameter": "T2M_MIN", "feature": "season_mean_tmin_c", "aggregation": "mean", "source_unit": "C", "unit": "C"},
+    {"parameter": "RH2M", "feature": "season_mean_rh_pct", "aggregation": "mean", "source_unit": "%", "unit": "%"},
+    {"parameter": "WS2M", "feature": "season_mean_wind_m_s", "aggregation": "mean", "source_unit": "m/s", "unit": "m/s"},
+    {"parameter": "ALLSKY_SFC_SW_DWN", "feature": "season_mean_solar_mj_m2_day", "aggregation": "mean", "source_unit": "MJ/m^2/day", "unit": "MJ/m^2/day"}
+  ],
+  "expected_counts": {"source": 198, "main": 88, "nitrate_common": 86, "paired": 68, "controls": 20, "seasons": 5},
+  "cohorts": {
+    "main": "Observed finite nonnegative water and yield, verified completed harvest",
+    "nitrate_common": "Subset of main with observed nitrate; all compared models rerun on these same 86 rows",
+    "paired": "Observed cover and unique fallow control matched on trial/block/tillage/cycle; controls may be reused"
+  },
+  "folds": ["wheat_2017", "wheat_2018", "wheat_2019", "wheat_2020", "wheat_2021"],
+  "validation": "Leave one harvest season out; historical cross-season validation may use later seasons in training. Not a prospective or untouched final test. Repeated plots may recur across seasons; no unseen-plot claim.",
+  "estimator": {"class": "Ridge", "alpha": 1.0, "fit_intercept": true, "solver": "svd", "positive": false},
+  "preprocessing": "StandardScaler(with_mean=True, with_std=True) fitted only within each training fold; no imputation or target transformation",
+  "comparisons": {
+    "main": ["mean", "water", "weather", "water_weather"],
+    "nitrate_common": ["mean", "water", "weather", "water_weather", "water_weather_nitrate"]
+  },
+  "management_adjustment": "None in this initial ablation; retain trial, tillage, planting window and cover mix for error slices. Associations are not causal water effects.",
+  "metrics": {"primary": "Unweighted mean of five held-out season MAEs in t/ha", "secondary": ["pooled MAE", "pooled RMSE", "signed prediction-minus-observation bias", "per-season MAE/RMSE/bias", "per-management MAE/RMSE/bias", "pooled R2 (descriptive only)"]},
+  "interpretation": "Report water+weather minus weather MAE and seasons improved, nitrate sensitivity and uncertainty. Five seasons cannot establish a reliable effect or farmer-use threshold. No automatic selection or promotion; no tuning after seeing results.",
+  "paired_next_phase": "Evaluate delta yield separately against zero and training-mean difference baselines; do not assume absolute-yield accuracy validates cover-versus-fallow ranking.",
+  "restrictions": ["No target imputation", "No IDs, yield-derived variables, revenue or stability predictors", "No unverified Mandan join", "0-90 cm stored water is not verified PAW", "Nitrate follows released 0-30 cm definition; older article mentions 0-15 cm, unresolved", "Observed sowing water and realized subsequent weather are unavailable at earlier cover planting", "No refit for serving, payload changes or deployment"]
+}

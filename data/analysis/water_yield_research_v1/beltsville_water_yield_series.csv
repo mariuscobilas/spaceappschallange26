@@ -1,0 +1,45 @@
+year,rep,system,daily_water_rows,first_water_date,last_water_date,missing_dates_within_series,corn_yield_kg_ha,cover_type,water_definition,sowing_water_status
+2017,3,3,104,2017-06-01,2017-09-12,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,3,4,104,2017-06-01,2017-09-12,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,3,5,104,2017-06-01,2017-09-12,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,3,6,104,2017-06-01,2017-09-12,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,4,3,104,2017-06-01,2017-09-12,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,4,4,104,2017-06-01,2017-09-12,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,4,5,104,2017-06-01,2017-09-12,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2017,4,6,104,2017-06-01,2017-09-12,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,2,3,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,2,4,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,2,5,80,2018-06-20,2018-09-07,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,2,6,80,2018-06-20,2018-09-07,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,3,3,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,3,4,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,3,5,80,2018-06-20,2018-09-07,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,3,6,80,2018-06-20,2018-09-07,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,4,3,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,4,4,80,2018-06-20,2018-09-07,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,4,5,80,2018-06-20,2018-09-07,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2018,4,6,80,2018-06-20,2018-09-07,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,2,3,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,2,4,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,2,5,110,2019-05-27,2019-09-13,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,2,6,110,2019-05-27,2019-09-13,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,3,3,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,3,4,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,3,5,110,2019-05-27,2019-09-13,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,3,6,110,2019-05-27,2019-09-13,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,4,3,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,4,4,110,2019-05-27,2019-09-13,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,4,5,110,2019-05-27,2019-09-13,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2019,4,6,110,2019-05-27,2019-09-13,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,2,3,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,2,4,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,2,5,103,2020-05-26,2020-09-05,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,2,6,103,2020-05-26,2020-09-05,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,3,3,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,3,4,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,3,5,103,2020-05-26,2020-09-05,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,3,6,103,2020-05-26,2020-09-05,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,4,3,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,4,4,103,2020-05-26,2020-09-05,0,,NC,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,4,5,103,2020-05-26,2020-09-05,0,,HV + CC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting
+2020,4,6,103,2020-05-26,2020-09-05,0,,RC + CR,source_daily_profile_storage_0_862mm_not_PAW,not_established_measurements_begin_after_planting

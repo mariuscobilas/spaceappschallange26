@@ -1,0 +1,14 @@
+﻿ATTRIBUTE,DESCRIPTION,UNITS,NOTE
+EXPYEAR,Experimental year,,"1 = Late summer 2008, Late fall 2008, Spring 2009; 2 = Late summer 2009, Late fall 2009, Spring 2010; 3 = Late summer 2010, Late fall 2010, Spring 2011"
+TIME,Sampling time,,"PREPLANT, LATEFALL, SPRING"
+CCTRT,Cover crop treatment,,"1 = No cover crop (check/control); 2 = Purple top turnip; 3 = Proso millet; 4 = Spring triticale; 5 = Soybean; 6 = Vine pea; 7 = Winter canola; 8 = Sunflower; 9 = Upper benchmark (2-8 mixed); 10 = drop- purple top turnip; 11 = drop- proso millet; 12 = drop- spring triticale; 13 = drop- soybean; 14 = drop- vine pea; 15 = drop- winter canola; 16 = drop- sunflower; 17 = drop- proso millet and spring triticale; 18 = drop- soybean and vine pea; 19 = drop- winter canola and sunflower; 20 = No cover crop (drill is run across plot for residue incorporation, no seed)"
+CCGROUP,Cover crop group,,CONTROL = Control; MIXTURE = Cover crop mixture; MONO = Cover crop monoculture
+REP,Replication,,"1, 2, 3, 4"
+SWC1,"Soil water content, 0-30 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC2,"Soil water content, 30-60 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC3,"Soil water content, 60-90 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC4,"Soil water content, 90-120 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC5,"Soil water content, 120-150 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC6,"Soil water content, 150-180 cm",cm H2O/30 cm increment,Missing data = -9999
+SWC7,"Soil water content, 180-210 cm",cm H2O/30 cm increment,Missing data = -9999
+TOTAL,"Soil water content, 0-210 cm",cm H20/210 cm increment,Missing data = -9999

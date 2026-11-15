@@ -1,5 +1,15 @@
 # ML work area
 
+**Research transfer:** [publication and model selection](../../../../docs/ML_PUBLICATION.md). `research_yield_model.py` loads numeric Colorado water+weather Ridge weights from `data/model-bundles/colorado-water-weather-ridge-v1`. This research refit is separate from original cross-season scores and Clovis serving. [Mandan weather verification](../../../../docs/MANDAN_WEATHER_VERIFICATION.md) confirms NASA coverage and exact wheat seasons; soil sampling days remain unresolved.
+
+**Current research entry point:** [ML research plan](../../../../docs/ML_RESEARCH_PLAN.md) and [matched cover/fallow evaluation](../../../../docs/COVER_FALLOW_EVALUATION.md). The objective is cover planting versus fallow while protecting following-crop water/yield, with current HTTP payloads retained. `prepare_water_yield.py` prepares the Colorado/NASA cohort; `evaluate_water_yield.py` evaluates absolute yield; `evaluate_cover_fallow.py` evaluates matched differences. Phases 1–3 experiments are complete, with decision validity unresolved. Address paired-data/context and initial-water gaps before Phase 4. No model was promoted. Earlier Clovis notes below do not supersede this plan.
+
+`compare_water_yield_models.py` adds the fixed [Random Forest/Gradient Boosting comparison](../../../../docs/WATER_YIELD_MODEL_COMPARISON.md) without modifying the original experiment. Ridge leads the absolute-yield primary comparison; the subsequent matched evaluation shows that this does not establish correct planting choices.
+
+`evaluate_cover_fallow_context.py` runs the completed [context/biomass follow-up](../../../../docs/COVER_FALLOW_CONTEXT_EVALUATION.md). Added context and biomass did not improve the decision result; preserve the failure and prioritize compatible independent field evidence before Phase 4.
+
+`prepare_mandan.py` prepares the separate, [design-supported Mandan spring-wheat cohort](../../../../docs/MANDAN_LINKAGE.md). `evaluate_mandan.py` runs the completed [19 fixed component configurations](../../../../docs/MANDAN_EVALUATION.md): absolute yield improves over a weak mean baseline, but matched decisions and initial-to-spring Ridge fail stronger references. Investigate weather/timing/location definitions next; sampling phases, crops and depths differ from Colorado, nitrate linkage remains unverified and no model is promoted.
+
 Put the Python model and inference code used by the FastAPI backend here. Keep HTTP request handling in `app/main.py`; API endpoints can import functions from this package when the model interface is defined.
 
 Task 6 and serving are now implemented in `app/decision.py`, `app/service.py`, `app/api.py`, and `app/contracts.py`; see [the frontend handoff](../../../../docs/API_HANDOFF.md). `runtime.py` bridges the frozen standalone model modules into the package without changing their source hashes. Serving uses the existing Task 5 model and preserves its experimental status; later split-evaluation artifacts are not promoted. The historical task notes below describe their original stages.

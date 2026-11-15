@@ -1,6 +1,10 @@
 # Space Apps Challenge 2026
 
+**ML research package:** [model selection, weights and reproduction](docs/ML_PUBLICATION.md). The portable Colorado water+weather Ridge is for retrospective yield research; cover/fallow decision validity remains unsupported. [Mandan weather verification](docs/MANDAN_WEATHER_VERIFICATION.md) confirms regional NASA coverage while retaining unresolved soil sampling dates.
+
 Meridian (original project name: Field Shift) is a NASA Earth observation workspace for field exploration, cover-crop planning and transparent manual economics. It uses Next.js, FastAPI and Turborepo. The client baseline and first numeric environmental context are implemented locally; validated agronomic analysis remains pending.
+
+**Current ML continuation:** read the [research plan](docs/ML_RESEARCH_PLAN.md) and [cover-versus-fallow evaluation](docs/COVER_FALLOW_EVALUATION.md). Colorado field records and NASA POWER weather support some yield-difference magnitude prediction, but the tested models miss most observed cover benefits. Farmer-use validity remains unresolved; paired-data/context and initial-water gaps need attention next. Older Clovis and termination-first notes below retain their historical scope.
 
 **Task 6 and provisional planting advice are ready for frontend integration.** [Start with the API handoff](docs/API_HANDOFF.md): FastAPI endpoints, editable financial/risk assumptions, [OpenAPI](docs/openapi.json), checked [JSON payloads](examples/api/analyze.request.json), and a [typed frontend client](apps/web/lib/field-shift-api.ts). Shared fixtures cover plant, do not plant, review, and insufficient evidence. The saved example endpoint supports web development without local model artifacts. Advice remains unvalidated; compatible model bundles can be replaced without changing frontend payloads.
 

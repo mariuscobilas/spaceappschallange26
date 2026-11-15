@@ -1,0 +1,43 @@
+{
+  "counts": {
+    "controls": 20,
+    "main": 88,
+    "nitrate_common": 86,
+    "paired": 68,
+    "seasons": 5,
+    "source": 198
+  },
+  "farmer_ready": false,
+  "models_fitted": false,
+  "output_sha256": {
+    "exclusions.csv": "ee8bba3df69822a929c7a60e5ec621c870146f389b8d15a118432ac627211539",
+    "feature_schema.json": "b09f0d2ca141394101759d38ed2461c98acff0af2aac63f7cffb0c4eafbded7a",
+    "fold_memberships.csv": "f45c60f6c3a0e66c36a74154855d892bf6301ff8e339e5a1d6c4b77d86ce0f5e",
+    "observations.csv": "eceaebc88c3d95e0c6cd29e4256181c6b27c605a323382259012aa68be627f60",
+    "paired_observations.csv": "a5421d4dc3444ccfbf4914a679494c99cd72fb2c7370dfcfabde7b4177edd0b1",
+    "season_weather.csv": "c58a9ffb121e52b064c178d602b2a10faffbb8eb914253619fc6bbc945110ad7"
+  },
+  "preparation_code_sha256": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+  "protocol_sha256": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+  "python": "3.14.4",
+  "season_counts": {
+    "wheat_2017": 8,
+    "wheat_2018": 27,
+    "wheat_2019": 11,
+    "wheat_2020": 30,
+    "wheat_2021": 12
+  },
+  "source_sha256": {
+    "data/analysis/water_yield_research_v1/eash_matched_water_yield_pairs.csv": "0deccea8d0702135032d49edc10fce8da33378076279ce1d8129b0a25e3e2bfb",
+    "data/analysis/water_yield_research_v1/eash_plot_cycles.csv": "b08447797a0fa376208d8a0075f9c68ffd3a041e0f2804416945c18a181b68cb",
+    "data/analysis/water_yield_research_v1/inventory.json": "4d79e73f9857163064f9477881e3c3bb67edaff40edc75f31488ec1022abc9ea",
+    "data/dryad_eash_2025/Cover_Crop_Trials_Data.xlsx": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.json": "cde7b2e1b37adca1df2465d33ba0601a15b4d5b96fb9f7e2bc219eb1eec7e8b6",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.source.json": "d60c67e9c2755dcefafe743bc6cb13fc05791cfa8e8fe2730526d93de497d3db",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.json": "10f94761b472009068d6542fe269fbdeaf8e30c2926e50713824d0ac225c07aa",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.source.json": "9ec1863219caaa11b0d74fd572c7602784dbde8178f0d41381198036a17c0f9e",
+    "data/raw/water_yield_calendar_v1/eash_calendar_evidence.json": "86b7b9b6d6d7ff97d689622a57ed1cf49d55908dec7963f95a087dc19619e8bd"
+  },
+  "version": "water-yield-v1",
+  "weather_daily_dates": 2192
+}

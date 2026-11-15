@@ -1,12 +1,12 @@
 # Meridian — future delivery plan
 
-Updated 14 November 2026 after the client completion pass. This is a dependency-based plan; dates and team assignments have not been confirmed. No Linear issues were modified. AI model, training and inference work remain deferred under the current user instruction.
+Frontend delivery plan recorded 14 November 2026 after the client completion pass. Dates and team assignments have not been confirmed. No Linear issues were modified. ML was deferred during that frontend pass; the user subsequently reopened ML research. For its current problem definition, completed source audit, next experiment and continuation instructions, use [ML_RESEARCH_PLAN.md](ML_RESEARCH_PLAN.md).
 
 ## Current position
 
 The local client supports Explore, Field Planner, Economics and Ask Meridian; exact points and drawn fields; NASA imagery; source-backed point conditions; saved plans and drafts; manual economics; U.S./metric units; JSON backup/import; two-plan calendar comparison; and prepared evidence export.
 
-The core agronomic question remains: **I already have a cover crop. When should I terminate it before my next cash crop?** Today users choose timing and receive a calculated calendar date. No validated service chooses a date, predicts yield/water effects, generates answers or colors Atlas cells by return/risk.
+The frontend checkpoint used a termination-first question: **I already have a cover crop. When should I terminate it before my next cash crop?** The user has since clarified the ML decision as **whether to plant a proposed cover crop versus leaving the interval fallow before a following cash crop**, while protecting water and yield. The current interface still lets users choose timing and receive a calculated calendar date. No validated service chooses a date, predicts yield/water effects, generates answers or colors Atlas cells by return/risk. This document retains the frontend delivery dependencies; the linked ML plan governs the research sequence.
 
 Latest client verification: 58 checks passed across the complete regression run and focused reruns, plus TypeScript and production build. Earlier environmental delivery recorded 20 backend tests and 13 shared fixtures passing. Those were not rerun in the client pass or this documentation update.
 

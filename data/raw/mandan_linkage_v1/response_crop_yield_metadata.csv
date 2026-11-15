@@ -1,0 +1,14 @@
+"Data from:  Late-Seeded Cover Crops in a Semiarid Environment: Overyielding, Dominance, and Subsequent Crop Yield (https://doi.org/
+10.1017/S174217052100020X)",,,,
+,,,,
+ATTRIBUTE,DESCRIPTION,UNITS,NOTE,NOTE2
+YEAR,Experimental year,YYYY,Trial began in 2008 and continued through  2010 for estimating the cover crop data.  The last year to collect response crop data was 2011.,
+REP,Replication,Integer,"1, 2, 3, 4",
+PLOT,Plot number,Integer,100 | … | 499,
+TRT,Cover Crop treatment by number,Integer,1 | … | 20,
+TRT_DESC,"Treatments consisted of seven different cover crop monocultures; each in a different functional group and a series of cover crop mixtures, which included the same seven cover crops but had selected functional groups removed from the mixture",Character,"1 = No cover crop (check/control) [C]; 2 = Purple top turnip [PTT]; 3 = Proso millet [PM]; 4 = Spring triticale [ST]; 5 = Soybean [S]; 6 = Vine pea [VP]; 7 = Winter canola [WC]; 8 = Sunflower [SF]; 9 = Upper benchmark (2-8 mixed) [HD]; 10 = drop- purple top turnip [DPTT]; 11 = drop- proso millet [DPM]; 12 = drop- spring triticale [DST]; 13 = drop- soybean [DS]; 14 = drop- vine pea [DVP]; 15 = drop- winter canola [DWC]; 16 = drop- sunflower [DSF]; 17 = drop- proso millet and spring triticale [DPMST]; 18 = drop- soybean and vine pea [DSVP]; 19 = drop- winter canola and sunflower [DWCSF]; 20 = No cover crop (drill is run across plot for residue incorporation, no seed) [CD]",
+CROP,Response crop planted after the cover crop to test treatments,Character,Corn | DryPea | Soybean | SpringWheat,
+TESTWT,"Test  weight of response crop grain. Grain test weight is a measurement of grain quality that is calculated by dividing the average weight of a cereal by the volume of a bushel which is 1.244 cubic feet, and is expressed in pounds per bushel. It is a volumetric measurement that accounts for the varying densities of grain that can be caused by weather or production practices.",Integer; pound per bushel,"Grain test weight, often used as a grain quality indicator, is a volumetric measurement based on an official bushel being 1.244 cubic feet. For U.S. No. 1 yellow corn, the official minimum test weight is 56 pounds per bushel. If test weights drop below this standard, the grain price is discounted. Usually, test weights are determined by weighing grain samples filled in a standard dry one-quart measure",Why Grain Test Weights Matter | CropWatch | University of Nebraska–Lincoln (unl.edu)
+MOISTURE, Percent of moisture in response crop grain,Integer; percent,"Grain tested using a benchtop, DICKEY-john® grain moisture analyzer",
+TKW,Thousand kernal weight of response crop grain,Integer; grams,This is a measure of grain quality. This reflects the weight of 1000 kernals of grain. The greater the weight the larger the individual kernals,
+YIELD,Yield in kg ha-1 of response crop grain,Integer; kg ha-1,Grain yield of response crop following the cover crop treatments,

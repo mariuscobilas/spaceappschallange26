@@ -1,0 +1,9 @@
+﻿ATTRIBUTE,DESCRIPTION,UNITS,NOTE
+EXPYEAR,Experimental year,,"1 = Fall 2008, Spring 2009; 2 = Fall 2009, Spring 2010; 3 = Fall 2010, Spring 2011"
+SEASON,Season,,"FALL, SPRING"
+REP,Replication,,"1, 2, 3, 4"
+PLOT,Plot number,,
+CCTRT,Cover crop treatment,,"1 = No cover crop (check/control); 2 = Purple top turnip; 3 = Proso millet; 4 = Spring triticale; 5 = Soybean; 6 = Vine pea; 7 = Winter canola; 8 = Sunflower; 9 = Upper benchmark (2-8 mixed); 10 = drop- purple top turnip; 11 = drop- proso millet; 12 = drop- spring triticale; 13 = drop- soybean; 14 = drop- vine pea; 15 = drop- winter canola; 16 = drop- sunflower; 17 = drop- proso millet and spring triticale; 18 = drop- soybean and vine pea; 19 = drop- winter canola and sunflower; 20 = No cover crop (drill is run across plot for residue incorporation, no seed)"
+CCGROUP,Cover crop group,,CONTROL = Control; MIXTURE = Cover crop mixture; MONO = Cover crop monoculture
+DEPTH,Soil depth,cm,"0TO15, 15TO30, 30TO60, 60TO90"
+NO3N,Extractable soil nitrate-nitrogen,kg NO3-N/ha,Missing data = -9999

@@ -1,0 +1,237 @@
+YEAR,REP,TRT,PLOT,CROP,TRT_DESC,yield_kg_ha,candidate_spring_profile_water_mm,candidate_before_cover_profile_water_mm,parent_plot_identity_verified,wheat_planting_date,wheat_harvest_date,water_definition,spring_sample_date_status
+2009,1,1,123,SpringWheat,No cover crop (check/control),3794,769.0999999999999,647.9000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,1,278,SpringWheat,No cover crop (check/control),3616,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,1,346,SpringWheat,No cover crop (check/control),5195,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,1,461,SpringWheat,No cover crop (check/control),4337,788.5,664.2,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,1,104,SpringWheat,No cover crop (check/control),3360,795.4000000000001,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,1,256,SpringWheat,No cover crop (check/control),3425,856.4,755.6999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,1,325,SpringWheat,No cover crop (check/control),3084,759.0999999999999,685.6,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,1,450,SpringWheat,No cover crop (check/control),2866,789.4,732.3000000000001,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,1,154,SpringWheat,No cover crop (check/control),780,819.8000000000001,673.4000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,1,229,SpringWheat,No cover crop (check/control),784,756.7,672.3000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,1,356,SpringWheat,No cover crop (check/control),536,1138.1,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,1,483,SpringWheat,No cover crop (check/control),681,816.8000000000001,697.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,2,129,SpringWheat,Purple top turnip,4238,702.4,587.7,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,2,294,SpringWheat,Purple top turnip,3721,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,2,353,SpringWheat,Purple top turnip,3718,694.3000000000001,606.0,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,2,460,SpringWheat,Purple top turnip,4793,787.0999999999999,681.3,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,2,109,SpringWheat,Purple top turnip,2939,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,2,245,SpringWheat,Purple top turnip,3016,795.4000000000001,680.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,2,333,SpringWheat,Purple top turnip,3364,787.0999999999999,771.0,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,2,453,SpringWheat,Purple top turnip,3049,785.0,744.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,2,150,SpringWheat,Purple top turnip,1041,899.0999999999999,722.2,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,2,220,SpringWheat,Purple top turnip,695,810.6999999999999,739.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,2,349,SpringWheat,Purple top turnip,643,1118.8,698.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,2,495,SpringWheat,Purple top turnip,657,1298.8,689.5999999999999,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,3,120,SpringWheat,Proso millet,3962,740.6999999999999,628.3,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,3,282,SpringWheat,Proso millet,4159,775.1,612.4,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,3,357,SpringWheat,Proso millet,4065,730.6,597.9,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,3,464,SpringWheat,Proso millet,4964,768.1999999999999,631.3000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,3,100,SpringWheat,Proso millet,3342,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,3,243,SpringWheat,Proso millet,2523,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,3,337,SpringWheat,Proso millet,3496,823.1999999999999,739.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,3,459,SpringWheat,Proso millet,3064,816.1,791.3,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,3,156,SpringWheat,Proso millet,629,817.8,700.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,3,238,SpringWheat,Proso millet,532,810.6999999999999,711.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,3,346,SpringWheat,Proso millet,700,906.2,706.9,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,3,492,SpringWheat,Proso millet,1001,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,4,133,SpringWheat,Spring triticale,4409,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,4,288,SpringWheat,Spring triticale,3611,734.3000000000001,653.6,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,4,350,SpringWheat,Spring triticale,2863,761.3,692.0999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,4,466,SpringWheat,Spring triticale,3964,735.1999999999999,614.6,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,4,108,SpringWheat,Spring triticale,3378,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,4,259,SpringWheat,Spring triticale,3671,852.3000000000001,754.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,4,334,SpringWheat,Spring triticale,3696,1024.3000000000002,755.6999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,4,457,SpringWheat,Spring triticale,3701,809.3000000000001,756.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,4,146,SpringWheat,Spring triticale,1005,1088.3,705.9000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,4,223,SpringWheat,Spring triticale,744,992.6999999999999,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,4,347,SpringWheat,Spring triticale,712,981.5,696.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,4,484,SpringWheat,Spring triticale,715,965.1999999999999,682.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,5,125,SpringWheat,Soybean,3684,754.8000000000001,642.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,5,283,SpringWheat,Soybean,3524,750.8,621.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,5,347,SpringWheat,Soybean,4537,674.7,529.6,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,5,475,SpringWheat,Soybean,3777,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,5,106,SpringWheat,Soybean,3156,725.1999999999999,600.1,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,5,257,SpringWheat,Soybean,3260,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,5,336,SpringWheat,Soybean,3689,911.5,740.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,5,448,SpringWheat,Soybean,2983,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,5,158,SpringWheat,Soybean,509,808.6,714.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,5,226,SpringWheat,Soybean,896,767.9000000000001,690.6,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,5,359,SpringWheat,Soybean,608,994.7,745.6,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,5,485,SpringWheat,Soybean,900,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,6,128,SpringWheat,Vine pea,3888,703.1999999999999,554.0999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,6,284,SpringWheat,Vine pea,4425,780.9000000000001,662.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,6,341,SpringWheat,Vine pea,3417,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,6,459,SpringWheat,Vine pea,5171,788.1,694.7,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,6,110,SpringWheat,Vine pea,2831,787.3000000000001,659.0999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,6,246,SpringWheat,Vine pea,3302,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,6,330,SpringWheat,Vine pea,3840,765.8,741.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,6,446,SpringWheat,Vine pea,3051,776.1,783.1999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,6,149,SpringWheat,Vine pea,965,812.6999999999999,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,6,239,SpringWheat,Vine pea,638,901.2,720.1,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,6,355,SpringWheat,Vine pea,675,957.0999999999999,702.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,6,493,SpringWheat,Vine pea,793,1227.6000000000001,684.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,7,132,SpringWheat,Winter canola,4652,728.3,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,7,289,SpringWheat,Winter canola,3894,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,7,349,SpringWheat,Winter canola,3683,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,7,462,SpringWheat,Winter canola,5235,791.0,693.6,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,7,117,SpringWheat,Winter canola,3119,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,7,251,SpringWheat,Winter canola,3448,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,7,332,SpringWheat,Winter canola,3581,886.1,774.0,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,7,441,SpringWheat,Winter canola,2502,807.0999999999999,714.0,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,7,141,SpringWheat,Winter canola,1029,1153.4,801.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,7,230,SpringWheat,Winter canola,897,977.4,701.8000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,7,351,SpringWheat,Winter canola,607,937.8,716.1,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,7,491,SpringWheat,Winter canola,752,819.8000000000001,680.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,8,135,SpringWheat,Sunflower,4523,706.8000000000001,575.8,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,8,280,SpringWheat,Sunflower,3804,800.8,678.1999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,8,345,SpringWheat,Sunflower,4834,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,8,474,SpringWheat,Sunflower,3491,712.6,588.0,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,8,118,SpringWheat,Sunflower,3423,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,8,249,SpringWheat,Sunflower,3383,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,8,339,SpringWheat,Sunflower,3696,765.9000000000001,722.2,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,8,452,SpringWheat,Sunflower,3087,797.9000000000001,755.6999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,8,143,SpringWheat,Sunflower,1178,872.6999999999999,705.9000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,8,231,SpringWheat,Sunflower,729,825.9000000000001,651.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,8,340,SpringWheat,Sunflower,696,784.2,701.8000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,8,486,SpringWheat,Sunflower,909,882.9000000000001,711.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,9,136,SpringWheat,upper benchmark (2-8 all mixed),3430,728.5,588.2,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,9,281,SpringWheat,upper benchmark (2-8 all mixed),3118,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,9,351,SpringWheat,upper benchmark (2-8 all mixed),3611,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,9,471,SpringWheat,upper benchmark (2-8 all mixed),3416,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,9,101,SpringWheat,upper benchmark (2-8 all mixed),3018,793.4000000000001,602.2,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,9,244,SpringWheat,upper benchmark (2-8 all mixed),2992,818.8,705.9000000000001,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,9,331,SpringWheat,upper benchmark (2-8 all mixed),3327,817.6999999999999,742.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,9,456,SpringWheat,upper benchmark (2-8 all mixed),3193,793.7,748.6,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,9,153,SpringWheat,upper benchmark (2-8 all mixed),1001,812.6999999999999,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,9,224,SpringWheat,upper benchmark (2-8 all mixed),782,1311.0,694.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,9,350,SpringWheat,upper benchmark (2-8 all mixed),606,1075.1000000000001,723.1999999999999,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,9,487,SpringWheat,upper benchmark (2-8 all mixed),819,1195.1000000000001,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,10,127,SpringWheat,drop- purple top turnip,4486,712.0,586.8,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,10,295,SpringWheat,drop- purple top turnip,4592,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,10,340,SpringWheat,drop- purple top turnip,4525,783.1,697.9000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,10,465,SpringWheat,drop- purple top turnip,4825,754.5,646.5999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,10,113,SpringWheat,drop- purple top turnip,3075,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,10,240,SpringWheat,drop- purple top turnip,2780,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,10,326,SpringWheat,drop- purple top turnip,3168,753.5,677.4,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,10,447,SpringWheat,drop- purple top turnip,2806,756.0,662.2,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,10,142,SpringWheat,drop- purple top turnip,1259,815.6999999999999,635.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,10,221,SpringWheat,drop- purple top turnip,671,1309.0,710.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,10,344,SpringWheat,drop- purple top turnip,713,946.9,617.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,10,480,SpringWheat,drop- purple top turnip,738,1117.8,736.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,11,122,SpringWheat,drop- proso millet,4382,759.5999999999999,656.4,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,11,293,SpringWheat,drop- proso millet,3777,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,11,339,SpringWheat,drop- proso millet,4772,790.6,677.9000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,11,472,SpringWheat,drop- proso millet,3421,681.4,566.1999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,11,102,SpringWheat,drop- proso millet,3400,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,11,242,SpringWheat,drop- proso millet,3302,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,11,327,SpringWheat,drop- proso millet,3137,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,11,458,SpringWheat,drop- proso millet,3363,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,11,157,SpringWheat,drop- proso millet,686,812.6999999999999,754.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,11,232,SpringWheat,drop- proso millet,803,751.7,648.9,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,11,342,SpringWheat,drop- proso millet,891,1128.0,640.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,11,497,SpringWheat,drop- proso millet,804,861.5,712.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,12,134,SpringWheat,drop- spring triticale,4028,633.9,489.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,12,292,SpringWheat,drop- spring triticale,3946,770.1999999999999,657.0999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,12,344,SpringWheat,drop- spring triticale,4766,788.4000000000001,685.3,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,12,469,SpringWheat,drop- spring triticale,3813,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,12,111,SpringWheat,drop- spring triticale,2970,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,12,254,SpringWheat,drop- spring triticale,3837,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,12,320,SpringWheat,drop- spring triticale,2913,873.0,635.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,12,451,SpringWheat,drop- spring triticale,3062,772.5,739.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,12,145,SpringWheat,drop- spring triticale,954,993.7,702.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,12,236,SpringWheat,drop- spring triticale,677,1237.8,703.9,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,12,358,SpringWheat,drop- spring triticale,601,1126.9,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,12,498,SpringWheat,drop- spring triticale,943,1106.6,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,13,121,SpringWheat,drop- soybean,3823,756.1,682.0,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,13,285,SpringWheat,drop- soybean,3892,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,13,348,SpringWheat,drop- soybean,3996,756.0,639.0999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,13,470,SpringWheat,drop- soybean,4271,738.5,617.2,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,13,114,SpringWheat,drop- soybean,3195,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,13,247,SpringWheat,drop- soybean,3119,791.3,650.0,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,13,322,SpringWheat,drop- soybean,2902,751.9,693.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,13,443,SpringWheat,drop- soybean,2712,777.0999999999999,696.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,13,148,SpringWheat,drop- soybean,903,846.2,697.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,13,234,SpringWheat,drop- soybean,749,783.1999999999999,686.5999999999999,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,13,353,SpringWheat,drop- soybean,683,1220.5,695.6999999999999,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,13,496,SpringWheat,drop- soybean,620,1015.1,726.2,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,14,130,SpringWheat,drop- vine pea,3862,730.8,617.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,14,277,SpringWheat,drop- vine pea,4706,786.9,653.4000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,14,352,SpringWheat,drop- vine pea,3573,738.6,617.8,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,14,458,SpringWheat,drop- vine pea,3811,796.1,670.8,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,14,103,SpringWheat,drop- vine pea,3105,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,14,241,SpringWheat,drop- vine pea,2453,782.2,659.0999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,14,321,SpringWheat,drop- vine pea,2822,715.9000000000001,625.6,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,14,455,SpringWheat,drop- vine pea,3399,790.1,746.5999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,14,140,SpringWheat,drop- vine pea,1090,910.3,848.3,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,14,222,SpringWheat,drop- vine pea,820,,728.3,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,14,345,SpringWheat,drop- vine pea,843,1086.3,703.9,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,14,488,SpringWheat,drop- vine pea,902,810.6999999999999,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,15,137,SpringWheat,drop- winter canola,4167,710.3,570.0,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,15,287,SpringWheat,drop- winter canola,3877,722.4,607.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,15,356,SpringWheat,drop- winter canola,3932,716.3,590.2,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,15,473,SpringWheat,drop- winter canola,3377,719.8000000000001,595.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,15,119,SpringWheat,drop- winter canola,3344,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,15,253,SpringWheat,drop- winter canola,3799,965.1999999999999,811.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,15,338,SpringWheat,drop- winter canola,3849,804.3000000000001,750.6,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,15,444,SpringWheat,drop- winter canola,3002,763.7,705.9000000000001,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,15,159,SpringWheat,drop- winter canola,548,954.0,723.1999999999999,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,15,233,SpringWheat,drop- winter canola,815,1097.3999999999999,702.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,15,352,SpringWheat,drop- winter canola,677,932.6999999999999,677.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,15,494,SpringWheat,drop- winter canola,751,792.3000000000001,694.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,16,126,SpringWheat,drop- sunflower,4654,732.4,603.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,16,286,SpringWheat,drop- sunflower,3756,765.6,654.0999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,16,342,SpringWheat,drop- sunflower,1800,775.1999999999999,648.6,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,16,476,SpringWheat,drop- sunflower,3992,666.5999999999999,529.0,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,16,112,SpringWheat,drop- sunflower,3130,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,16,248,SpringWheat,drop- sunflower,3488,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,16,323,SpringWheat,drop- sunflower,2533,753.6,695.6999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,16,440,SpringWheat,drop- sunflower,2618,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,16,147,SpringWheat,drop- sunflower,795,1019.0999999999999,707.9000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,16,225,SpringWheat,drop- sunflower,837,785.1999999999999,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,16,348,SpringWheat,drop- sunflower,776,1229.7,710.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,16,481,SpringWheat,drop- sunflower,775,953.0,684.5,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,17,138,SpringWheat,drop- proso millet and spring triticale,3585,752.6,638.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,17,291,SpringWheat,drop- proso millet and spring triticale,3575,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,17,343,SpringWheat,drop- proso millet and spring triticale,3698,803.1999999999999,688.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,17,463,SpringWheat,drop- proso millet and spring triticale,5038,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,17,115,SpringWheat,drop- proso millet and spring triticale,3142,662.2,526.9,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,17,250,SpringWheat,drop- proso millet and spring triticale,3572,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,17,329,SpringWheat,drop- proso millet and spring triticale,3085,818.6,725.1999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,17,454,SpringWheat,drop- proso millet and spring triticale,3455,799.5,746.5999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,17,152,SpringWheat,drop- proso millet and spring triticale,1149,782.2,674.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,17,237,SpringWheat,drop- proso millet and spring triticale,744,1150.3,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,17,341,SpringWheat,drop- proso millet and spring triticale,821,1151.3,647.9000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,17,490,SpringWheat,drop- proso millet and spring triticale,877,982.5,638.8000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,18,124,SpringWheat,drop- soybean and vine pea,4179,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,18,290,SpringWheat,drop- soybean and vine pea,3681,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,18,354,SpringWheat,drop- soybean and vine pea,3647,710.5,607.1,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,18,468,SpringWheat,drop- soybean and vine pea,3923,769.5,671.5,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,18,107,SpringWheat,drop- soybean and vine pea,3094,750.6,631.7,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,18,258,SpringWheat,drop- soybean and vine pea,3614,784.2,660.1,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,18,335,SpringWheat,drop- soybean and vine pea,3654,896.5999999999999,741.5,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,18,442,SpringWheat,drop- soybean and vine pea,2628,815.8,697.8,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,18,144,SpringWheat,drop- soybean and vine pea,919,895.1,653.0,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,18,235,SpringWheat,drop- soybean and vine pea,822,830.0,734.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,18,343,SpringWheat,drop- soybean and vine pea,872,915.4000000000001,637.8,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,18,489,SpringWheat,drop- soybean and vine pea,860,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,1,19,131,SpringWheat,drop- winter canola and sunflower,4519,,,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,2,19,279,SpringWheat,drop- winter canola and sunflower,5333,782.9000000000001,665.4000000000001,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,3,19,355,SpringWheat,drop- winter canola and sunflower,3541,675.1999999999999,578.9,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2009,4,19,467,SpringWheat,drop- winter canola and sunflower,3997,752.6,640.6999999999999,False,2009-05-20,2009-09-04,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,19,116,SpringWheat,drop- winter canola and sunflower,3372,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,19,252,SpringWheat,drop- winter canola and sunflower,3533,879.8000000000001,639.8,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,19,328,SpringWheat,drop- winter canola and sunflower,3444,786.2,717.0999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,19,445,SpringWheat,drop- winter canola and sunflower,2752,790.1,719.0999999999999,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,19,151,SpringWheat,drop- winter canola and sunflower,890,1221.5,687.6,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,19,227,SpringWheat,drop- winter canola and sunflower,831,756.7,618.4000000000001,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,19,354,SpringWheat,drop- winter canola and sunflower,552,946.9,691.7,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,19,499,SpringWheat,drop- winter canola and sunflower,781,794.4,676.4,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,1,20,105,SpringWheat,no cover crop (control/drill),3207,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,2,20,255,SpringWheat,no cover crop (control/drill),3256,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,3,20,324,SpringWheat,no cover crop (control/drill),3048,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2010,4,20,449,SpringWheat,no cover crop (control/drill),2614,,,False,2010-05-21,2010-09-14,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,1,20,155,SpringWheat,no cover crop (control/drill),775,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,2,20,228,SpringWheat,no cover crop (control/drill),833,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,3,20,357,SpringWheat,no cover crop (control/drill),741,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement
+2011,4,20,482,SpringWheat,no cover crop (control/drill),827,,,False,2011-05-17,2011-08-26,total_storage_0_210cm_not_verified_plant_available_water,phase_only_not_exact_wheat_sowing_measurement

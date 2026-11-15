@@ -1,0 +1,36 @@
+{
+  "version": "cover-fallow-v1",
+  "purpose": "Retrospective matched following-wheat yield difference: cover yield minus fallow yield, in t/ha",
+  "exposure": "Source pairs and earlier absolute-yield results have been inspected. This protocol is fixed before direct contrast fitting and contrast scoring; the five historical seasons are development evidence, not an untouched final test.",
+  "seed": 42,
+  "target": "delta_yield_t_ha",
+  "numerical_zero_tolerance": 1e-12,
+  "pinned_sha256": {
+    "apps/api/app/ml/prepare_water_yield.py": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1",
+    "apps/api/app/ml/compare_water_yield_models.py": "00f9cb21bacf14d160290ed9c84207bc07b2b7b7e4be2a1d160026ec05b1414f",
+    "apps/api/app/ml/water_yield_protocol_v1.json": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+    "apps/api/app/ml/water_yield_model_comparison_v1.json": "a7901ef8725cdb3b71a58cb60877484653076e1533f558d2b5c0f34cc9f013e3",
+    "data/processed/water_yield_v1/manifest.json": "9d2908f4a5833eceb82bd9384c41764491325778c75951ce993a1c9ae0864e12",
+    "data/processed/water_yield_v1/paired_observations.csv": "a5421d4dc3444ccfbf4914a679494c99cd72fb2c7370dfcfabde7b4177edd0b1",
+    "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/oof_predictions.csv": "f7c1ad77892d7a1a5018b85e50b119aa8426d7d463a61f01b3bd8a35100e8b73"
+  },
+  "absolute_predictions_path": "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/oof_predictions.csv",
+  "expected_counts": {"pairs": 68, "unique_controls": 20},
+  "expected_season_pairs": {"wheat_2017": 6, "wheat_2018": 21, "wheat_2019": 8, "wheat_2020": 24, "wheat_2021": 9},
+  "feature_families": {
+    "delta_water": ["delta_profile_water_mm"],
+    "delta_water_weather": ["delta_profile_water_mm", "season_rain_mm", "season_mean_tmax_c", "season_mean_tmin_c", "season_mean_rh_pct", "season_mean_wind_m_s", "season_mean_solar_mj_m2_day"]
+  },
+  "models": ["ridge", "random_forest", "gradient_boosting"],
+  "parameters": "Exactly reuse Ridge settings from water_yield_protocol_v1.json and fixed tree settings from water_yield_model_comparison_v1.json; no search or post-result changes",
+  "baselines": ["zero_difference", "training_mean_difference"],
+  "indirect_models": "Subtract main-cohort water_weather out-of-fold cover and fallow predictions for each of the three existing algorithms. No all-data predictions or fits on the held-out season.",
+  "training": "Equal weight per eligible pair; StandardScaler fitted on training pairs only for Ridge. Trees unscaled. No IDs, arm yields, nitrate, revenue, target transforms, clipping or imputation as predictors. No synthetic targets.",
+  "validation": "Reuse the five frozen paired leave-one-harvest-season-out folds. Cover and shared control must have the same role; no control may span training and evaluation within a fold. Repeated plots across seasons remain possible. This is historical cross-season validation, not future-only or new-site testing.",
+  "primary": "Direct Ridge delta_water_weather: unweighted mean of five season MAEs in t/ha, versus zero and training-mean difference baselines",
+  "secondary": ["All declared direct and indirect models", "Pooled MAE/RMSE/bias and descriptive R2", "Season/management errors", "MAE averaged equally across unique controls within each season, then equally across seasons", "Benefit recall, harm recall, balanced accuracy and raw decision accuracy", "Predicted-cover fraction and benefit/harm confusion counts", "Observed matched-pair yield opportunity loss relative to choosing the higher observed yield"],
+  "decision_diagnostic": "Predict cover only when predicted delta exceeds 1e-12; otherwise fallow. Numerical zero is not an agronomic or financial threshold. Exclude observed numerical ties from directional accuracy; either choice has zero yield opportunity loss on a tie. Always-fallow policy is therefore represented by the zero baseline.",
+  "uncertainty": "68 pairs share 20 controls and recur across five seasons; do not bootstrap pairs as independent observations or report an independent-fold confidence interval. Report per-season spread and class counts. No calibrated uncertainty or causal individual-treatment-effect claim.",
+  "limits": "Observed cash-crop-sowing water differences and realized weather are future intermediates relative to the earlier cover-planting decision. Yield excludes cover costs and other services; profit is not evaluated. No promotion, API/payload changes or early water-model implementation."
+}

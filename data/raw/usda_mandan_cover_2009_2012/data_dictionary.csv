@@ -1,0 +1,54 @@
+"Data from:  Late-Seeded Cover Crops in a Semiarid Environment: Overyielding, Dominance, and Subsequent Crop Yield (https://doi.org/
+10.1017/S174217052100020X)",,,,,,,
+,,,,,,,
+Spreadsheet tab,Element or value display name,Description,Data type,Character length,Acceptable values,Required?,Accepts null value?
+CCS_BiomassData,DATUM,ID number for associated data row,integer,3,1|…|236,n,n
+CCS_BiomassData,YEAR,Year,integer,4,2008 | 2009 | 2010,y,n
+CCS_BiomassData,REP,Replication,integer,1,1 | 2 | 3 | 4,y,n
+CCS_BiomassData,PLOT,Plot number,integer,3,100 | … | 499,y,n
+CCS_BiomassData,TRT,Cover crop treatment,integer,2,1 | … | 20,y,n
+CCS_BiomassData,TRT_DESC,"Treatments consisted of seven different cover crop monocultures; each in a different functional group and a series of cover crop mixtures, which included the same seven cover crops but had selected functional groups removed from the mixture",varchar,40,No cover crop (check/control) | Purple top turnip | Proso millet | Spring triticale | Soybean | Vine pea | Winter canola | Sunflower | upper benchmark (2-8 all mixed) | drop- purple top turnip | drop- proso millet | drop- spring triticale | drop- soybean | drop- vine pea | drop- winter canola | drop- sunflower | drop- proso millet and spring triticale | drop- soybean and vine pea | drop- winter canola and sunflower,y,n
+CCS_BiomassData,PPTroot, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha.  Below ground biomass  was not collected in 2009.,integer,4,,n,y
+CCS_BiomassData,PPTtop, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,PM, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,ST, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,S, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,VP, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,WC, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,SF, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_BiomassData,PLNTNO,Counted stems of target species within the quadrats,integer,4,,n,y
+CCS_BiomassData,WEED, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,4,,n,y
+CCS_ResponseCropYield,YEAR,Year,integer,4, 2009 | 2010 | 2011,y,n
+CCS_ResponseCropYield,PLOT,Plot number,integer,1,1 | 2 | 3 | 4,y,n
+CCS_ResponseCropYield,TRT,Cover crop treatment,integer,3,100 | … | 499,y,n
+CCS_ResponseCropYield,REP,Replication,integer,2,1 | … | 20,y,n
+CCS_ResponseCropYield,TRT_DESC,"Treatments consisted of seven different cover crop monocultures; each in a different functional group and a series of cover crop mixtures, which included the same seven cover crops but had selected functional groups removed from the mixture",varchar,40,No cover crop (check/control) | Purple top turnip | Proso millet | Spring triticale | Soybean | Vine pea | Winter canola | Sunflower | upper benchmark (2-8 all mixed) | drop- purple top turnip | drop- proso millet | drop- spring triticale | drop- soybean | drop- vine pea | drop- winter canola | drop- sunflower | drop- proso millet and spring triticale | drop- soybean and vine pea | drop- winter canola and sunflower |no cover crop (control/drill),y,n
+CCS_ResponseCropYield,CROP,Response crop planted after the cover crop,varchar,7,Corn | DryPea | Soybean | SpWht,y,n
+CCS_ResponseCropYield,TESTWT,Test  weight of response crop grain expressed in pounds per bushel,integer,3,,n,y
+CCS_ResponseCropYield,MOISTURE, Percent of moisture in response crop grain,integer,3,,n,y
+CCS_ResponseCropYield,TKW,Thousand kernal weight of response crop grain,integer,4,,n,y
+CCS_ResponseCropYield,YIELD,Yield in kg ha-1 of response crop grain,integer,16,,n,y
+CCS_TRT,TREATMENT,Treatments designated by number,integer,2,1 | … | 20,y,n
+CCS_TRT,CROPCODE,The character abbreviation used to represent the treatments,varchar,5,C | PTT | PM | ST | S | VP | WC | SF | ALL | DPTT | DPM | DST | DS | DVP | DWC | DSF | DPMST | DSVP | DWCSF | CD,y,n
+CCS_TRT,TREATMENTDESCIPTION,"Treatments consisted of seven different cover crop monocultures; each in a different functional group and a series of cover crop mixtures, which included the same seven cover crops but had selected functional groups removed from the mixture",varchar,53,Non-Seeded Control | Purple Top Turnip Monoculture | Proso Millet Monoculture | Spring Triticale Monoculture | Soybean Monoculture | Vine Pea Monoculture | Winter Canola  Monoculture | Sunflower Monoculture | All species Mixture | ALL species minus PTT | ALL species minus PM | ALL species minus ST | ALL species minus S | ALL species minus VP | ALL species minus WC | ALL species minus SF | ALL species minus PMST | ALL species minus SVP | ALL species minus WCSF | Non-Seeded Control disturbed using the No-Till Drill,y,n
+CCS_TRT,MONOCULTURE_MIXTURE,Description of the treatments indicating whether it was a monoculture by functional group or which functional group was dropped from the treatment. Several of the treatments were done only in 2009 and 2010.,varchar,42,All years | Root-Crop | Warm-season Grass | Cool-Season Grass | Warm-season Legume | Cool-Season Legume | Cool-Season Forb | Warm-season Forb | Mixture of All Monocultures | Removal of Root-Crop from Mixture | Removal of Warm-Season Grass from Mixture | Removal of Cool-Season Grass from Mixture | Removal of Warm-Season Legume from Mixture | Removal of Cool-Season Legume from Mixture | Removal of Cool-Season Forb from Mixture | Removal of Warm-Season Forb from Mixture | Removal of Grasses from Mixture | Removal of Legumes from Mixture | Removal of Forbs from Mixture | In 2009 and 2010 only,y,n
+CCS_Management,DATUM,ID number for associated data row,integer,2,1|…|54,y,n
+CCS_Management,YEAR,Year in the experimental trial; YYYY,integer,4,,y,n
+CCS_Management,RESPONSECROP,Response crop planted after the cover crop,varchar,7,Corn | DryPea | Soybean | SpringWheat,y,n
+CCS_Management,DATE,Calendar date expressed as MM/DD/YYYY,datetime,10,,y,n
+CCS_Management,ACTIVITY,Classification of the field activity during the growing season,varchar,15,Planting | Fertilizing | Spraying | Harvest | BiomassSampling,y,n
+CCS_Management,NOTE,"Additional information that may be relevant.  This could include crop cultivar, herbicide, or herbicide appliation rate",varchar,188,,n,y
+CCS_SeedingRate,CROPCODE,Description of the treatments with the crop(s) dropped and the short-hand code used to represent it.,varchar,27,Control [C] | Purple top turnip [PTT] | Proso millet [PM] | Spring triticale [ST] | Soybean [S] | Vine pea [VP] | Winter canola [WC] | Sunflower [SF] |All cover crops [ALL] | ALL minus PTT  [DPTT] | ALL minus PM [DPM] | ALL minus ST [DST] | ALL minus S [DS] | ALL minus VP [DVP] | ALL minus WC [DWC] | ALL minus SF [DSF] | ALL minus PM and ST [DPMST] | ALL minus S and VP [DSVP] | ALL minus WC and SF [DWCSF],y,n
+CCS_SeedingRate,PURPLETOPTURNIP,The seeding rate  for the cover crop purple top turnip within the treatment expressed as viable seeds ha-1,integer,9,,n,y
+CCS_SeedingRate,PROSOMILLET,The seeding rate  forthe cover crop proso millet within the treatment expressed as viable seeds ha-1,integer,9,,n,y
+CCS_SeedingRate,SPRINGTRITICALE,The seeding rate  for the cover crop spring triticale within the treatment expressed as viable seeds ha-1,integer,9,,n,y
+CCS_SeedingRate,SOYBEAN,The seeding rate  for the cover crop soybean within the treatment expressed as viable seeds ha-1,integer,7,,n,y
+CCS_SeedingRate,VINEPEA,The seeding rate  for the cover crop vine pea within the treatment expressed as viable seeds ha-1,integer,7,,n,y
+CCS_SeedingRate,WINTERCANOLA,The seeding rate  for winter canola within the treatment expressed as viable seeds ha-1,integer,9,,n,y
+CCS_SeedingRate,SUNFLOWER,The seeding rate  for the cover crop sunflower within the treatment expressed as viable seeds ha-1,integer,6,,n,y

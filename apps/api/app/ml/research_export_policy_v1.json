@@ -1,0 +1,24 @@
+{
+  "version": "colorado-research-export-v1",
+  "authorization": "User requested verification and GitHub upload of the best model on 15 November 2026",
+  "scope": "New research-only all-data refit for transfer, separate from frozen evaluation protocols; no serving promotion or API changes",
+  "cohort": "Colorado main: 88 observations, five winter-wheat harvest seasons",
+  "feature_family": "water_weather",
+  "estimator": "ridge",
+  "selection_metric": "macro_season_mae",
+  "selection_rule": "Use the lowest recorded mean held-out-season MAE among fixed Ridge, Random Forest and Gradient Boosting on the identical main water_weather cohort. No new search or score computed on the export refit.",
+  "comparison_path": "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/results.json",
+  "evaluation_path": "data/experiments/water_yield_v1/runs/20261115T103053452786Z/results.json",
+  "pinned_sha256": {
+    "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/results.json": "08c7c763e173f74dbf30f70e0a96175b4d8c5e23f5120f7f387f0b476cdc6e8d",
+    "data/experiments/water_yield_v1/runs/20261115T103053452786Z/results.json": "85e96b32189f13def3fed326b309ea545fef60321c4092cfbbfaea6f1637b20f",
+    "data/processed/water_yield_v1/observations.csv": "eceaebc88c3d95e0c6cd29e4256181c6b27c605a323382259012aa68be627f60",
+    "data/processed/water_yield_v1/feature_schema.json": "b09f0d2ca141394101759d38ed2461c98acff0af2aac63f7cffb0c4eafbded7a",
+    "apps/api/app/ml/water_yield_protocol_v1.json": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+    "apps/api/app/ml/prepare_water_yield.py": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1"
+  },
+  "output": "data/model-bundles/colorado-water-weather-ridge-v1",
+  "status": "retrospective_research_only",
+  "farmer_ready": false
+}

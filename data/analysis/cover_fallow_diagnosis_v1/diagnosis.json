@@ -1,0 +1,862 @@
+{
+  "benefit_details": [
+    {
+      "control_id": "T1-104/C2",
+      "cover_biomass_kg_ha": 1448.42,
+      "cover_mix": "CCM3",
+      "delta_nitrate_mg_kg": -6.991976438,
+      "delta_profile_water_mm": -10.608161499999994,
+      "delta_yield_t_ha": 0.12308088099999992,
+      "nitrate_complete": true,
+      "pair_id": "T1-101/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-104/C2",
+      "cover_biomass_kg_ha": 1499.88,
+      "cover_mix": "CCM1",
+      "delta_nitrate_mg_kg": -2.3146476400000005,
+      "delta_profile_water_mm": 16.74054700000002,
+      "delta_yield_t_ha": 0.21986623800000005,
+      "nitrate_complete": true,
+      "pair_id": "T1-102/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-204/C2",
+      "cover_biomass_kg_ha": 1736.47,
+      "cover_mix": "CCM1",
+      "delta_nitrate_mg_kg": -7.63596225,
+      "delta_profile_water_mm": -0.7744688000000082,
+      "delta_yield_t_ha": 0.12663241999999997,
+      "nitrate_complete": true,
+      "pair_id": "T1-201/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-204/C2",
+      "cover_biomass_kg_ha": 1798.36,
+      "cover_mix": "CCM3",
+      "delta_nitrate_mg_kg": -6.717130319999999,
+      "delta_profile_water_mm": -9.978988999999999,
+      "delta_yield_t_ha": 0.1645250159999998,
+      "nitrate_complete": true,
+      "pair_id": "T1-203/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-304/C2",
+      "cover_biomass_kg_ha": 1006.09,
+      "cover_mix": "CCM1",
+      "delta_nitrate_mg_kg": -7.407800959999999,
+      "delta_profile_water_mm": -22.501729600000004,
+      "delta_yield_t_ha": 0.3259095060000001,
+      "nitrate_complete": true,
+      "pair_id": "T1-301/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-304/C2",
+      "cover_biomass_kg_ha": 1403.34,
+      "cover_mix": "CCM3",
+      "delta_nitrate_mg_kg": -6.179238080000001,
+      "delta_profile_water_mm": -16.636519300000003,
+      "delta_yield_t_ha": 0.19593229199999995,
+      "nitrate_complete": true,
+      "pair_id": "T1-302/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T1-304/C2",
+      "cover_biomass_kg_ha": 2005.34,
+      "cover_mix": "CCM2",
+      "delta_nitrate_mg_kg": -12.20517663,
+      "delta_profile_water_mm": -23.923660999999996,
+      "delta_yield_t_ha": 0.2232974000000001,
+      "nitrate_complete": true,
+      "pair_id": "T1-303/C2",
+      "planting_window": "Fall",
+      "season_id": "wheat_2019",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T2-102/C1",
+      "cover_biomass_kg_ha": 547.456,
+      "cover_mix": "CCM8",
+      "delta_nitrate_mg_kg": -5.0600007399999996,
+      "delta_profile_water_mm": -3.4499999999999886,
+      "delta_yield_t_ha": 0.20581249999999995,
+      "nitrate_complete": true,
+      "pair_id": "T2-107/C1",
+      "planting_window": "Spring",
+      "season_id": "wheat_2018",
+      "tillage": "CT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T2-206/C1",
+      "cover_biomass_kg_ha": 1287.328,
+      "cover_mix": "CCM8",
+      "delta_nitrate_mg_kg": -4.620000667999999,
+      "delta_profile_water_mm": -25.349999999999994,
+      "delta_yield_t_ha": 0.15334711999999984,
+      "nitrate_complete": true,
+      "pair_id": "T2-201/C1",
+      "planting_window": "Spring",
+      "season_id": "wheat_2018",
+      "tillage": "NT",
+      "water_complete": true
+    },
+    {
+      "control_id": "T2-214/C1",
+      "cover_biomass_kg_ha": 716.352,
+      "cover_mix": "CCM6",
+      "delta_nitrate_mg_kg": -3.0250004399999995,
+      "delta_profile_water_mm": -16.799999999999983,
+      "delta_yield_t_ha": 0.269359295,
+      "nitrate_complete": true,
+      "pair_id": "T2-210/C1",
+      "planting_window": "Spring",
+      "season_id": "wheat_2018",
+      "tillage": "CT",
+      "water_complete": true
+    }
+  ],
+  "benefit_size_t_ha": {
+    "max": 0.3259095060000001,
+    "median": 0.20087239599999995,
+    "min": 0.12308088099999992
+  },
+  "biomass_coverage": {
+    "joint_pairs": 68,
+    "source_metadata": [
+      [
+        "Cycle 1 of Cover Crop - Winter Wheat rotation (Years 2015-2017 for T1; 2016-2018 for T2)",
+        "C1.CCBiomass",
+        "kg ha-1",
+        "Dry weight of cover crop biomass produced in Cycle 1 "
+      ],
+      [
+        "Cycle 2 of Cover Crop - Winter Wheat rotation (Years 2017-2019 for T1; 2018-2020 for T2)",
+        "C2.CCBiomass",
+        "kg ha-1",
+        "Dry weight of cover crop biomass produced in Cycle 2"
+      ],
+      [
+        "Cycle 3 of Cover Crop - Winter Wheat rotation (Years 2019-2021 for T1; 2020-2021 for T2)",
+        "C3.CCBiomass",
+        "kg ha-1",
+        "Dry weight of cover crop biomass produced in Cycle 3"
+      ]
+    ],
+    "yield_only_pairs": 123
+  },
+  "input_sha256": {
+    "apps/api/app/ml/cover_fallow_protocol_v1.json": "73ab64bc76b9c4fe6043791bf614935c1b97d54e4df1ab1df8f9281f292015dc",
+    "data/analysis/water_yield_research_v1/eash_plot_cycles.csv": "b08447797a0fa376208d8a0075f9c68ffd3a041e0f2804416945c18a181b68cb",
+    "data/dryad_eash_2025/Cover_Crop_Trials_Data.xlsx": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb",
+    "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z/oof_predictions.csv": "1d459939dc7a3a76e601c1f399cd1d3141e584dc32e08bbbe458bfa4db43bebb",
+    "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z/results.json": "a5950e5b757bb6ffd2e1c91eee041e51d5f7e30b3bcd86818cbf4ea0e71963d3",
+    "data/processed/water_yield_v1/paired_observations.csv": "a5421d4dc3444ccfbf4914a679494c99cd72fb2c7370dfcfabde7b4177edd0b1",
+    "data/raw/water_yield_calendar_v1/eash_calendar_evidence.json": "86b7b9b6d6d7ff97d689622a57ed1cf49d55908dec7963f95a087dc19619e8bd",
+    "scripts/diagnose_cover_fallow.py": "6bdca7624cf5e1d95720febfe43f23501ecf3f65a6188fc1c94c00114cd32bd5"
+  },
+  "joint_water_yield": {
+    "benefits": 10,
+    "harms": 58,
+    "pairs": 68,
+    "unique_controls": 20
+  },
+  "limitations": [
+    "All labels are exposed development data",
+    "Expanded yield-only cohort is not extra seasons or measured-water evidence",
+    "Missing water/nitrate is retained, not imputed",
+    "Pooled OOF score scales can differ by fold; within-season ranking is also reported",
+    "No probabilities or decision threshold were calibrated",
+    "Measured biomass and sowing nitrate/water are future intermediates at cover planting"
+  ],
+  "nitrate_complete_joint": {
+    "benefits": 10,
+    "harms": 56,
+    "pairs": 66,
+    "unique_controls": 20
+  },
+  "purpose": "Post-experiment diagnosis and next-experiment design; no model fit or threshold tuning",
+  "ranking": {
+    "direct/delta_water/gradient_boosting": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.38333333333333336,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8611111111111112
+        },
+        "wheat_2019": {
+          "average_precision": 0.9285714285714286,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.7142857142857143
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.3216346153846154,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.7922413793103449
+      }
+    },
+    "direct/delta_water/random_forest": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.38333333333333336,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8611111111111112
+        },
+        "wheat_2019": {
+          "average_precision": 0.823639455782313,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.2857142857142857
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.29353134992654045,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.7698275862068965
+      }
+    },
+    "direct/delta_water/ridge": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.4666666666666667,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8703703703703705
+        },
+        "wheat_2019": {
+          "average_precision": 0.8736394557823131,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.2857142857142857
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.3536080174198615,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.8155172413793104
+      }
+    },
+    "direct/delta_water_weather/gradient_boosting": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.55,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8055555555555556
+        },
+        "wheat_2019": {
+          "average_precision": 0.9285714285714286,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.7142857142857143
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.18056097560975612,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.5474137931034483
+      }
+    },
+    "direct/delta_water_weather/random_forest": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.38333333333333336,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8611111111111112
+        },
+        "wheat_2019": {
+          "average_precision": 0.8261904761904761,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.2857142857142857
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.19465977373354032,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.5922413793103448
+      }
+    },
+    "direct/delta_water_weather/ridge": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.4666666666666667,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8703703703703705
+        },
+        "wheat_2019": {
+          "average_precision": 0.8736394557823131,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.2857142857142857
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.12506559355133953,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.39137931034482754
+      }
+    },
+    "subtract_absolute/gradient_boosting": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.42857142857142855,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.888888888888889
+        },
+        "wheat_2019": {
+          "average_precision": 0.8928571428571428,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.5714285714285714
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.55,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.9224137931034483
+      }
+    },
+    "subtract_absolute/random_forest": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.3333333333333333,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8333333333333334
+        },
+        "wheat_2019": {
+          "average_precision": 0.8260204081632654,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.14285714285714285
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.45444656891096513,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.8603448275862069
+      }
+    },
+    "subtract_absolute/ridge": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.4666666666666667,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.8703703703703705
+        },
+        "wheat_2019": {
+          "average_precision": 0.8736394557823131,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.2857142857142857
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.5515032679738562,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.9051724137931034
+      }
+    },
+    "training_mean_difference": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.14285714285714285,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.5
+        },
+        "wheat_2019": {
+          "average_precision": 0.875,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.5
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.12794117647058822,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.18189655172413793
+      }
+    },
+    "zero_difference": {
+      "per_season": {
+        "wheat_2017": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 6,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2018": {
+          "average_precision": 0.14285714285714285,
+          "benefits": 3,
+          "n": 21,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.14285714285714285,
+          "roc_auc": 0.5
+        },
+        "wheat_2019": {
+          "average_precision": 0.875,
+          "benefits": 7,
+          "n": 8,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.875,
+          "roc_auc": 0.5
+        },
+        "wheat_2020": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 24,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        },
+        "wheat_2021": {
+          "average_precision": null,
+          "benefits": 0,
+          "n": 9,
+          "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+          "prevalence": 0.0,
+          "roc_auc": null
+        }
+      },
+      "pooled_descriptive": {
+        "average_precision": 0.14705882352941177,
+        "benefits": 10,
+        "n": 68,
+        "note": "Raw regression score ranking, not calibrated probabilities; no threshold selected",
+        "prevalence": 0.14705882352941177,
+        "roc_auc": 0.5
+      }
+    }
+  },
+  "training_benefit_support": {
+    "wheat_2017": {
+      "training_benefit_controls": 6,
+      "training_benefit_seasons": [
+        "wheat_2018",
+        "wheat_2019"
+      ],
+      "training_benefits": 10
+    },
+    "wheat_2018": {
+      "training_benefit_controls": 3,
+      "training_benefit_seasons": [
+        "wheat_2019"
+      ],
+      "training_benefits": 7
+    },
+    "wheat_2019": {
+      "training_benefit_controls": 3,
+      "training_benefit_seasons": [
+        "wheat_2018"
+      ],
+      "training_benefits": 3
+    },
+    "wheat_2020": {
+      "training_benefit_controls": 6,
+      "training_benefit_seasons": [
+        "wheat_2018",
+        "wheat_2019"
+      ],
+      "training_benefits": 10
+    },
+    "wheat_2021": {
+      "training_benefit_controls": 6,
+      "training_benefit_seasons": [
+        "wheat_2018",
+        "wheat_2019"
+      ],
+      "training_benefits": 10
+    }
+  },
+  "water_missing_yield_pairs": {
+    "benefits": 2,
+    "harms": 53,
+    "pairs": 55,
+    "unique_controls": 14
+  },
+  "yield_only": {
+    "benefits": 12,
+    "harms": 111,
+    "pairs": 123,
+    "unique_controls": 21
+  },
+  "yield_only_per_season": {
+    "wheat_2017": {
+      "benefits": 0,
+      "harms": 9,
+      "pairs": 9,
+      "unique_controls": 3
+    },
+    "wheat_2018": {
+      "benefits": 4,
+      "harms": 44,
+      "pairs": 48,
+      "unique_controls": 6
+    },
+    "wheat_2019": {
+      "benefits": 8,
+      "harms": 1,
+      "pairs": 9,
+      "unique_controls": 3
+    },
+    "wheat_2020": {
+      "benefits": 0,
+      "harms": 48,
+      "pairs": 48,
+      "unique_controls": 6
+    },
+    "wheat_2021": {
+      "benefits": 0,
+      "harms": 9,
+      "pairs": 9,
+      "unique_controls": 3
+    }
+  }
+}

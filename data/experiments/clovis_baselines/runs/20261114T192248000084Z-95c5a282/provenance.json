@@ -1,0 +1,28 @@
+{
+  "git_commit": "4259593123aa1602a227a0a6f27badfb29f51285",
+  "git_worktree_status": "M .gitignore\n M README.md\n M apps/api/API.md\n M apps/api/app/main.py\n M apps/api/app/ml/README.md\n M apps/api/requirements.txt\n?? 5min.csv\n?? 5minSoilT.csv\n?? 5minWeather.csv\n?? AUSTRALIA_BENCHMARK_FINDINGS.md\n?? \"Agronomy Journal - 2023 - Miller - Long\\342\\200\\220term cover crop effects on biomass  soil nitrate  soil water  and wheat.pdf\"\n?? BENCHMARK_FINDINGS.md\n?? COVER_CROP_DECISION_RESEARCH.md\n?? \"Crop Science - 2020 - Holman - Cover\\342\\200\\220crop water use and productivity in the high plains wheat fallow crop rotation.pdf\"\n?? DATA_AUDIT.md\n?? KANSAS_FEATURES_AND_READING.md\n?? KANSAS_FIRST.md\n?? NEW_MEXICO_FILE_DICTIONARY.md\n?? \"W14_Irrigation+fied activity7312025 (1).xlsx\"\n?? WATER_DEBT_FACTOR_REVIEW.md\n?? apps/api/app/ml/australia_benchmark.py\n?? apps/api/app/ml/benchmark.py\n?? apps/api/app/ml/clovis_baselines.py\n?? apps/api/app/ml/clovis_protocol.json\n?? apps/api/app/ml/prepare_clovis.py\n?? apps/api/app/ml/prepare_clovis_weather.py\n?? apps/api/tests/\n?? daily.csv\n?? data/\n?? docs/\n?? inspect_workbook.ps1",
+  "input_sha256": {
+    "apps/api/app/ml/clovis_baselines.py": "a2db416135bdedabbe4ca1cf3ce8b55d2ac22a746dd36740beca75a5765f1447",
+    "apps/api/app/ml/clovis_protocol.json": "39c656c85f36d5bb2debe4aae624621703bb60611ad2656c87994885e456b57c",
+    "data/processed/clovis_v1/split_manifest.json": "051edd66afe8f90ecf009fdddd2027327cdcc7cbb80087ec80775ee4da8f8354",
+    "data/processed/clovis_weather_v1/feature_schema.json": "b0505940694fa3fca0621e7e96fcd69b8e6f961902567a410c4fcac0d31a668f",
+    "data/processed/clovis_weather_v1/train_features.csv": "31aeb9904bdaa9a18a7d6364da9c809fd89c8c5f5310ed1d896f1e8aece6cd65",
+    "data/processed/clovis_weather_v1/validation_features.csv": "d262e4097ef15fae1c0feb29975b5ba0a8bc574df57f1a07c14a64cd7c7cfda0",
+    "data/processed/clovis_weather_v1/weather_manifest.json": "70ca6942291d78c5814773520f25546dc35325f99260967d6c6fa6f33fb5e010"
+  },
+  "packages": {
+    "SQLAlchemy": "2.1.8",
+    "alembic": "1.20.1",
+    "mlflow-skinny": "3.18.0",
+    "openpyxl": "3.1.5"
+  },
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "regression_gate": "At least 5% lower validation MAE than the selected baseline, plus segment and stability checks.",
+  "seed": 42,
+  "selection": "Lowest validation next-day moisture MAE; ties prefer persistence.",
+  "test_data_access": "Final-test feature file never opened, hashed, or evaluated by this experiment.",
+  "train_dates": 262,
+  "train_rows": 1048,
+  "validation_dates": 13,
+  "validation_rows": 52
+}

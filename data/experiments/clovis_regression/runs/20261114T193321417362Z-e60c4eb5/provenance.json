@@ -1,0 +1,88 @@
+{
+  "baseline_run_directory": "C:\\Users\\Lenovo\\NasaHackathon\\data\\experiments\\clovis_baselines\\runs\\20261114T192248000084Z-95c5a282",
+  "git_commit": "4259593123aa1602a227a0a6f27badfb29f51285",
+  "git_worktree_status": "M .gitignore\n M README.md\n M apps/api/API.md\n M apps/api/app/main.py\n M apps/api/app/ml/README.md\n M apps/api/requirements.txt\n?? 5min.csv\n?? 5minSoilT.csv\n?? 5minWeather.csv\n?? AUSTRALIA_BENCHMARK_FINDINGS.md\n?? \"Agronomy Journal - 2023 - Miller - Long\\342\\200\\220term cover crop effects on biomass  soil nitrate  soil water  and wheat.pdf\"\n?? BENCHMARK_FINDINGS.md\n?? COVER_CROP_DECISION_RESEARCH.md\n?? \"Crop Science - 2020 - Holman - Cover\\342\\200\\220crop water use and productivity in the high plains wheat fallow crop rotation.pdf\"\n?? DATA_AUDIT.md\n?? KANSAS_FEATURES_AND_READING.md\n?? KANSAS_FIRST.md\n?? NEW_MEXICO_FILE_DICTIONARY.md\n?? \"W14_Irrigation+fied activity7312025 (1).xlsx\"\n?? WATER_DEBT_FACTOR_REVIEW.md\n?? apps/api/app/ml/australia_benchmark.py\n?? apps/api/app/ml/benchmark.py\n?? apps/api/app/ml/clovis_baselines.py\n?? apps/api/app/ml/clovis_protocol.json\n?? apps/api/app/ml/clovis_regression.py\n?? apps/api/app/ml/clovis_regression_protocol.json\n?? apps/api/app/ml/evaluate_clovis_regression.py\n?? apps/api/app/ml/prepare_clovis.py\n?? apps/api/app/ml/prepare_clovis_weather.py\n?? apps/api/tests/\n?? daily.csv\n?? data/\n?? docs/\n?? inspect_workbook.ps1",
+  "input_sha256": {
+    "apps/api/app/ml/clovis_protocol.json": "39c656c85f36d5bb2debe4aae624621703bb60611ad2656c87994885e456b57c",
+    "apps/api/app/ml/clovis_regression.py": "d702bbb248050aa94ec5e208df6f7326ab65e91797c67e9639fdf486a3e1e5b8",
+    "apps/api/app/ml/clovis_regression_protocol.json": "5ad0eaf9e0b117607a54afc03262041c6973a55bf0a812720420c8e2431d4c0d",
+    "apps/api/app/ml/evaluate_clovis_regression.py": "b0d0878c004d419c341d3e535dcc3d1fb62a9897f9856afcc5db730b179bebf4",
+    "data/experiments/clovis_baselines/runs/20261114T192248000084Z-95c5a282/provenance.json": "6635535bce52fe903b6686e5379123d2370aa42a288aa3ffaf44a4496dcb9180",
+    "data/experiments/clovis_baselines/runs/20261114T192248000084Z-95c5a282/results.json": "b701262ea91a4a751bee09e2fbad652fc2c2d94a17e317454b9a443418ea9b81",
+    "data/processed/clovis_v1/split_manifest.json": "051edd66afe8f90ecf009fdddd2027327cdcc7cbb80087ec80775ee4da8f8354",
+    "data/processed/clovis_weather_v1/feature_schema.json": "b0505940694fa3fca0621e7e96fcd69b8e6f961902567a410c4fcac0d31a668f",
+    "data/processed/clovis_weather_v1/train_features.csv": "31aeb9904bdaa9a18a7d6364da9c809fd89c8c5f5310ed1d896f1e8aece6cd65",
+    "data/processed/clovis_weather_v1/validation_features.csv": "d262e4097ef15fae1c0feb29975b5ba0a8bc574df57f1a07c14a64cd7c7cfda0",
+    "data/processed/clovis_weather_v1/weather_manifest.json": "70ca6942291d78c5814773520f25546dc35325f99260967d6c6fa6f33fb5e010"
+  },
+  "packages": {
+    "SQLAlchemy": "2.1.8",
+    "alembic": "1.20.1",
+    "joblib": "1.6.0",
+    "mlflow-skinny": "3.18.0",
+    "numpy": "2.5.4",
+    "openpyxl": "3.1.5",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1"
+  },
+  "protocol": {
+    "adoption": {
+      "maximum_clipped_seven_day_steps": 0,
+      "maximum_clipped_validation_predictions": 0,
+      "maximum_seven_day_endpoint_mae_ratio": 1.0,
+      "maximum_treatment_mae_ratio": 1.25,
+      "minimum_relative_mae_improvement": 0.05
+    },
+    "candidate_order": [
+      "ridge_alpha_1",
+      "ridge_alpha_10",
+      "forest_depth_4",
+      "forest_depth_8"
+    ],
+    "candidates": {
+      "forest_depth_4": {
+        "family": "random_forest",
+        "max_depth": 4,
+        "max_features": 1.0,
+        "min_samples_leaf": 10,
+        "n_estimators": 150
+      },
+      "forest_depth_8": {
+        "family": "random_forest",
+        "max_depth": 8,
+        "max_features": 1.0,
+        "min_samples_leaf": 10,
+        "n_estimators": 150
+      },
+      "ridge_alpha_1": {
+        "alpha": 1.0,
+        "family": "ridge"
+      },
+      "ridge_alpha_10": {
+        "alpha": 10.0,
+        "family": "ridge"
+      }
+    },
+    "feature_policy": {
+      "categorical_encoding": "One-hot learned on train only; ignore unseen phases and report them.",
+      "not_applicable_age": -1.0,
+      "numeric_scaling": "StandardScaler fitted on train only.",
+      "physical_moisture_bounds": [
+        0.0,
+        1.0
+      ],
+      "season_encoding": "sin/cos of zero-based day of year divided by days in that year."
+    },
+    "final_test": "No final-test file access or evaluation in this task. No all-data refit.",
+    "seed": 42,
+    "selection": "Lowest validation moisture MAE among candidates passing every adoption check; fixed candidate order breaks ties.",
+    "target": "moisture_change_m3_m3",
+    "version": "clovis-regression-v1"
+  },
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "refit_on_all_data": false,
+  "seed": 42,
+  "test_data_access": "Final-test feature and pair files are never opened or hashed.",
+  "train_rows": 1048,
+  "validation_rows": 52
+}

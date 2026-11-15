@@ -1,0 +1,67 @@
+{
+  "version": "mandan-components-v1",
+  "purpose": "Separate Mandan spring-wheat component feasibility: observed spring water to yield, matched yield difference, and initial-to-spring water prediction",
+  "seed": 42,
+  "exposure": "Prepared eligibility, cohort counts and outcome signs were inspected before this protocol. Fixed component comparisons on three historical years; not a fresh final test or Colorado transfer validation.",
+  "pinned_sha256": {
+    "apps/api/app/ml/prepare_mandan.py": "cc69c282f7027fc3da4a7271260b2f70367cdda38d939ff0cec0f581677e8e69",
+    "data/raw/mandan_linkage_v1/linkage_evidence.json": "d61df61c569ab19b079f1d902f98e5da2d87f14f3b05ca5066ebceaa56413d44",
+    "data/processed/mandan_linkage_v1/inventory.json": "f24b12960a2cc21a4ac5b880b5f756ba5c5f24281b53eca9c0389b9202fef628",
+    "apps/api/app/ml/evaluate_cover_fallow.py": "4740ec4f794f1193ea9d141ab2b2919e06ebaf16cf4a1cad68ac889ce5839c5a",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1"
+  },
+  "years": [2009, 2010, 2011],
+  "estimator": {"alpha": 1.0, "fit_intercept": true, "solver": "svd", "positive": false},
+  "preprocessing": "Ridge Pipeline: training-only StandardScaler on numeric features and full OneHotEncoder(drop=None,handle_unknown=ignore,sparse_output=False) for treatment_description when declared. Treatment represents a known management strategy, not a plot ID. Equal weight per observation/pair. No imputation, target transforms or clipping.",
+  "task_order": ["yield_absolute", "yield_difference", "spring_water", "spring_water_difference"],
+  "tasks": {
+    "yield_absolute": {
+      "cohort": "spring_water_yield", "expected_n": 176, "id": "observation_id", "target": "wheat_yield_t_ha", "unit": "t/ha", "paired": false,
+      "primary": "water versus mean",
+      "methods": {
+        "mean": {"kind": "mean"},
+        "water": {"kind": "ridge", "numeric": ["spring_storage_0_210cm_mm"], "categorical": []},
+        "water_treatment": {"kind": "ridge", "numeric": ["spring_storage_0_210cm_mm"], "categorical": ["treatment_description"]}
+      }
+    },
+    "yield_difference": {
+      "cohort": "water_yield_pairs", "expected_n": 142, "id": "pair_id", "target": "delta_yield_t_ha", "unit": "t/ha", "paired": true,
+      "primary": "direct_water versus zero and mean_difference",
+      "methods": {
+        "zero": {"kind": "zero"},
+        "mean_difference": {"kind": "mean"},
+        "direct_water": {"kind": "ridge", "numeric": ["delta_spring_storage_0_210cm_mm"], "categorical": []},
+        "direct_water_treatment": {"kind": "ridge", "numeric": ["delta_spring_storage_0_210cm_mm"], "categorical": ["treatment_description"]},
+        "subtract_water": {"kind": "subtract", "source_task": "yield_absolute", "source_method": "water"},
+        "subtract_water_treatment": {"kind": "subtract", "source_task": "yield_absolute", "source_method": "water_treatment"}
+      }
+    },
+    "spring_water": {
+      "cohort": "initial_spring_water_yield", "expected_n": 164, "id": "observation_id", "target": "spring_storage_0_210cm_mm", "unit": "mm", "paired": false,
+      "primary": "ridge_initial_treatment versus persistence and mean_change",
+      "methods": {
+        "persistence": {"kind": "persistence", "reference": "preplant_storage_0_210cm_mm"},
+        "mean_spring": {"kind": "mean"},
+        "mean_change": {"kind": "mean_change", "reference": "preplant_storage_0_210cm_mm"},
+        "ridge_initial": {"kind": "ridge", "numeric": ["preplant_storage_0_210cm_mm"], "categorical": []},
+        "ridge_initial_treatment": {"kind": "ridge", "numeric": ["preplant_storage_0_210cm_mm"], "categorical": ["treatment_description"]}
+      }
+    },
+    "spring_water_difference": {
+      "cohort": "initial_water_yield_pairs", "expected_n": 110, "id": "pair_id", "target": "delta_spring_storage_0_210cm_mm", "unit": "mm", "paired": true,
+      "primary": "subtract_ridge_initial_treatment versus zero, initial_difference and mean_change",
+      "methods": {
+        "zero": {"kind": "zero"},
+        "initial_difference": {"kind": "persistence", "reference": "delta_preplant_storage_0_210cm_mm"},
+        "mean_change": {"kind": "mean_change", "reference": "delta_preplant_storage_0_210cm_mm"},
+        "subtract_ridge_initial": {"kind": "subtract", "source_task": "spring_water", "source_method": "ridge_initial"},
+        "subtract_ridge_initial_treatment": {"kind": "subtract", "source_task": "spring_water", "source_method": "ridge_initial_treatment"}
+      }
+    }
+  },
+  "metrics": "Separate task units; primary error unweighted mean of three held-out-year MAEs. Also pooled MAE/RMSE/bias/descriptive R2, every year, treatment slices, and paired control-balanced MAE. Yield contrasts additionally retain benefit/harm confusion, balanced accuracy, observed pair opportunity loss and within-year average precision where both signs exist.",
+  "baselines": "All target means and mean changes learned only on training years, on each task's own common cohort. Zero contrast plus choose-fallow-on-tie and training-mean contrast are decision references; do not infer success from raw majority accuracy.",
+  "validation": "Reuse frozen leave-one-year-out memberships, with two whole years in training. A shared control stays in one role. Absolute source predictions used in subtraction must also be out of fold for that same year. Earlier and later years can both be in historical training.",
+  "decision_zero_tolerance": 1e-12,
+  "restrictions": ["No model, feature, seed or threshold search after results", "No training on Colorado or pooling spring/winter wheat", "No use of plot IDs, year, replication, biomass, latefall water, observed arm yields, unverified nitrate or harvest-quality fields as predictors", "No missing target imputation or profile-depth substitution", "No NASA weather joined to guessed field coordinates or sampling dates", "Measured spring water is a retrospective input for yield; initial water and treatment alone omit future weather for the phase-water model", "Spring is a phase with uncertain sampling day, not an exact sowing date or daily forecast", "Three years, reused controls and overlapping folds do not support independent-row confidence intervals", "No calibrated forecast probabilities, serving refit, promotion or payload changes"]
+}

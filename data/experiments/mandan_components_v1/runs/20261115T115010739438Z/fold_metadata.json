@@ -1,0 +1,1444 @@
+{
+  "spring_water/mean_change": {
+    "2009": {
+      "kind": "mean_change",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 189.26000000000002,
+      "training_n": 110
+    },
+    "2010": {
+      "kind": "mean_change",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 194.56982758620688,
+      "training_n": 116
+    },
+    "2011": {
+      "kind": "mean_change",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 106.67745098039217,
+      "training_n": 102
+    }
+  },
+  "spring_water/mean_spring": {
+    "2009": {
+      "kind": "mean",
+      "training_n": 110,
+      "training_target_mean": 891.4209090909092
+    },
+    "2010": {
+      "kind": "mean",
+      "training_n": 116,
+      "training_target_mean": 859.3887931034482
+    },
+    "2011": {
+      "kind": "mean",
+      "training_n": 102,
+      "training_target_mean": 772.4392156862747
+    }
+  },
+  "spring_water/persistence": {
+    "2009": {
+      "kind": "persistence",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 110
+    },
+    "2010": {
+      "kind": "persistence",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 116
+    },
+    "2011": {
+      "kind": "persistence",
+      "reference": "preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 102
+    }
+  },
+  "spring_water/ridge_initial": {
+    "2009": {
+      "categorical_features": [],
+      "coefficients": [
+        15.739493002631347
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 891.4209090909092,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        702.1609090909091
+      ],
+      "numeric_scale": [
+        47.11854893477735
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 116.3519213217211,
+      "training_n": 110,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm"
+      ]
+    },
+    "2010": {
+      "categorical_features": [],
+      "coefficients": [
+        88.67117685632289
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 859.3887931034482,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        664.8189655172414
+      ],
+      "numeric_scale": [
+        54.57938052268632
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 98.15107135399103,
+      "training_n": 116,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm"
+      ]
+    },
+    "2011": {
+      "categorical_features": [],
+      "coefficients": [
+        43.898431838623765
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 772.4392156862748,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        665.7617647058825
+      ],
+      "numeric_scale": [
+        65.38520556433032
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 24.25248673997994,
+      "training_n": 102,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm"
+      ]
+    }
+  },
+  "spring_water/ridge_initial_treatment": {
+    "2009": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        15.800484642755027,
+        -80.1313180350866,
+        -56.21445120077311,
+        25.036470397904655,
+        -41.69484828962736,
+        45.211007899043636,
+        -62.83527638663899,
+        4.447496030720037,
+        23.60080091050509,
+        -0.08054842609579937,
+        -10.933943857188556,
+        57.06719300020352,
+        -5.305312113992919,
+        -38.716029962917354,
+        62.82924458536575,
+        77.42276014558834,
+        -34.05910279412143,
+        1.0272502712263556,
+        -2.4686455676002157,
+        35.79725339348483
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 892.9554616118235,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        702.1609090909091
+      ],
+      "numeric_scale": [
+        47.11854893477735
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 107.29933818874429,
+      "training_n": 110,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2010": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        90.62274085922073,
+        -69.03860679647423,
+        -47.562990936945184,
+        19.34420371509023,
+        -49.75925110082217,
+        -0.48199224570858146,
+        -47.78235030352376,
+        19.036901759864406,
+        -13.456173509839545,
+        -32.21352101215387,
+        36.67876663713711,
+        54.8909824280065,
+        -9.152982763190332,
+        -26.437289902461433,
+        42.18888502977103,
+        37.14247752375355,
+        -47.17963113274211,
+        0.716545624322559,
+        6.172175786607543,
+        126.89385119930839
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 862.5641900807738,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        664.8189655172414
+      ],
+      "numeric_scale": [
+        54.57938052268632
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 90.17439886121699,
+      "training_n": 116,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2011": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        43.52817982495912,
+        -0.8129843228633926,
+        2.0429412428847766,
+        -19.299923374979116,
+        13.98144055429195,
+        18.026010005152237,
+        -12.166946685374361,
+        -14.434756256575564,
+        10.934677129790165,
+        -5.4319135225186495,
+        -4.038379263907418,
+        -10.880240749083951,
+        -7.7219416037906345,
+        11.65844526457666,
+        9.348572286330963,
+        -6.2524139438762205,
+        -2.652052579978804,
+        1.6777089714669169,
+        7.661376677358219,
+        8.360380171096214
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 772.5864908085977,
+      "kind": "ridge",
+      "numeric_features": [
+        "preplant_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        665.7617647058825
+      ],
+      "numeric_scale": [
+        65.38520556433032
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 24.513380593910252,
+      "training_n": 102,
+      "transformed_features": [
+        "preplant_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    }
+  },
+  "spring_water_difference/initial_difference": {
+    "2009": {
+      "kind": "persistence",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 82
+    },
+    "2010": {
+      "kind": "persistence",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 70
+    },
+    "2011": {
+      "kind": "persistence",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 0.0,
+      "training_n": 68
+    }
+  },
+  "spring_water_difference/mean_change": {
+    "2009": {
+      "kind": "mean_change",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 74.10487804878052,
+      "training_n": 82
+    },
+    "2010": {
+      "kind": "mean_change",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 74.86714285714288,
+      "training_n": 70
+    },
+    "2011": {
+      "kind": "mean_change",
+      "reference": "delta_preplant_storage_0_210cm_mm",
+      "training_mean_change": 8.977941176470686,
+      "training_n": 68
+    }
+  },
+  "spring_water_difference/subtract_ridge_initial": {
+    "2009": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    },
+    "2010": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    },
+    "2011": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    }
+  },
+  "spring_water_difference/subtract_ridge_initial_treatment": {
+    "2009": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    },
+    "2010": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    },
+    "2011": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "ridge_initial_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "spring_water"
+    }
+  },
+  "spring_water_difference/zero": {
+    "2009": {
+      "kind": "zero",
+      "training_n": 82
+    },
+    "2010": {
+      "kind": "zero",
+      "training_n": 70
+    },
+    "2011": {
+      "kind": "zero",
+      "training_n": 68
+    }
+  },
+  "yield_absolute/mean": {
+    "2009": {
+      "kind": "mean",
+      "training_n": 121,
+      "training_target_mean": 1.7636363636363637
+    },
+    "2010": {
+      "kind": "mean",
+      "training_n": 127,
+      "training_target_mean": 2.2047952755905507
+    },
+    "2011": {
+      "kind": "mean",
+      "training_n": 104,
+      "training_target_mean": 3.6538365384615386
+    }
+  },
+  "yield_absolute/water": {
+    "2009": {
+      "categorical_features": [],
+      "coefficients": [
+        -0.6017925635465671
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 1.7636363636363641,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        899.0305785123966
+      ],
+      "numeric_scale": [
+        150.36310972919495
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 0.9169497291878689,
+      "training_n": 121,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm"
+      ]
+    },
+    "2010": {
+      "categorical_features": [],
+      "coefficients": [
+        -1.0708235111387485
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 2.2047952755905507,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        868.8850393700787
+      ],
+      "numeric_scale": [
+        163.42660327519908
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 1.1129362058171526,
+      "training_n": 127,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm"
+      ]
+    },
+    "2011": {
+      "categorical_features": [],
+      "coefficients": [
+        -0.08995801605766923
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 3.6538365384615386,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        772.2355769230769
+      ],
+      "numeric_scale": [
+        57.89555735292323
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 0.5190564368055662,
+      "training_n": 104,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm"
+      ]
+    }
+  },
+  "yield_absolute/water_treatment": {
+    "2009": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        -0.6447948558368741,
+        -0.03179365400865543,
+        -0.26636528123836983,
+        0.15388374347727224,
+        -0.16930332599079317,
+        0.4934888234030402,
+        -0.2954411974355542,
+        0.051709740970767415,
+        -0.02838849578505842,
+        -0.7821331434405959,
+        0.1753902782143943,
+        0.041613207136323244,
+        -0.10919659600611947,
+        0.22065544200984452,
+        0.2644766908253743,
+        -0.31224471555667366,
+        -0.02031980077906449,
+        0.1765571142580455,
+        0.02247889884856706,
+        0.4149322710972552
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 1.7284014521568598,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        899.0305785123966
+      ],
+      "numeric_scale": [
+        150.36310972919495
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 0.8778627046861711,
+      "training_n": 121,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2010": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        -1.1381009568213003,
+        -0.4493670471808722,
+        -0.011324561174351197,
+        0.24865827670546242,
+        -0.37855934130936664,
+        -0.06859199637009405,
+        -0.4395893145981594,
+        0.22269028164269045,
+        0.19055053545246442,
+        -0.21221280594766548,
+        0.0755618349352355,
+        0.5389079901600363,
+        -0.014111237783698386,
+        -0.3949401727859651,
+        0.5663619212228267,
+        -0.041472617663902554,
+        0.23087818574505295,
+        -0.175034741181957,
+        -0.06550166716146119,
+        0.1770964772937252
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 2.1986457161398327,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        868.8850393700787
+      ],
+      "numeric_scale": [
+        163.42660327519908
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 1.080552099015445,
+      "training_n": 127,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2011": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        -0.08812507394145715,
+        -0.13390541477729317,
+        0.24976566597335942,
+        0.008598317340280534,
+        0.03256700837982918,
+        -0.007946037527876884,
+        0.02602857833720295,
+        0.16634962500614076,
+        0.2992378989697313,
+        0.36226097418587944,
+        -0.23342084978741673,
+        0.22121170233534204,
+        -0.18071112260338615,
+        -0.18429536635240953,
+        0.058727827497865426,
+        -0.3079557174767975,
+        -0.14141349671943018,
+        0.042393918537023685,
+        0.09399932175387601,
+        -0.37149283307191994
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 3.6654706155278234,
+      "kind": "ridge",
+      "numeric_features": [
+        "spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        772.2355769230769
+      ],
+      "numeric_scale": [
+        57.89555735292323
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "No cover crop (check/control)",
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 0.48697341612741335,
+      "training_n": 104,
+      "transformed_features": [
+        "spring_storage_0_210cm_mm",
+        "treatment_description_No cover crop (check/control)",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    }
+  },
+  "yield_difference/direct_water": {
+    "2009": {
+      "categorical_features": [],
+      "coefficients": [
+        0.009707985591955764
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.09765486725663713,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        54.150442477876105
+      ],
+      "numeric_scale": [
+        160.82723546696246
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 0.20740125991075947,
+      "training_n": 113,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ]
+    },
+    "2010": {
+      "categorical_features": [],
+      "coefficients": [
+        -0.019348405025624925
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.09962886597938143,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        43.89587628865979
+      ],
+      "numeric_scale": [
+        174.0293996477546
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 0.22124718354275927,
+      "training_n": 97,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ]
+    },
+    "2011": {
+      "categorical_features": [],
+      "coefficients": [
+        0.17464662504188494
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.09882432432432435,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        -8.955405405405363
+      ],
+      "numeric_scale": [
+        64.20854144976289
+      ],
+      "prediction_clipping": false,
+      "training_categories": {},
+      "training_mae": 0.3488939932704239,
+      "training_n": 74,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ]
+    }
+  },
+  "yield_difference/direct_water_treatment": {
+    "2009": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        0.010858526266401334,
+        -0.014449033704739184,
+        -0.04723859420501843,
+        -0.024262986419229065,
+        0.1732906676589881,
+        0.1453860834283061,
+        0.0036258051083252916,
+        0.006667847940781703,
+        0.006102584178294193,
+        0.06262318192334103,
+        0.0036793178821130272,
+        -0.14175069741990837,
+        0.015080317089288663,
+        -0.029576379115861414,
+        -0.1071832022944519,
+        -0.059110539151438865,
+        0.07632526165506201,
+        -0.004793833405646231,
+        -0.0644158011482067
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.09639804814008979,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        54.150442477876105
+      ],
+      "numeric_scale": [
+        160.82723546696246
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 0.20096145010842884,
+      "training_n": 113,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2010": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        -0.031949638113779884,
+        0.0005680140492445463,
+        0.09130961968628086,
+        -0.12689015940823273,
+        -0.06788241501557164,
+        -0.007791545680714804,
+        0.09435613640249756,
+        0.2436801162748445,
+        -0.07928916333297176,
+        0.030924669035223153,
+        0.18161817911766695,
+        -0.060867107023865004,
+        -0.06531820774221783,
+        0.0439920899135002,
+        0.05125385188793041,
+        -0.021712496025364354,
+        -0.16688242989059304,
+        -0.09161362688963139,
+        -0.049455525358025484
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.0940660203650358,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        43.89587628865979
+      ],
+      "numeric_scale": [
+        174.0293996477546
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 0.21992552125281986,
+      "training_n": 97,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    },
+    "2011": {
+      "categorical_features": [
+        "treatment_description"
+      ],
+      "coefficients": [
+        0.1667096933057797,
+        0.1592387564068138,
+        0.10059076985872896,
+        -0.06497953049347521,
+        0.04586117679223404,
+        0.10711925552537824,
+        0.15432222325062359,
+        0.22264932553818478,
+        -0.09167052416936854,
+        -0.025705746670225314,
+        0.2084580409414608,
+        -0.15335797250040445,
+        -0.14263538459792036,
+        -0.0041105838534770435,
+        0.003860437654305403,
+        -0.23344451845911032,
+        0.010258259473357975,
+        -0.10504465343332307,
+        -0.19140933126378346
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": 0.10162304363793413,
+      "kind": "ridge",
+      "numeric_features": [
+        "delta_spring_storage_0_210cm_mm"
+      ],
+      "numeric_mean": [
+        -8.955405405405363
+      ],
+      "numeric_scale": [
+        64.20854144976289
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "treatment_description": [
+          "Proso millet",
+          "Purple top turnip",
+          "Soybean",
+          "Spring triticale",
+          "Sunflower",
+          "Vine pea",
+          "Winter canola",
+          "drop- proso millet",
+          "drop- proso millet and spring triticale",
+          "drop- purple top turnip",
+          "drop- soybean",
+          "drop- soybean and vine pea",
+          "drop- spring triticale",
+          "drop- sunflower",
+          "drop- vine pea",
+          "drop- winter canola",
+          "drop- winter canola and sunflower",
+          "upper benchmark (2-8 all mixed)"
+        ]
+      },
+      "training_mae": 0.3197185322821237,
+      "training_n": 74,
+      "transformed_features": [
+        "delta_spring_storage_0_210cm_mm",
+        "treatment_description_Proso millet",
+        "treatment_description_Purple top turnip",
+        "treatment_description_Soybean",
+        "treatment_description_Spring triticale",
+        "treatment_description_Sunflower",
+        "treatment_description_Vine pea",
+        "treatment_description_Winter canola",
+        "treatment_description_drop- proso millet",
+        "treatment_description_drop- proso millet and spring triticale",
+        "treatment_description_drop- purple top turnip",
+        "treatment_description_drop- soybean",
+        "treatment_description_drop- soybean and vine pea",
+        "treatment_description_drop- spring triticale",
+        "treatment_description_drop- sunflower",
+        "treatment_description_drop- vine pea",
+        "treatment_description_drop- winter canola",
+        "treatment_description_drop- winter canola and sunflower",
+        "treatment_description_upper benchmark (2-8 all mixed)"
+      ]
+    }
+  },
+  "yield_difference/mean_difference": {
+    "2009": {
+      "kind": "mean",
+      "training_n": 113,
+      "training_target_mean": 0.09765486725663713
+    },
+    "2010": {
+      "kind": "mean",
+      "training_n": 97,
+      "training_target_mean": 0.09962886597938143
+    },
+    "2011": {
+      "kind": "mean",
+      "training_n": 74,
+      "training_target_mean": 0.09882432432432435
+    }
+  },
+  "yield_difference/subtract_water": {
+    "2009": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    },
+    "2010": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    },
+    "2011": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    }
+  },
+  "yield_difference/subtract_water_treatment": {
+    "2009": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    },
+    "2010": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    },
+    "2011": {
+      "kind": "subtract",
+      "new_fit": false,
+      "source_method": "water_treatment",
+      "source_predictions": "same-year out-of-fold only",
+      "source_task": "yield_absolute"
+    }
+  },
+  "yield_difference/zero": {
+    "2009": {
+      "kind": "zero",
+      "training_n": 113
+    },
+    "2010": {
+      "kind": "zero",
+      "training_n": 97
+    },
+    "2011": {
+      "kind": "zero",
+      "training_n": 74
+    }
+  }
+}

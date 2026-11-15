@@ -1,0 +1,36 @@
+{
+  "version": "mandan-weather-verification-v1",
+  "purpose": "Verify study-area NASA weather and exact wheat crop-season windows; no fitting or invented soil sampling dates",
+  "soil_catalog": "https://catalog.data.gov/dataset/data-from-short-term-soil-responses-to-late-seeded-cover-crops-in-a-semi-arid-environment",
+  "crop_catalog": "https://catalog.data.gov/dataset/data-from-late-seeded-cover-crops-in-a-semiarid-environment-overyielding-dominance-and-sub",
+  "catalog_coordinates_lon_lat": [[-100.9352, 46.7801], [-100.9453, 46.7762], [-100.9256, 46.7576]],
+  "representative_point_rule": "Use the first catalog point for every year as an explicitly regional proxy; no verified annual field assignment or plot-level weather claim",
+  "annual_field_assignment_verified": false,
+  "exact_soil_sampling_dates_verified": false,
+  "catalog_temporal_extent": "2008-08-21/2011-05-18",
+  "weather_request": {
+    "latitude": 46.7801,
+    "longitude": -100.9352,
+    "start": "20080101",
+    "end": "20111231",
+    "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+    "community": "AG",
+    "format": "JSON",
+    "time-standard": "LST"
+  },
+  "wheat_calendar": [
+    {"year": 2009, "planting": "2009-05-20", "harvest": "2009-09-04"},
+    {"year": 2010, "planting": "2010-05-21", "harvest": "2010-09-14"},
+    {"year": 2011, "planting": "2011-05-17", "harvest": "2011-08-26"}
+  ],
+  "pinned_sha256": {
+    "data/raw/usda_mandan_cover_2009_2012/management.xlsx": "f27812c72383f6162fe4b57a004ccab1004fce019e322507bccc10f76e88f4a9",
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water_metadata.csv": "bd6a37a57b4d623f56ab16c81f4cae1934556466c32eb13bf9f49dbe57bfbb72"
+  },
+  "restrictions": [
+    "Crop-season aggregates use verified wheat planting through harvest inclusive",
+    "Do not aggregate PREPLANT-to-SPRING weather without exact sampling dates or a separately declared approximate-horizon experiment",
+    "Realized weather is retrospective or scenario input, unavailable at cover planting",
+    "No cross-site pooling, model search, production promotion or payload changes"
+  ]
+}

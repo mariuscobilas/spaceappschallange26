@@ -1,0 +1,81 @@
+{
+  "families": {
+    "mean": [],
+    "water": [
+      "profile_water_at_wheat_sowing_mm"
+    ],
+    "water_weather": [
+      "profile_water_at_wheat_sowing_mm",
+      "season_rain_mm",
+      "season_mean_tmax_c",
+      "season_mean_tmin_c",
+      "season_mean_rh_pct",
+      "season_mean_wind_m_s",
+      "season_mean_solar_mj_m2_day"
+    ],
+    "water_weather_nitrate": [
+      "profile_water_at_wheat_sowing_mm",
+      "season_rain_mm",
+      "season_mean_tmax_c",
+      "season_mean_tmin_c",
+      "season_mean_rh_pct",
+      "season_mean_wind_m_s",
+      "season_mean_solar_mj_m2_day",
+      "nitrate_0_30cm_mg_kg"
+    ],
+    "weather": [
+      "season_rain_mm",
+      "season_mean_tmax_c",
+      "season_mean_tmin_c",
+      "season_mean_rh_pct",
+      "season_mean_wind_m_s",
+      "season_mean_solar_mj_m2_day"
+    ]
+  },
+  "metadata_are_not_predictors": true,
+  "target": "wheat_yield_t_ha",
+  "weather_definitions": [
+    {
+      "aggregation": "sum",
+      "feature": "season_rain_mm",
+      "parameter": "PRECTOTCORR",
+      "source_unit": "mm/day",
+      "unit": "mm"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_tmax_c",
+      "parameter": "T2M_MAX",
+      "source_unit": "C",
+      "unit": "C"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_tmin_c",
+      "parameter": "T2M_MIN",
+      "source_unit": "C",
+      "unit": "C"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_rh_pct",
+      "parameter": "RH2M",
+      "source_unit": "%",
+      "unit": "%"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_wind_m_s",
+      "parameter": "WS2M",
+      "source_unit": "m/s",
+      "unit": "m/s"
+    },
+    {
+      "aggregation": "mean",
+      "feature": "season_mean_solar_mj_m2_day",
+      "parameter": "ALLSKY_SFC_SW_DWN",
+      "source_unit": "MJ/m^2/day",
+      "unit": "MJ/m^2/day"
+    }
+  ]
+}

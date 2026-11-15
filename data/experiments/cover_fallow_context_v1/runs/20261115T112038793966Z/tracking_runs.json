@@ -1,0 +1,8 @@
+{
+  "context": "6a767d238ede4592b4d78d93275add0a",
+  "context_biomass": "d8037190bdd44f8aa992798483387baa",
+  "direct/delta_water/ridge": "b11ac9e8679347929814067b0b2699a1",
+  "subtract_absolute/ridge": "265c12b0dda4459bbd2d534e6d397add",
+  "training_mean_difference": "0b4f95695b034c04a5bb9478fa65bc3e",
+  "zero_difference": "9b21f013a1814b489b334c3feb167cc5"
+}

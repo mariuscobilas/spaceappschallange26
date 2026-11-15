@@ -1,0 +1,25 @@
+"Data from:  Late-Seeded Cover Crops in a Semiarid Environment: Overyielding, Dominance, and Subsequent Crop Yield (https://doi.org/
+10.1017/S174217052100020X)",,,
+,,,
+ATTRIBUTE,DESCRIPTION,UNITS,NOTE
+YEAR,Experimental year,YYYY,Trial began in 2008 and continued through  2010 for estimating the cover crop data.  The last year to collect response crop data was 2011.
+REP,Replication,Integer,"1, 2, 3, 4"
+PLOT,Plot number,Integer,100 | … | 499
+TRT,Cover Crop treatment by number,Integer,1 | … | 20
+TRT_DESC,"Treatments consisted of seven different cover crop monocultures; each in a different functional group and a series of cover crop mixtures, which included the same seven cover crops but had selected functional groups removed from the mixture",Character,"1 = No cover crop (check/control) [C]; 2 = Purple top turnip [PTT]; 3 = Proso millet [PM]; 4 = Spring triticale [ST]; 5 = Soybean [S]; 6 = Vine pea [VP]; 7 = Winter canola [WC]; 8 = Sunflower [SF]; 9 = Upper benchmark (2-8 mixed) [HD]; 10 = drop- purple top turnip [DPTT]; 11 = drop- proso millet [DPM]; 12 = drop- spring triticale [DST]; 13 = drop- soybean [DS]; 14 = drop- vine pea [DVP]; 15 = drop- winter canola [DWC]; 16 = drop- sunflower [DSF]; 17 = drop- proso millet and spring triticale [DPMST]; 18 = drop- soybean and vine pea [DSVP]; 19 = drop- winter canola and sunflower [DWCSF]; 20 = No cover crop (drill is run across plot for residue incorporation, no seed) [CD]"
+PPTroot, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha.  Below ground biomass  was not collected in 2009.,integer,Missing data = -9999
+PPTtop, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+PM, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+ST, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+S, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+VP, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+WC, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Row 97 has data where there should be no WC in the planting mix.  It is believed this was several random seeds and that these 2 plants should be considered as 'weed' data.  Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+SF, Biomass of target species (i.e. biomass by species) in grams collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
+PLNTNO,Counted stems of target species within  2 1/4 m2 quadrats,integer,Missing data = -9999
+WEED, Biomass in grams of non-target species (species not planted in the trial)  collected from 2 1/4 m2 quadrats and then combined to be 1/2 m2 quadrat. Yield calculation =  double the value to convert to g/m2 and multiply by 10 to convert to kg/ha. ,integer,Missing data = -9999
