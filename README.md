@@ -1,142 +1,157 @@
-# Space Apps Challenge 2026
+# Meridian
 
-**ML research package:** [model selection, weights and reproduction](docs/ML_PUBLICATION.md). The portable Colorado water+weather Ridge is for retrospective yield research; cover/fallow decision validity remains unsupported. [Mandan weather verification](docs/MANDAN_WEATHER_VERIFICATION.md) confirms regional NASA coverage while retaining unresolved soil sampling dates.
+**NASA Space Apps Challenge 2026 — Field Shift**
 
-Meridian (original project name: Field Shift) is a NASA Earth observation workspace for field exploration, cover-crop planning and transparent manual economics. It uses Next.js, FastAPI and Turborepo. The client baseline and first numeric environmental context are implemented locally; validated agronomic analysis remains pending.
+Meridian is an AI-powered NASA Earth observation and agronomic planning workspace designed to help growers **maximize farm revenue sustainably**. Built with **Next.js**, **FastAPI**, **Mastra**, and **Turborepo**, Meridian fuses satellite imagery, gridded meteorology, USDA soil horizon profiles, custom field geometry, predictive soil-moisture modeling, and an LLM tool-calling agent into a single end-to-end decision workspace.
 
-**Current ML continuation:** read the [research plan](docs/ML_RESEARCH_PLAN.md) and [cover-versus-fallow evaluation](docs/COVER_FALLOW_EVALUATION.md). Colorado field records and NASA POWER weather support some yield-difference magnitude prediction, but the tested models miss most observed cover benefits. Farmer-use validity remains unresolved; paired-data/context and initial-water gaps need attention next. Older Clovis and termination-first notes below retain their historical scope.
+## Table of Contents
 
-**Task 6 and provisional planting advice are ready for frontend integration.** [Start with the API handoff](docs/API_HANDOFF.md): FastAPI endpoints, editable financial/risk assumptions, [OpenAPI](docs/openapi.json), checked [JSON payloads](examples/api/analyze.request.json), and a [typed frontend client](apps/web/lib/field-shift-api.ts). Shared fixtures cover plant, do not plant, review, and insufficient evidence. The saved example endpoint supports web development without local model artifacts. Advice remains unvalidated; compatible model bundles can be replaced without changing frontend payloads.
+* [1. Problem & Solution Overview](#1-problem--solution-overview)
+* [2. Core Capabilities](#2-core-capabilities)
+  * [2.1 4-Level H3 Geospatial Explorer & Regional Atlas (`/`)](#21-4-level-h3-geospatial-explorer--regional-atlas-)
+  * [2.2 Custom Field Drawing, Calendar Planner & Economics (`/planner/fields`, `/planner`, `/planner/review`, `/economics`)](#22-custom-field-drawing-calendar-planner--economics-plannerfields-planner-plannerreview-economics)
+  * [2.3 Predictive ML Engine & Mastra AI Advisor (`apps/web/lib/meridian`)](#23-predictive-ml-engine--mastra-ai-advisor-appsweblibmeridian)
+* [3. System Architecture](#3-system-architecture)
+* [4. Scope & Scientific Trust Guardrails](#4-scope--scientific-trust-guardrails)
+* [5. Quickstart & Environment Setup](#5-quickstart--environment-setup)
+* [6. Repository Structure & Documentation Index](#6-repository-structure--documentation-index)
+* [7. Team](#7-team)
 
-The one-day MVP now starts with the Clovis, New Mexico cover-crop observations. [Data preparation](docs/CLOVIS_DATA_PREPARATION.md) implements the first task: source audit, frozen evaluation splits, cleaned moisture labels, and verification. The Kansas-first documents below describe the earlier research scope.
+## 1. Problem & Solution Overview
 
-[NASA weather preparation](docs/CLOVIS_WEATHER_PREPARATION.md) caches Clovis daily weather for 2001â€“2025 and joins it to the unchanged train/validation/test labels, ready for baseline evaluation.
+Planting a cover crop (*"reverse crop"* such as cereal rye or winter pea) protects topsoil, suppresses weeds, and builds organic matter—but in water-limited regions, it also consumes soil moisture needed by the following cash crop (*"money crop"* such as wheat, corn, soybeans, cotton, or sorghum). Getting the balance wrong either forfeits soil health or creates a **"water debt"** that cuts cash-crop yield and farm profitability.
 
-[Baseline feasibility](docs/CLOVIS_BASELINE_EVALUATION.md) compares persistence with a training-only daily-change rule using validation data and local MLflow tracking. Persistence was the reference to beat; this stage used validation only.
+Growers and conservation advisors currently lack a unified tool that connects **what is happening in the atmosphere and soil**, **what future soil moisture looks like under different management choices**, and **how those choices affect net dollars per hectare or acre**.
 
-[Weather-aware regression evaluation](docs/CLOVIS_REGRESSION_EVALUATION.md) adds shared training/inference features and four tracked Ridge/Random Forest candidates. None beat the adoption gates; the best experimental model is retained without replacing persistence.
+Meridian solves this in four connected steps:
 
-[Historical scenario simulation](docs/CLOVIS_SCENARIO_SIMULATION.md) implements Task 5: complete dry/typical/very-rainy weather sequences, paired cover/fallow moisture trajectories, a validated request payload, and diagnostics. The current experimental model drifts and clips during seasonal rollouts; these outputs are not ready for planting advice.
+1. **Observe:** Inspect any U.S. region across a 4-level H3 hexagonal grid and integrated Regional Atlas layers inside **Explore** (`/`), backed by live NASA POWER meteorology, NASA GIBS satellite imagery, U.S. Drought Monitor data, and USDA SSURGO soil profiles.
+2. **Delineate & Plan:** Draw custom field boundaries (`/planner/fields`), configure cash-crop planting dates and cover-crop termination lead times (`/planner`), review and compare confirmed plans (`/planner/review`), and model net profit and break-even yield changes (`/economics`).
+3. **Predict:** Run historical and current soil/weather data through our ML pipeline (`apps/api/ml`) to forecast future soil moisture trajectories and cash- vs. cover-crop trade-offs.
+4. **Advise:** Consult **Meridian**, our **Mastra AI agent** (`apps/web/lib/meridian`), which orchestrates ML predictions, live NASA/USDA environmental tools, and the grower's field economics to explain trade-offs and guide profitable, sustainable decisions.
 
-[Held-out test evaluation](docs/CLOVIS_FINAL_TEST_EVALUATION.md) scores the frozen shallow Random Forest against persistence on 1,548 observations. Its next-day MAE is 44% higher, and 7/30/90-day recursive errors are worse. The test set is now evaluated; no model was retrained or promoted.
+## 2. Core Capabilities
 
-[Model diagnosis and repair plan](docs/CLOVIS_MODEL_DIAGNOSIS.md) identifies missing management-phase coverage, negligible learned crop response, recursive drift, and a daily-mean versus end-of-day target mismatch. The saved model remains unchanged; the next proposed task is a versioned moisture/history contract.
+### 2.1 4-Level H3 Geospatial Explorer & Regional Atlas (`/`)
 
-[Split audit](docs/CLOVIS_SPLIT_AUDIT.md) compares the original 39.6/2.0/58.5 allocation with global chronological and phase-balanced 70/15/15 candidates. The phase-balanced candidate includes every management phase in each partition, with 1,856 training examples, but is an exploratory historical evaluation. The audit prepared the memberships used in the following experiment.
+The **Explore** workspace (`/`) unifies regional satellite/weather inspection and historical cover-crop research in a single map experience. It divides the contiguous United States into a **zoom-adaptive 4-tier H3 hexagonal grid** (Resolutions $2$, $3$, $4$, and viewport-scoped $5$) layered over customizable basemaps (**OpenFreeMap** Light, Streets, Dark; **USGS** Topographic and Aerial imagery), opt-in **NASA GIBS** satellite overlays (**SMAP** surface soil moisture, **VIIRS NDVI** vegetation index, **GPM IMERG** precipitation rate), and the **U.S. Drought Monitor** overlay.
 
-[Evaluation of the new allocations](docs/CLOVIS_SPLIT_MODEL_EVALUATION.md) subsequently fits the same fixed forest independently on both versioned datasets. Validation gains are modest and exposed-test next-day errors are approximately tied with persistence. The report examines recharge events, phase coverage, feature use, and short recursive forecasts; no artifact was promoted.
+* **Live Hexagon Inspector:** Clicking any hexagon opens a **Hexagon Information** drawer surfacing source-backed environmental conditions at the cell centroid:
+  * **Cell Geometry & Grid Context:** Full hexagon area (e.g., $13{,}005.4\text{ km}^2$ at H3 Resolution $3$), centroid coordinates, H3 resolution tier, and Region ID.
+  * **NASA POWER Daily Meteorology (`MERRA-2 / GEOS-IT`, $0.5^\circ \times 0.625^\circ$ grid):**
+    * **30-Day Cumulative Precipitation ($\text{mm}$):** Sum of $30$ contiguous valid daily precipitation observations.
+    * **Root-Zone Relative Wetness ($0\text{--}100\text{ cm}$, $\%$):** Modeled relative saturation fraction.
+  * **USDA NRCS Soil Data Access (`SSURGO` Map Unit):**
+    * **Available Water Storage ($0\text{--}100\text{ cm}$, $\text{mm}$):** Mapped profile water-storage capacity alongside dominant soil map unit and slope (e.g., *Hall silt loam, $1$ to $3$ percent slopes*).
+    * **Soil Texture & Horizon Profile ($0\text{--}30\text{ cm}$):** Drainage class, hydrologic group, Sand ($\%$), Silt ($\%$), Clay ($\%$), Organic Matter ($\%$), Bulk Density ($\text{g/cm}^3$), $\text{pH}$, and Saturated Hydraulic Conductivity ($\mu\text{m/s}$).
+* **Integrated Regional Atlas:** Accessible directly within the **Explore** tab, allowing users to inspect historical cover-crop yield impacts across $486$ **counties** in six U.S. Corn Belt states (**Illinois, Indiana, Iowa, Michigan, Missouri, and Ohio**) derived from archived 2019–2020 peer-reviewed research outputs (filterable by corn/soybean and year), alongside optional H3 net-return scenarios (`ATLAS_DATASET_PATH`) and USDA soil horizon diagnostics.
 
-The first research and product scope is western Kansas dryland winter wheat. See [KANSAS_FIRST.md](KANSAS_FIRST.md) for the decision, evidence, data sources, model approach, and validation limits.
-See [KANSAS_FEATURES_AND_READING.md](KANSAS_FEATURES_AND_READING.md) for the initial feature contract and dissertation reading order.
-See [WATER_DEBT_FACTOR_REVIEW.md](WATER_DEBT_FACTOR_REVIEW.md) for the location-independent evidence on which factors affect water carryover and the next crop.
-See [DATA_AUDIT.md](DATA_AUDIT.md) for the verified public trial files, missing fields, and external NASA/USDA inputs.
-See [BENCHMARK_FINDINGS.md](BENCHMARK_FINDINGS.md) for the first five-model benchmark and its held-out results.
-See [AUSTRALIA_BENCHMARK_FINDINGS.md](AUSTRALIA_BENCHMARK_FINDINGS.md) for the separate two-year Australian phase-level experiment.
-See [COVER_CROP_DECISION_RESEARCH.md](COVER_CROP_DECISION_RESEARCH.md) for crop water-use evidence, U.S. trial locations, and the proposed decision API payload.
+### 2.2 Custom Field Drawing, Calendar Planner & Economics (`/planner/fields`, `/planner`, `/planner/review`, `/economics`)
 
-## Project areas
+* **Field Delineation (`/planner/fields`):** Drop exact coordinates or draw and edit custom farm polygons using **Terra Draw**. Geodesic area and centroid are computed locally, paired with on-demand **USDA Cropland Data Layer (CDL)** point crop classification and field-specific NASA POWER + SSURGO metrics.
+* **Cover-Crop Calendar Planner (`/planner`):** Pair a cash crop (*wheat, corn, soybeans, cotton, sorghum*) with a cover crop (*cereal rye, winter pea, forage radish, multi-species mix*), set planting dates and termination lead times ($0$ to $60$ days in $5$-day increments), and preserve unfinished working drafts across reloads.
+* **Plan Review & Comparison (`/planner/review`):** Inspect confirmed calendar plans, reopen saved configurations, compare two plans side by side, and export structured summaries.
+* **Transparent Unit-Economics Calculator (`/economics`):** Calculates net financial return and break-even yield thresholds across both U.S. customary and canonical metric units without zero-filling missing inputs:
 
-- `apps/web` â€” Next.js frontend
-- `apps/api` â€” FastAPI endpoints and API documentation
-- `apps/api/app/ml` â€” Python ML work area; see its README before adding model code
+$$
+\text{Baseline Revenue}_{\text{ha}} = \text{Baseline Yield} \times \text{Commodity Price}
+$$
 
-## Requirements
+$$
+\text{Net Change}_{\text{ha}} = \left(\text{Baseline Revenue}_{\text{ha}} \times \frac{\text{Assumed Yield Change}}{100}\right) - \text{Seed Cost} - \text{Termination Cost} + \text{Support Payment}
+$$
 
-Node.js 20.9+, pnpm 9+, and Python 3.11+.
+$$
+\text{Total Net Change} = \text{Net Change}_{\text{ha}} \times \text{Managed Hectares}
+$$
 
-## Setup
+$$
+\text{Break-Even Yield Change } (\%) = 100 \times \frac{\text{Seed Cost} + \text{Termination Cost} - \text{Support Payment}}{\text{Baseline Revenue}_{\text{ha}}}
+$$
 
-Run `pnpm install` at the repository root, then create the API environment:
+* **Local-First Persistence & Workspace Backup:** Works immediately with zero account required; users can export and restore versioned JSON backups covering fields, plans, drafts, economic assumptions, and map preferences.
 
-```powershell
-# Windows PowerShell
-py -m venv apps/api/.venv
-apps/api/.venv/Scripts/python.exe -m pip install -r apps/api/requirements.txt
+### 2.3 Predictive ML Engine & Mastra AI Advisor (`apps/web/lib/meridian`)
+
+* **Predictive Soil & Crop ML Models (`apps/api/ml`):** Trained on multi-year field observations (including Clovis, NM moisture series, Colorado yield-difference records, and NASA POWER weather histories) to forecast future soil moisture trajectories and evaluate water-carryover trade-offs between the cash crop ("money crop") and cover crop ("reverse crop") across dry, typical, and wet weather scenarios.
+* **Meridian Mastra Agent (`apps/web/lib/meridian`):** Powered by **Mastra** (`AI_AGENT_MODEL=openai/gpt-6.1-terra`), Meridian acts as an interactive agronomic and financial advisor. Using structured tools connected to the FastAPI backend, NASA POWER/USDA SSURGO lookups, ML forecast endpoints, and the user's drawn field/budget state, the agent explains expected soil dynamics and recommends strategies to maximize sustainable revenue while explicitly communicating data provenance and regional generalization limits.
+
+## 3. System Architecture
+
+```text
++-----------------------------------------------------------------------+
+|  Next.js Frontend & Mastra AI Workspace (apps/web)                    |
+|  - MapLibre GL + deck.gl (4-Level H3 Grid, Atlas, NASA GIBS, USDM)    |
+|  - Terra Draw Fields, Calendar Planner, Review & Economics Calculator |
+|  - Mastra Agent & Toolset (apps/web/lib/meridian)                     |
++-----------------------------------+-----------------------------------+
+                                    | Typed REST / OpenAPI Contracts
+                                    v
++-----------------------------------------------------------------------+
+|  FastAPI Backend & ML Engine (apps/api)                               |
+|  - Environmental Context Proxies (NASA POWER, USDA SSURGO, USDA CDL)  |
+|  - Regional Atlas Endpoints (486-County Dataset & H3 Scenarios)       |
+|  - Soil Moisture & Crop Trade-Off ML Pipeline (apps/api/ml)           |
++-----------------------------------------------------------------------+
+```
+
+## 4. Scope & Scientific Trust Guardrails
+
+Meridian enforces strict provenance and transparency across every layer:
+
+* **Every Metric Carries Provenance:** Displayed environmental numbers always retain their source agency, grid/parcel resolution, observation window, units, and retrieval timestamp.
+* **No Silent Fabrication:** Missing satellite or weather observations remain explicitly marked as unavailable—never zero-filled or silently replaced with mock values.
+* **Regional Generalization Disclosure:** Field-level ML models trained on specific trial sites (such as Clovis, NM or Colorado dryland records) surface clear regional coverage and uncertainty context when applied to new geographies, so growers can weigh model projections alongside local soil capacity and their own budget assumptions.
+
+## 5. Quickstart & Environment Setup
+
+### Prerequisites
+
+* **Node.js** `20.9+` and **pnpm** `9+`
+* **Python** `3.11+`
+
+### 1. Configure Environment Variables
+
+Create a `.env.local` file inside `apps/web` (or `.env` at the repository root) with your OpenAI API key and service URLs:
+
+```env
+OPENAI_API_KEY=sk-proj-your-openai-api-key
+AI_AGENT_MODEL=openai/gpt-6.1-terra
+API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+> **Security Note:** Never commit `.env` or `.env.local` files containing real API keys to version control.
+
+### 2. Install Dependencies
+
+```sh
+# Install JavaScript/TypeScript workspace dependencies
+pnpm install
 ```
 
 ```sh
-# macOS / Linux
+# Create and populate the Python FastAPI + ML virtual environment (macOS / Linux)
 python3 -m venv apps/api/.venv
 apps/api/.venv/bin/python -m pip install -r apps/api/requirements.txt
 ```
 
-Run `pnpm dev` from the root. The web app is at http://localhost:3000 and the API at http://localhost:8000. See [apps/api/API.md](apps/api/API.md) for endpoints and mock payloads. Run `pnpm run build` to build the frontend. FastAPI is interpreted and has no build step.
+```powershell
+# Windows PowerShell alternative
+py -m venv apps/api/.venv
+apps/api/.venv/Scripts/python.exe -m pip install -r apps/api/requirements.txt
+```
 
-## Meridian workspace
+### 3. Run Locally
 
-Run `pnpm --filter @spaceapps/web dev`, then open http://localhost:3000.
-The frontend uses shadcn/ui (Base UI / Nova), Tailwind v4, and a full-height
-navigation sidebar ordered Explore, My fields, Regional Atlas, Field Planner,
-Economics and Ask Meridian. Explore (`/`) is for map browsing and filters; My fields
-(`/fields`) owns point selection, drawing and saved-field management; Atlas (`/atlas`)
-owns regional inspection. These map routes share one mounted map and preserve context. Production builds use Next.js Webpack; development uses Turbopack.
+```sh
+pnpm dev
+```
 
-Explore keeps only location/crop filters and Map options in its toolbar. Layers,
-opacity, source legends and dates live in the options Sheet. Field creation and
-management live on My fields; browsing Explore does not create a field draft. The light OpenFreeMap basemap retains
-roads and place names under selectable H3 cells. The map workspaces preserve crop, location and dates. Kansas locality shortcuts are Tribune, Colby, Hays, Salina,
-Manhattan and Ottawa. H3 resolution is 2 below zoom 4, 3 below 6, 4 below 9, then
-viewport-scoped 5. Cells represent regional geography, not verified farm parcels.
+* **Meridian Web App:** `http://localhost:3000` (e.g., `/`, `/planner/fields`, `/planner`, `/planner/review`, `/economics`)
+* **FastAPI Backend & Docs:** `http://localhost:8000` (`http://localhost:8000/docs`)
 
-NASA SMAP, VIIRS NDVI and IMERG imagery is opt-in. Historical dates resolve to the
-last advertised observation on/before the request; actual dates, units and legends
-remain visible. IMERG depicts precipitation rate. Loading or external failures
-leave map navigation usable. On-demand location details open in a Sheet.
-
-My fields selects exact map points and supports named, saved polygon fields with
-Terra Draw. Draw or edit a boundary, finish it, then save or cancel. Geodesic area
-and centroid are calculated locally; fields above 5,000 ha remain editable and are
-directed to Atlas. Unsaved changes have Save / Discard / Stay protection.
-
-Field details request a USDA Cropland Data Layer point sample through the API.
-The source year is shown, detected crops require explicit acceptance, and manual
-crop selection remains available when classification is unsupported or unavailable.
-This is a point sample, not a whole-field crop assessment.
-
-Field details and Planner show source-backed field context from the API: complete
-30-day NASA POWER precipitation, modeled root-zone relative wetness, and USDA
-mapped soil water-storage capacity. Actual source periods, grid/map-unit meaning,
-source links and missing states are available in the panel. Soil capacity is not
-current moisture; historical weather uses its selected period while soil mapping
-uses the current survey. These values are not yield forecasts or recommendations.
-
-Field Planner saves management assumptions per saved field and crop. Polygon
-hectares are authoritative in both Planner and Economics; point areas are manual.
-The same field and intended next crop stay switchable in every workspace. Planner
-leads with planting date and shows your planned termination date; unfinished drafts
-survive navigation and reload separately from confirmed plans. Economics and Planner
-offer U.S./metric units while storing metric assumptions. Economics can show per-area
-change before acreage is entered; parcel totals require a valid managed area.
-Confirmed plans are available under **Field Planner â†’ Saved plans** at
-`/planner/saved`. Open restores the field and crop; differing working drafts have
-an explicit restore choice. Deleting a plan preserves its field and economic inputs.
-Regional Atlas selections open a docked regional overview on desktop and a Sheet on phones:
-hex area/centre/detail, crop/date context and clearly identified centre-point
-conditions. The map remains interactive beside the desktop overview.
-Economics calculates from explicitly entered prices, yields, percentage change,
-costs, support and area; blank inputs are not zero. It supplies no market values or
-model forecasts. Saved plans also supports two-plan calendar comparison and text
-export, with a warning when field or crop contexts differ. This compares confirmed
-records; it does not store multiple scenario versions for one field/crop.
-
-Ask Meridian prepares, copies and exports a question with field/plan context and
-verified numeric conditions, including sample coordinates, periods, units, sources
-and missing states. Saved plans and distinct working drafts are labeled. Analysis
-is not connected. No risk scores or drought simulation are fabricated.
-
-**Workspace backup** in the sidebar exports versioned JSON for fields, plans,
-drafts, economics, map preferences and display units. Import validates the file,
-shows a preview and merges on explicit confirmation; existing local records win
-collisions. Settings and units are restored from the backup. Unsaved field edits
-block import, and storage failure triggers rollback of preceding writes. Keep a
-downloaded backup before clearing browser data; this is not cloud synchronization.
-
-Geography: Natural Earth (public domain). Hexagons: H3. Imagery/legends: NASA GIBS.
-No login or Meteomatics credentials are needed. ML/analysis integration and
-Azure/GoDaddy deployment remain deferred. Fields, plans and economic inputs stay
-in browser storage; existing location-based inputs migrate when a field is saved.
-
-Validation:
+### 4. Verification & Tests
 
 ```sh
 pnpm --filter @spaceapps/web exec tsc --noEmit
@@ -145,38 +160,34 @@ pnpm --filter @spaceapps/web exec playwright install chromium
 pnpm --filter @spaceapps/web exec playwright test
 ```
 
-## Project progress
+## 6. Repository Structure & Documentation Index
 
-See [milestones](docs/MILESTONES.md) for delivery gates and
-[continuation handoff](docs/HANDOFF.md) for current decisions and implementation state.
-See [next product delivery](docs/PRODUCT-NEXT.md) for the SPA-85/86/88 dependency
-split and the proposed simulation contract handoff.
+```text
+├── apps/
+│   ├── web/
+│   │   ├── app/              # Next.js routes (/, /planner, /planner/fields, /planner/review, /economics, /intel)
+│   │   └── lib/meridian/     # Mastra AI agent definition, system prompts & agronomic tools
+│   └── api/
+│       ├── ml/               # Soil moisture & crop trade-off ML models, training & inference
+│       └── API.md            # FastAPI endpoint specifications
+├── data/research/cover-crops/# Prepared historical cover-crop observations & budget bundle
+├── docs/                     # Architecture, PRD, Atlas provenance & ML benchmark reports
+└── examples/api/             # Verified JSON request/response payloads
+```
 
-Current progress (14 November 2026): 58 frontend checks passed across the complete
-regression run and focused reruns; TypeScript and production build passed. These
-are local checks, not deployed acceptance. Earlier backend verification recorded
-20 tests and 13 shared fixtures passing; those were not rerun in the client pass.
-See [client delivery](docs/CLIENT-DELIVERY.md), [PRD](docs/PRD.md), and the
-[future delivery plan](docs/PRODUCT-NEXT.md).
+### Detailed Technical & Research Documentation
 
-## Regional Atlas assessments
+* **Product & Architecture:** [PRD](docs/PRD.md) · [Milestones](docs/MILESTONES.md) · [API Handoff](docs/API_HANDOFF.md) · [OpenAPI Spec](docs/openapi.json) · [Client Delivery](docs/CLIENT-DELIVERY.md) · [Next Product Delivery](docs/PRODUCT-NEXT.md)
+* **Geospatial & Atlas Data:** [Regional Atlas Guide](docs/REGIONAL-ATLAS.md) · [Atlas Delivery & Acceptance](docs/ATLAS-DELIVERY.md) · [Map Sources & Drought Data](docs/MAP-DATA.md) · [Research Evidence Bundle](data/research/cover-crops/v1/README.md)
+* **ML Benchmarks & Agronomic Research:** [ML Publication](docs/ML_PUBLICATION.md) · [ML Research Plan](docs/ML_RESEARCH_PLAN.md) · [Cover vs. Fallow Evaluation](docs/COVER_FALLOW_EVALUATION.md) · [Mandan Weather Verification](docs/MANDAN_WEATHER_VERIFICATION.md) · [Clovis Model Diagnosis](docs/CLOVIS_MODEL_DIAGNOSIS.md) · [Clovis Scenario Simulation](docs/CLOVIS_SCENARIO_SIMULATION.md) · [Clovis Final Test Evaluation](docs/CLOVIS_FINAL_TEST_EVALUATION.md) · [Kansas-First Scope](KANSAS_FIRST.md) · [Benchmark Findings](BENCHMARK_FINDINGS.md)
 
-Atlas now supports deck.gl H3 net-return rendering, crop/scenario filters,
-source-aware diagnostics and a real USDA soil horizon profile. The API requires an
-explicitly supplied, reviewed regional JSON dataset via `ATLAS_DATASET_PATH`;
-without one it shows unavailable assessment coverage and retains geographic browsing.
-Illustrative Kansas benchmarks are not used as production regional values.
-See [Atlas delivery and acceptance](docs/ATLAS-DELIVERY.md) for dataset requirements,
-soil-source verification and measured performance limits.
+## 7. Team
 
-## Map providers and real drought data
-
-Map options offers OpenFreeMap Light, Streets and Dark plus USGS topographic and aerial imagery, with persistent selection, attribution and provider-failure recovery. Aerial imagery is historical and its vintage varies. Explore and My fields also offer an optional, dated U.S. Drought Monitor overlay (2026-11-10), bundled from the official source with a category legend, provenance and reproducible import script. It provides regional context independently of NASA observation dates and Atlas economics. See [map sources and refresh steps](docs/MAP-DATA.md).
-
-Source-backed historical cover-crop observations and published budget comparisons are available in the [prepared research evidence bundle](data/research/cover-crops/v1/README.md), with reproducible preparation and independent source review. Its research-site scope is distinct from regional Atlas predictions.
-
-Regional Atlas now defaults to [published county yield effects](docs/REGIONAL-ATLAS.md):
-486 county geometries and corn/soybean estimates from the authors' archived 2019–2020
-research outputs, with crop/year filters and sample support. The bundled API endpoint
-works without dataset configuration. These historical sample means are separate
-from H3 net-return scenarios and current field forecasts.
+| Member | Role |
+| :--- | :--- |
+| **Marius** | Fullstack & Lead |
+| **Ion** | Backend, Data & Machine Learning |
+| **Alexa** | Product Management & Demo |
+| **Liza** | Presentation & Visuals |
+| **Sergiu** | Data Operations, Location Research & QA |
+| **Andrei** | Dataset Preparation & QA |

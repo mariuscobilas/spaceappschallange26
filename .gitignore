@@ -9,6 +9,9 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+.claude/
+.agents/
+.turbo/
 
 # Browser verification artifacts
 apps/web/test-results/
@@ -30,3 +33,4 @@ data/local-backups/
 
 # Original five-minute moisture source exceeds the repository's 10 MB data limit.
 /5min.csv
+
