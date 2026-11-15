@@ -24,6 +24,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useUnitSystem } from "@/hooks/use-unit-system";
@@ -146,6 +147,9 @@ export default function EconomicsWorkspace() {
       (field.key === "areaHa" && (value === 0 || value > 5000));
   }
   const complete = fields.filter((field) => field.key !== "areaHa").every((field) => !invalid[field.key]);
+  const missingAssumptions = fields
+    .filter((field) => field.key !== "areaHa" && parsed[field.key] === null)
+    .map((field) => field.label.toLowerCase());
   const areaValid = !invalid.areaHa;
   const result =
     ready && complete
@@ -180,17 +184,13 @@ export default function EconomicsWorkspace() {
           Explore your assumptions
         </h1>
         <p className="max-w-2xl text-muted-foreground">
-          Compare user-entered revenue and cover crop costs for the selected
-          field. No market prices or yield changes are supplied by the app.
+          Compare revenue and cover crop costs for the selected field.
         </p>
       </header>
 
-      <Alert>
-        <AlertTitle>Assumption calculator</AlertTitle>
-        <AlertDescription>
-          Results are arithmetic scenarios calculated only from your manually entered assumptions. Baseline yield and yield change are not observed or forecast by Meridian; record their source and period in Field Planner notes before using a scenario for decisions.
-        </AlertDescription>
-      </Alert>
+      <p className="max-w-3xl text-sm text-muted-foreground">
+        Results are arithmetic scenarios from values entered below. Meridian does not provide observed yield or market price inputs; keep the baseline yield source and period in your Field Planner notes.
+      </p>
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
         <div>
@@ -243,6 +243,7 @@ export default function EconomicsWorkspace() {
                         field.key === "areaHa" && polygonArea !== undefined
                       }
                       aria-invalid={bad || undefined}
+                      aria-describedby={`economics-${field.key}-help`}
                       onChange={(event) => {
                         const input = event.target.value;
                         const bufferKey = `${contextKey(settings)}:${field.key}`;
@@ -256,7 +257,7 @@ export default function EconomicsWorkspace() {
                         });
                       }}
                     />
-                    <FieldDescription>
+                    <FieldDescription id={`economics-${field.key}-help`}>
                       {field.key === "areaHa" && polygonArea !== undefined
                         ? "Calculated from saved field boundary."
                         : bad
@@ -291,7 +292,9 @@ export default function EconomicsWorkspace() {
                 <EmptyHeader>
                   <EmptyTitle>Enter all assumptions</EmptyTitle>
                   <EmptyDescription>
-                    Results appear after each revenue and cost assumption contains a valid number. Zero is accepted for costs and subsidy.
+                    {missingAssumptions.length
+                      ? `Add ${missingAssumptions.join(", ")} to calculate this scenario. Zero is accepted for costs and subsidy.`
+                      : "Correct the highlighted values to calculate this scenario. Zero is accepted for costs and subsidy."}
                   </EmptyDescription>
                 </EmptyHeader>
               </Empty>
@@ -377,17 +380,11 @@ export default function EconomicsWorkspace() {
           </AlertDescription>
         </Alert>
       )}
-      <p className="text-sm text-muted-foreground">
-        Use{" "}
-        <Link className="underline underline-offset-4" href="/planner">
-          Field Planner
-        </Link>{" "}
-        to plan termination timing. Switch fields or the next cash crop in the header, or{" "}
-        <Link className="underline underline-offset-4" href="/">
-          return to the map
-        </Link>{" "}
-        to inspect observations.
-      </p>
+      <nav aria-label="Next steps" className="flex flex-wrap gap-3">
+        <Button variant="outline" render={<Link href="/planner" />} nativeButton={false}>Edit field plan</Button>
+        <Button render={<Link href="/intel" />} nativeButton={false}>Prepare evidence request</Button>
+        <Button variant="ghost" render={<Link href="/" />} nativeButton={false}>Return to map</Button>
+      </nav>
     </section>
   );
 }

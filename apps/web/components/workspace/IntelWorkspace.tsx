@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Copy, Info } from "lucide-react";
+import { ArrowUpRight, Copy } from "lucide-react";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { coverCrops, crops, locationLabel } from "@/lib/workspace";
 import { useFieldConditions } from "@/lib/fields/use-field-conditions";
@@ -35,7 +33,7 @@ export default function IntelWorkspace() {
     setQuestion,
   } = useMeridian();
   const [feedback, setFeedback] = useState("");
-  const [copiedRequest, setCopiedRequest] = useState(false);
+  const [copiedRequest, setCopiedRequest] = useState<string | null>(null);
   const conditionPoint = settings.selection.boundary
     ? analyzeBoundary(settings.selection.boundary)?.sample
     : { latitude: settings.selection.latitude, longitude: settings.selection.longitude };
@@ -87,16 +85,16 @@ export default function IntelWorkspace() {
     try {
       await navigator.clipboard.writeText(request);
       setFeedback("Request copied");
-      setCopiedRequest(true);
+      setCopiedRequest(request);
     } catch {
       setFeedback("Clipboard access was unavailable. Select the prepared request below to copy it.");
-      setCopiedRequest(false);
+      setCopiedRequest(null);
     }
   };
   const suggest = (text: string) => {
     setQuestion(text);
     setFeedback("");
-    setCopiedRequest(false);
+    setCopiedRequest(null);
   };
   const exportRequest = () => {
     const blob = new Blob([request], { type: "text/plain;charset=utf-8" });
@@ -105,7 +103,7 @@ export default function IntelWorkspace() {
     anchor.href = url;
     anchor.download = "meridian-request.txt";
     anchor.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     setFeedback("Request exported");
   };
   return (
@@ -118,6 +116,10 @@ export default function IntelWorkspace() {
         <p className="max-w-2xl text-muted-foreground">
           A question starts with a place. Bring your selected area, observations
           and field plan into the conversation.
+        </p>
+        <p className="text-sm text-muted-foreground" role="note">
+          Analysis is not connected yet. Prepare a request with your field evidence below.
+          {conditionsLoading ? " Field conditions are being checked." : ""}
         </p>
       </div>
       <Card>
@@ -142,7 +144,7 @@ export default function IntelWorkspace() {
                 onChange={(e) => {
                   setQuestion(e.target.value);
                   setFeedback("");
-                  setCopiedRequest(false);
+                  setCopiedRequest(null);
                 }}
                 placeholder="What should I review before planting here?"
                 className="min-h-36"
@@ -176,15 +178,6 @@ export default function IntelWorkspace() {
               </Button>
             </div>
           </div>
-          <Separator />
-          <Alert role="note">
-            <Info aria-hidden="true" />
-            <AlertTitle>Analysis is not connected yet</AlertTitle>
-            <AlertDescription>
-              {conditionsLoading ? "Field readings are loading. The prepared request marks them unavailable until verified." : "Prepare, copy, or export a request with verified numeric field conditions, their periods, sources, and missing-data states."}
-              Meridian does not generate an assessment in this workspace yet.
-            </AlertDescription>
-          </Alert>
           <FieldGroup><Field><FieldLabel htmlFor="prepared-request">Prepared request</FieldLabel><Textarea id="prepared-request" readOnly value={request} className="min-h-52" onFocus={(e) => e.target.select()} /></Field></FieldGroup>
           {feedback && (
             <p className="text-sm text-muted-foreground" role="status">
@@ -193,19 +186,15 @@ export default function IntelWorkspace() {
           )}
         </CardContent>
         <CardFooter className="flex flex-wrap justify-between gap-3">
-          <Button
-            variant="ghost"
-            render={<Link href="/" />}
-            nativeButton={false}
-          >
+          <Button variant="ghost" render={<Link href="/" />} nativeButton={false}>
             Back to Explore
             <ArrowUpRight data-icon="inline-end" />
           </Button>
+          <Button variant="outline" disabled={!question.trim()} onClick={exportRequest}>Export .txt</Button>
           <Button disabled={!question.trim()} onClick={copy}>
             <Copy data-icon="inline-start" />
-            {copiedRequest ? "Copied" : "Copy request"}
+            {copiedRequest === request ? "Copied" : "Copy request"}
           </Button>
-          <Button variant="outline" disabled={!question.trim()} onClick={exportRequest}>Export .txt</Button>
         </CardFooter>
       </Card>
     </section>

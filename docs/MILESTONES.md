@@ -145,3 +145,36 @@ remain pending. See [future delivery plan](PRODUCT-NEXT.md) for dependencies and
 
 Done when: the custom domain serves the verified app over HTTPS and the real backend
 works from that origin. Domain purchase, Azure provisioning, and deployment are not done.
+
+## FR-10/11 Atlas engineering follow-up
+
+The regional renderer, contract/service, filters, legend, diagnostics, typed missing
+states and USDA point soil-profile lookup are now implemented locally. Production
+regional return/yield coverage still requires an externally reviewed validated
+dataset. Hardware 60 fps acceptance remains open; software-WebGL measurements do
+not meet it. Warm layer setup is below 300 ms in the recorded tests, with variable
+cold initialization. See [Atlas delivery](ATLAS-DELIVERY.md) for evidence and gates.
+
+## Map provider and observational data expansion
+
+Implemented locally: five keyless background styles (OpenFreeMap Light/Streets/Dark,
+USGS topographic/aerial), persistent choices, attribution, provider fallback/retry,
+and an opt-in, real USDM regional drought snapshot dated 2026-11-10. The 661 KB
+bundle is loaded on demand and includes category colors, provenance, hashes and a
+repeatable import script. It remains separate from Atlas return/yield data.
+
+Next: review and deploy dated dataset refreshes; evaluate additional authoritative
+crop/soil observations against coverage, dates and licensing before enabling them.
+A validated regional economics dataset and production/hardware performance
+acceptance remain separate open requirements. See [map data](MAP-DATA.md).
+
+## Regional Atlas — historical county yield layer
+
+A sourced regional layer is implemented using county summaries of the authors'
+published Deines et al. CATE outputs: 486 county geometries, six states, corn/soybeans,
+2019/2020 and pooled periods. No new AI model is fit, no trial-site values are
+extrapolated, and source coordinates are not redistributed. Source integrity,
+aggregation, geographic joins and contracts were validated. This closes the missing
+regional research-layer delivery; current/nationwide forecasts, independently
+validated county causal effects, regional economic returns and hardware performance
+acceptance remain separate gates. See [regional Atlas](REGIONAL-ATLAS.md).

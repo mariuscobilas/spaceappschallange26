@@ -6,7 +6,7 @@ Enables end-to-end type safety between FastAPI and Next.js.
 import math
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Literal, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, model_validator
 
 # Clovis analysis contracts are canonical here alongside Meridian's existing types.
 from .clovis_schemas import *  # noqa: F403
@@ -327,3 +327,276 @@ class FieldConditionsResult(BaseModel):
             raise ValueError("Retrieval timestamp must include a timezone")
         return self
 
+
+class AtlasValidation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["validated"]
+    method: str = Field(min_length=1, max_length=300)
+    reference: str = Field(min_length=1, max_length=1000)
+
+
+class AtlasScenario(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: str = Field(min_length=1, max_length=100)
+    label: str = Field(min_length=1, max_length=200)
+    baseline: str = Field(min_length=1, max_length=300)
+    periodStart: date
+    periodEnd: date
+
+    @model_validator(mode="after")
+    def check_period(self):
+        if self.periodStart > self.periodEnd:
+            raise ValueError("scenario periodStart must precede periodEnd")
+        return self
+
+
+class AtlasCell(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    h3Index: str = Field(pattern=r"^8[0-9a-f]{14}$")
+    crop: Literal["wheat", "corn", "soybeans", "cotton", "sorghum"]
+    scenarioId: str = Field(min_length=1, max_length=100)
+    activeAreaHa: Optional[float]
+    netReturnUsdHa: Optional[float]
+    yieldPenaltyPct: Optional[float]
+    rootZoneWetness: Optional[float]
+    soilTexture: Optional[str] = Field(max_length=100)
+
+    @model_validator(mode="after")
+    def finite_and_bounded(self):
+        for name in ("activeAreaHa", "netReturnUsdHa", "yieldPenaltyPct", "rootZoneWetness"):
+            value = getattr(self, name)
+            if value is not None and not math.isfinite(value):
+                raise ValueError(f"{name} must be finite or null")
+        if self.activeAreaHa is not None and self.activeAreaHa < 0:
+            raise ValueError("activeAreaHa cannot be negative")
+        if self.yieldPenaltyPct is not None and self.yieldPenaltyPct > 100:
+            raise ValueError("yieldPenaltyPct cannot exceed 100; negative means yield gain")
+        if self.rootZoneWetness is not None and not 0 <= self.rootZoneWetness <= 1:
+            raise ValueError("rootZoneWetness must be between 0 and 1")
+        if (self.activeAreaHa is None or self.activeAreaHa == 0) and any(getattr(self, name) is not None for name in ("netReturnUsdHa", "yieldPenaltyPct")):
+            raise ValueError("cells without verified active area must not include return or yield outputs")
+        return self
+
+
+class AtlasProvenance(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    title: str = Field(min_length=1, max_length=300)
+    url: str = Field(min_length=1, max_length=1000)
+    periodStart: Optional[date] = None
+    periodEnd: Optional[date] = None
+    spatialMeaning: str = Field(min_length=1, max_length=500)
+
+
+class AtlasDataset(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["available", "unavailable"]
+    message: str = Field(max_length=1000)
+    datasetId: Optional[str] = Field(max_length=200)
+    generatedAt: Optional[datetime]
+    validation: Optional[AtlasValidation]
+    scenarios: List[AtlasScenario] = Field(max_length=20)
+    cells: List[AtlasCell] = Field(max_length=10_000)
+    provenance: List[AtlasProvenance] = Field(max_length=50)
+
+    @model_validator(mode="after")
+    def check_dataset(self):
+        if self.status == "unavailable":
+            if self.validation is not None or self.datasetId is not None or self.generatedAt is not None or self.scenarios or self.cells or self.provenance:
+                raise ValueError("unavailable dataset must contain no dataset metadata, validation, cells, scenarios, or provenance")
+            return self
+        if not self.datasetId or not self.generatedAt or not self.validation or not self.scenarios or not self.cells or not self.provenance:
+            raise ValueError("available atlas requires identity, validation, scenarios, cells, and provenance")
+        scenario_ids = {scenario.id for scenario in self.scenarios}
+        if len(scenario_ids) != len(self.scenarios):
+            raise ValueError("scenario IDs must be unique")
+        keys = set()
+        for cell in self.cells:
+            if cell.scenarioId not in scenario_ids:
+                raise ValueError("cell refers to an unknown scenario")
+            key = (cell.h3Index, cell.crop, cell.scenarioId)
+            if key in keys:
+                raise ValueError("atlas cell keys must be unique")
+            keys.add(key)
+        return self
+
+
+class SoilMeasure(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["available", "unavailable"]
+    value: Optional[float | str]
+    unit: str = Field(max_length=80)
+    source: str = Field(max_length=200)
+    sourceUrl: str = Field(max_length=1000)
+    message: str = Field(max_length=500)
+
+    @model_validator(mode="after")
+    def check_value(self):
+        if self.status == "available" and self.value is None:
+            raise ValueError("available soil measures require a value")
+        if self.status == "unavailable" and self.value is not None:
+            raise ValueError("unavailable soil measures must have null value")
+        if isinstance(self.value, float) and not math.isfinite(self.value):
+            raise ValueError("soil measure must be finite")
+        return self
+
+
+class SoilHorizon(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    topCm: float = Field(ge=0, le=300)
+    bottomCm: float = Field(gt=0, le=300)
+    texture: SoilMeasure
+    sandPct: SoilMeasure
+    siltPct: SoilMeasure
+    clayPct: SoilMeasure
+    organicMatterPct: SoilMeasure
+    bulkDensityGcm3: SoilMeasure
+    ph: SoilMeasure
+    saturatedConductivityUmS: SoilMeasure
+
+    @model_validator(mode="after")
+    def check_depth(self):
+        if self.bottomCm <= self.topCm:
+            raise ValueError("horizon bottom must be deeper than top")
+        fractions = [self.sandPct.value, self.siltPct.value, self.clayPct.value]
+        if all(isinstance(value, (int, float)) for value in fractions) and abs(sum(fractions) - 100) > 2:
+            raise ValueError("soil texture fractions must sum to approximately 100 percent")
+        return self
+
+
+class SoilProfileComponent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    mapUnitSymbol: str = Field(max_length=100)
+    mapUnitName: str = Field(max_length=300)
+    componentName: str = Field(max_length=300)
+    componentPercent: Optional[float] = Field(ge=0, le=100)
+    drainageClass: SoilMeasure
+    hydrologicGroup: SoilMeasure
+    horizons: List[SoilHorizon] = Field(max_length=30)
+
+
+class SoilProfileResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["available", "unavailable"]
+    message: str = Field(max_length=1000)
+    sample: GeoCoordinate
+    retrievedAt: datetime
+    source: str = Field(max_length=200)
+    sourceUrl: str = Field(max_length=1000)
+    components: List[SoilProfileComponent] = Field(max_length=20)
+
+    @model_validator(mode="after")
+    def check_status(self):
+        if self.status == "unavailable" and self.components:
+            raise ValueError("unavailable soil result cannot contain components")
+        return self
+
+
+
+class RegionalYieldEstimate(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    crop: Literal["corn", "soybeans"]
+    period: Literal["2019", "2020", "2019-2020"]
+    sampleRecords: int = Field(ge=10)
+    sampleRecordsByYear: dict[Literal["2019", "2020"], int]
+    meanYieldEffectPct: float = Field(gt=-100)
+
+    @model_validator(mode="after")
+    def finite_estimate(self):
+        if set(self.sampleRecordsByYear) != {"2019", "2020"} or any(v < 0 for v in self.sampleRecordsByYear.values()) or sum(self.sampleRecordsByYear.values()) != self.sampleRecords:
+            raise ValueError("invalid sample year counts")
+        if self.period in ("2019", "2020") and self.sampleRecordsByYear[self.period] != self.sampleRecords:
+            raise ValueError("sample counts must match selected year")
+        if not math.isfinite(self.meanYieldEffectPct):
+            raise ValueError("yield effect must be finite")
+        return self
+
+
+class RegionalYieldGeometry(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["Polygon", "MultiPolygon"]
+    coordinates: list
+
+    @model_validator(mode="after")
+    def geographic_rings(self):
+        polygons = [self.coordinates] if self.type == "Polygon" else self.coordinates
+        if not polygons or len(polygons) > 2000:
+            raise ValueError("invalid county polygons")
+        positions = 0
+        for polygon in polygons:
+            if not isinstance(polygon, list) or not polygon:
+                raise ValueError("invalid polygon")
+            for ring in polygon:
+                if not isinstance(ring, list) or len(ring) < 4 or ring[0] != ring[-1]:
+                    raise ValueError("county rings must be closed")
+                for position in ring:
+                    positions += 1
+                    if not isinstance(position, list) or len(position) != 2 or any(type(v) not in (int, float) or not math.isfinite(v) for v in position):
+                        raise ValueError("invalid geographic position")
+                    if not -125 <= position[0] <= -66 or not 24 <= position[1] <= 50:
+                        raise ValueError("county outside CONUS")
+        if positions > 20000:
+            raise ValueError("county geometry too large")
+        return self
+
+
+class RegionalYieldRegion(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    fips: str = Field(pattern=r"^\d{5}$")
+    name: str = Field(min_length=1, max_length=150)
+    state: Literal["IA", "IL", "IN", "MI", "MO", "OH"]
+    centroid: List[StrictFloat] = Field(min_length=2, max_length=2)
+    geometry: RegionalYieldGeometry
+    estimates: List[RegionalYieldEstimate] = Field(min_length=1, max_length=6)
+
+    @model_validator(mode="after")
+    def unique_estimates(self):
+        if any(not math.isfinite(v) for v in self.centroid) or not (-125 <= self.centroid[0] <= -66 and 24 <= self.centroid[1] <= 50):
+            raise ValueError("invalid county centre")
+        state_fips = {"IA":"19", "IL":"17", "IN":"18", "MI":"26", "MO":"29", "OH":"39"}
+        if not self.fips.startswith(state_fips[self.state]):
+            raise ValueError("county/state FIPS mismatch")
+        keys = [(e.crop, e.period) for e in self.estimates]
+        if len(keys) != len(set(keys)):
+            raise ValueError("duplicate county estimates")
+        return self
+
+
+class RegionalYieldSource(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    title: str = Field(min_length=1, max_length=300)
+    url: str = Field(pattern=r"^https://", max_length=1000)
+    doi: str = Field(min_length=1, max_length=150)
+    archiveSha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    license: str = Field(min_length=1, max_length=150)
+
+
+class RegionalYieldMethod(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    summary: str = Field(min_length=1, max_length=1000)
+    units: Literal["percent"]
+    sampleUnit: Literal["model sample record"]
+    minimumSampleRecords: Literal[10]
+    interpretation: str = Field(min_length=1, max_length=1000)
+    limitations: List[str] = Field(min_length=1, max_length=20)
+
+
+class RegionalYieldDataset(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: Literal["available", "unavailable"]
+    message: str = Field(min_length=1, max_length=1000)
+    datasetId: Optional[str] = Field(max_length=200)
+    generatedAt: Optional[datetime]
+    source: Optional[RegionalYieldSource]
+    method: Optional[RegionalYieldMethod]
+    regions: List[RegionalYieldRegion] = Field(max_length=1000)
+
+    @model_validator(mode="after")
+    def complete_dataset(self):
+        if self.status == "unavailable":
+            if self.datasetId is not None or self.generatedAt is not None or self.source is not None or self.method is not None or self.regions:
+                raise ValueError("unavailable regional data must be empty")
+        elif not self.datasetId or self.generatedAt is None or self.source is None or self.method is None or not self.regions:
+            raise ValueError("available regional data requires complete metadata and regions")
+        if len({r.fips for r in self.regions}) != len(self.regions):
+            raise ValueError("duplicate county FIPS")
+        return self

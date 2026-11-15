@@ -4,6 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import type { Feature, FeatureCollection, Polygon } from "geojson";
 import type { GeoPolygon } from "@spaceapps/shared";
+import type { AtlasCell } from "@spaceapps/shared";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { point } from "@turf/helpers";
 import type { GeoJSONSource, Map as MlMap, MapMouseEvent } from "maplibre-gl";
@@ -17,7 +18,6 @@ import {
   hexAt,
   hexCenter,
   layerDates,
-  MAP_STYLE,
   localStyle,
   OVERLAYS,
   resolutionForZoom,
@@ -31,7 +31,11 @@ import type {
   MapStatus,
   Selection,
 } from "../../lib/map/types";
+import { createDroughtOverlay } from "@/lib/map/drought";
 import farms from "../../data/benchmark_farms.json";
+import { atlasFeatureCollection, createAtlasDeckLayer, createAtlasDeckOverlay, isAtlasCell, validatedAtlasCells } from "@/lib/map/atlas-renderer";
+import { DEFAULT_BASEMAP, getBasemapStyle } from "@/lib/map/basemaps";
+import { regionalYieldBounds, regionalYieldCollection, yieldColorExpression } from "@/lib/map/regional-yield-renderer";
 
 type Farm = { id: string; name: string; latitude: number; longitude: number };
 const BENCHMARKS = farms as Farm[];
@@ -54,6 +58,10 @@ export default function MapCanvas(props: MapCanvasProps) {
   const drawingSnapshot = useRef<any[]>([]);
   const finishRequest = useRef(0);
   const fallbackActive = useRef(false);
+  const fallbackStyleDeferred = useRef(false);
+  const appliedBasemap = useRef(props.basemap ?? DEFAULT_BASEMAP);
+  const basemapRetry = useRef(props.basemapRetry ?? 0);
+  const pendingBasemap = useRef(props.basemap ?? DEFAULT_BASEMAP);
   const resolution = useRef<2 | 3 | 4 | 5>(4);
   const cameras = useRef({ field: DEFAULT_CAMERA, atlas: ATLAS_CAMERA });
   const mode = useRef(props.mode);
@@ -64,6 +72,20 @@ export default function MapCanvas(props: MapCanvasProps) {
   const overlayCleanup = useRef<(() => void) | undefined>(undefined);
   const layerInfo = useRef<LayerInfo | undefined>(undefined);
   const initialFieldFocusApplied = useRef(false);
+  const droughtOverlay = useRef<ReturnType<typeof createDroughtOverlay> | null>(null);
+  const atlasOverlay = useRef<any>(null);
+  const atlasFallbackVisible = useRef(false);
+  const atlasGeneration = useRef(0);
+  const atlasFrameSamples = useRef<number[]>([]);
+  const atlasLastSample = useRef(0);
+  const atlasLastCommit = useRef(0);
+  const atlasHoverH3 = useRef<string | null>(null);
+  const atlasFrameCommitMs = useRef(0);
+  const countyViewActive = useRef(false);
+  const countyCamera = useRef<{ center: [number, number]; zoom: number } | null>(null);
+  const returnCamera = useRef<{ center: [number, number]; zoom: number }>(ATLAS_CAMERA);
+  const countyFitNonce = useRef<number | undefined>(undefined);
+  const countyFittedDataset = useRef<string | null>(null);
 
   useEffect(() => {
     if (!element.current) return;
@@ -105,13 +127,17 @@ export default function MapCanvas(props: MapCanvasProps) {
       ml.setWorkerUrl("/vendor/maplibre/maplibre-gl-worker.mjs");
       map = new ml.Map({
         container: element.current,
-        style: MAP_STYLE,
+        style: getBasemapStyle(propsRef.current.basemap ?? DEFAULT_BASEMAP),
         center: cameras.current[mode.current].center,
         zoom: cameras.current[mode.current].zoom,
         maxZoom: 16,
         attributionControl: {},
       });
       mapRef.current = map;
+      droughtOverlay.current = createDroughtOverlay(map, status => {
+        if (element.current) element.current.dataset.droughtStatus = status;
+        propsRef.current.onDroughtStatus?.(status);
+      });
       map.on("style.load", () => {
         attached.current = false;
         terraDraw.current = null;
@@ -123,6 +149,16 @@ export default function MapCanvas(props: MapCanvasProps) {
         syncSelectionLayers();
         void syncDrawing();
         void syncOverlay();
+        void syncAtlasOverlay();
+        syncRegionalYield();
+        void droughtOverlay.current?.sync(!!propsRef.current.drought);
+        const selected = propsRef.current.basemap ?? DEFAULT_BASEMAP;
+        if (fallbackActive.current) {
+          propsRef.current.onBasemapStatus?.({ selected, displayed: "local-fallback", state: "fallback" });
+        } else {
+          appliedBasemap.current = pendingBasemap.current = selected;
+          propsRef.current.onBasemapStatus?.({ selected, displayed: selected, state: "ready" });
+        }
         if (!initialFieldFocusApplied.current) {
           initialFieldFocusApplied.current = true;
           focusFieldSelection(map!);
@@ -133,29 +169,22 @@ export default function MapCanvas(props: MapCanvasProps) {
         const sourceId = (event as typeof event & { sourceId?: string })
           .sourceId;
         const isBasemap = sourceId
-          ? !["field-h3", "nasa-raster", "field-selection", "field-point"].includes(sourceId) && !sourceId.startsWith("field-draw")
-          : /openfreemap|Failed to fetch|NetworkError/i.test(
+          ? !["field-h3", "nasa-raster", "field-selection", "field-point", "atlas-regional-data", "atlas-county-yield", "usdm-observation"].includes(sourceId) && !sourceId.startsWith("field-draw")
+          : /openfreemap|nationalmap\.gov|Failed to fetch|NetworkError/i.test(
               event.error?.message ?? "",
             );
         if (fallbackActive.current || !isBasemap) return;
         fallbackActive.current = true;
-        attached.current = false;
+        const drawingMode = propsRef.current.drawing?.mode;
+        propsRef.current.onBasemapStatus?.({ selected: pendingBasemap.current, displayed: drawingMode === "polygon" ? appliedBasemap.current : "local-fallback", state: "fallback" });
+        if (drawingMode === "polygon") {
+          fallbackStyleDeferred.current = true;
+          return;
+        }
         propsRef.current.onMapReady?.(false);
         reportDrawingReady(false);
-        if (terraDraw.current) {
-          drawingSnapshot.current = terraDraw.current.getSnapshot();
-          drawingSnapshotSession.current = propsRef.current.drawing?.session;
-        }
-        terraDraw.current?.stop();
-        terraDraw.current = null;
-        terraSelectMode.current = null;
-        activeDrawMode.current = "";
-        drawingBuildGeneration.current++;
-        generation.current++;
-        window.clearTimeout(timeout.current);
-        overlayCleanup.current?.();
-        overlayCleanup.current = undefined;
-        map!.setStyle(localStyle());
+        prepareMapStyleReload(map!);
+        map!.setStyle(localStyle(), { diff: false });
       });
       map.on("moveend", () => {
         const c = map!.getCenter();
@@ -172,6 +201,7 @@ export default function MapCanvas(props: MapCanvasProps) {
         } else if (next === 5) syncData();
       });
       map.on("click", selectAt);
+        map.on("mousemove", hoverAtlasAt);
     })().catch((e) => {
       if (!cancelled)
         propsRef.current.onStatus({
@@ -185,6 +215,9 @@ export default function MapCanvas(props: MapCanvasProps) {
       generation.current++;
       window.clearTimeout(timeout.current);
       overlayCleanup.current?.();
+      removeAtlasOverlay();
+      droughtOverlay.current?.dispose();
+      droughtOverlay.current = null;
       terraDraw.current?.stop();
       terraDraw.current = null;
       terraSelectMode.current = null;
@@ -239,6 +272,20 @@ export default function MapCanvas(props: MapCanvasProps) {
       },
       before,
     );
+    map.addSource("atlas-regional-data", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    map.addSource("atlas-county-yield", {type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addLayer({id:"atlas-county-fill",type:"fill",source:"atlas-county-yield",layout:{visibility:"none"},paint:{"fill-color":yieldColorExpression() as never,"fill-opacity":0.76}},before);
+    map.addLayer({id:"atlas-county-line",type:"line",source:"atlas-county-yield",layout:{visibility:"none"},paint:{"line-color":["case",["get","selected"],"#183a24","#ffffff"],"line-width":["case",["get","selected"],2,0.8],"line-opacity":0.9}},before);
+    map.addLayer({
+      id: "atlas-regional-fill", type: "fill", source: "atlas-regional-data",
+      layout: { visibility: "none" },
+      paint: { "fill-color": ["get", "atlasColor"], "fill-opacity": 0.78 },
+    }, before);
+    map.addLayer({
+      id: "atlas-regional-line", type: "line", source: "atlas-regional-data",
+      layout: { visibility: "none" },
+      paint: { "line-color": ["case", ["==", ["get", "h3Index"], propsRef.current.atlasSelectedH3 ?? ""], "#183a24", "#ffffff"], "line-width": ["case", ["==", ["get", "h3Index"], propsRef.current.atlasSelectedH3 ?? ""], 2.5, 0.7], "line-opacity": 0.9 },
+    }, before);
     map.addLayer(
       {
         id: "field-h3-line",
@@ -284,6 +331,10 @@ export default function MapCanvas(props: MapCanvasProps) {
       },
     });
     map.on("sourcedata", (event) => {
+      if (event.sourceId === "atlas-county-yield" && event.isSourceLoaded) {
+        if (element.current) element.current.dataset.regionalReady = "true";
+        if (propsRef.current.regionalYieldActive && propsRef.current.overlay === "off") propsRef.current.onStatus(idleStatus());
+      }
       if (event.sourceId === "field-h3" && event.isSourceLoaded) {
         gridReady.current = true;
         if (propsRef.current.overlay === "off")
@@ -365,7 +416,8 @@ export default function MapCanvas(props: MapCanvasProps) {
     const selected = propsRef.current.selection;
     const polygonSource = map.getSource("field-selection") as GeoJSONSource;
     const pointSource = map.getSource("field-point") as GeoJSONSource;
-    const region = propsRef.current.mode === "atlas" && selected.hexId && isValidCell(selected.hexId)
+    const countyMode = propsRef.current.mode === "atlas" && (propsRef.current.regionalYieldActive??!!propsRef.current.regionalYield);
+    const region = !countyMode && propsRef.current.mode === "atlas" && selected.hexId && isValidCell(selected.hexId)
       ? selected.hexId : undefined;
     const features: Feature<Polygon>[] = region
       ? [h3CellFeature(region, getResolution(region))]
@@ -373,7 +425,7 @@ export default function MapCanvas(props: MapCanvasProps) {
         ? [{ type: "Feature", properties: {}, geometry: selected.boundary }] : [];
     const marker = region ? hexCenter(region) : selected;
     polygonSource.setData({ type: "FeatureCollection", features });
-    pointSource.setData({
+    pointSource.setData(countyMode?{type:"FeatureCollection",features:[]}:{
       type: "FeatureCollection",
       features: [{
         type: "Feature",
@@ -409,6 +461,29 @@ export default function MapCanvas(props: MapCanvasProps) {
   function reportDrawingReady(ready: boolean) {
     if (element.current) element.current.dataset.drawingReady = String(ready);
     propsRef.current.onDrawingReady?.(ready);
+  }
+
+  function prepareMapStyleReload(map: MlMap) {
+    propsRef.current.onMapReady?.(false);
+    reportDrawingReady(false);
+    const center = map.getCenter();
+    cameras.current[mode.current] = { center: [center.lng, center.lat], zoom: map.getZoom() };
+    const drawing = propsRef.current.drawing;
+    if (terraDraw.current) {
+      drawingSnapshot.current = terraDraw.current.getSnapshot();
+      drawingSnapshotSession.current = drawing?.session;
+      terraDraw.current.stop();
+      terraDraw.current = null;
+    }
+    terraSelectMode.current = null;
+    activeDrawMode.current = "";
+    attached.current = false;
+    drawingBuildGeneration.current++;
+    generation.current++;
+    window.clearTimeout(timeout.current);
+    overlayCleanup.current?.();
+    overlayCleanup.current = undefined;
+    removeAtlasOverlay();
   }
 
   async function syncDrawing() {
@@ -568,6 +643,34 @@ export default function MapCanvas(props: MapCanvasProps) {
       propsRef.current.onSelect({ latitude: lat, longitude: lng, name: "Selected point" });
       return;
     }
+    const suppliedAtlas = propsRef.current.atlasCells;
+    const countyLayer=propsRef.current.regionalYield;
+    if(propsRef.current.mode==="atlas"&&(propsRef.current.regionalYieldActive??!!countyLayer)){
+      if(!countyLayer)return;
+      const f=map.queryRenderedFeatures(e.point,{layers:["atlas-county-fill"]})[0]; const fips=String(f?.properties?.fips??"");
+      if(!fips)return;
+      const region=countyLayer.data.regions.find(r=>r.fips===fips); if(!region)return;
+      propsRef.current.onRegionalSelect?.(fips);
+      const [longitude,latitude]=region.centroid;
+      propsRef.current.onSelect({longitude,latitude,name:`${region.name}, ${region.state}`,hexId:hexAt(latitude,longitude,resolution.current)});
+      return;
+    }
+    if (suppliedAtlas !== undefined) {
+      let cell: AtlasCell | null = null;
+      if (atlasOverlay.current) {
+        const picked = atlasOverlay.current.pickObject({ x: e.point.x, y: e.point.y });
+        if (picked?.object && isAtlasCell(picked.object)) cell = picked.object;
+      }
+      if (!cell && map.getLayer("atlas-regional-fill")) {
+        const feature = map.queryRenderedFeatures(e.point, { layers: ["atlas-regional-fill"] })[0];
+        const h3Index = feature?.properties?.h3Index;
+        if (typeof h3Index === "string") cell = validatedAtlasCells(suppliedAtlas).find((item) => item.h3Index === h3Index) ?? null;
+      }
+      if (!cell) return;
+      const center = hexCenter(cell.h3Index);
+      propsRef.current.onSelect({ ...center, name: `Atlas region · ${cell.crop}`, hexId: cell.h3Index });
+      return;
+    }
     const hit = map.queryRenderedFeatures(e.point, {
       layers: ["field-h3-fill"],
     })[0];
@@ -581,6 +684,125 @@ export default function MapCanvas(props: MapCanvasProps) {
       name: farm ? `Region near ${farm.name}` : "Selected region",
       hexId,
     });
+  }
+  function hoverAtlasAt(e: MapMouseEvent) {
+    const p = propsRef.current;
+    if(p.mode==="atlas"&&(p.regionalYieldActive??!!p.regionalYield)){
+      const map=mapRef.current;const feature=map?.queryRenderedFeatures(e.point,{layers:["atlas-county-fill"]})[0];
+      if(map)map.getCanvas().style.cursor=feature?"pointer":"";
+      return;
+    }
+    if (p.mode !== "atlas" || p.atlasCells === undefined) return;
+    if (atlasOverlay.current) return;
+    const map = mapRef.current;
+    const feature = map?.queryRenderedFeatures(e.point, { layers: ["atlas-regional-fill"] })[0];
+    const h3Index = typeof feature?.properties?.h3Index === "string" ? feature.properties.h3Index : null;
+    if (h3Index === atlasHoverH3.current) return;
+    atlasHoverH3.current = h3Index;
+    p.onAtlasHover?.(h3Index ? validatedAtlasCells(p.atlasCells).find((item) => item.h3Index === h3Index) ?? null : null);
+  }
+  function setAtlasFallback(enabled: boolean) {
+    const map = mapRef.current;
+    if (!map) return;
+    const source = map.getSource("atlas-regional-data") as GeoJSONSource | undefined;
+    const cells = validatedAtlasCells(propsRef.current.atlasCells);
+    if (enabled || atlasFallbackVisible.current) source?.setData(enabled ? atlasFeatureCollection(cells) : { type: "FeatureCollection", features: [] });
+    atlasFallbackVisible.current = enabled;
+    for (const id of ["atlas-regional-fill", "atlas-regional-line"]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", enabled ? "visible" : "none");
+    }
+  }
+  function removeAtlasOverlay() {
+    const map = mapRef.current;
+    const overlay = atlasOverlay.current;
+    atlasOverlay.current = null;
+    atlasGeneration.current++;
+    if (map && overlay) {
+      try { map.removeControl(overlay); } catch { overlay.finalize?.(); }
+    }
+  }
+  async function syncAtlasOverlay() {
+    const map = mapRef.current;
+    if (!map || !attached.current) return;
+    const p = propsRef.current;
+    const cells = validatedAtlasCells(p.atlasCells);
+    const enabled = p.mode === "atlas" && p.atlasCells !== undefined;
+    if (!enabled) {
+      removeAtlasOverlay();
+      setAtlasFallback(false);
+      p.onAtlasHover?.(null);
+      if (element.current) element.current.dataset.atlasRenderMode = "idle";
+      p.onAtlasRenderStatus?.("idle");
+      return;
+    }
+    const selected = p.atlasSelectedH3;
+    if (map.getLayer("atlas-regional-line")) {
+      map.setPaintProperty("atlas-regional-line", "line-color", ["case", ["==", ["get", "h3Index"], selected ?? ""], "#183a24", "#ffffff"]);
+      map.setPaintProperty("atlas-regional-line", "line-width", ["case", ["==", ["get", "h3Index"], selected ?? ""], 2.5, 0.7]);
+    }
+    if (cells.length === 0) {
+      removeAtlasOverlay();
+      setAtlasFallback(false);
+      if (element.current) {
+        element.current.dataset.atlasRenderMode = "unavailable";
+        element.current.dataset.atlasCells = "0";
+      }
+      p.onAtlasRenderStatus?.("unavailable");
+      return;
+    }
+    setAtlasFallback(false);
+    const generationId = ++atlasGeneration.current;
+    const beforeId = map.getStyle().layers.find((layer) => layer.type === "symbol")?.id;
+    const onHover = (cell: AtlasCell | null) => {
+      atlasHoverH3.current = cell?.h3Index ?? null;
+      propsRef.current.onAtlasHover?.(cell);
+    };
+    const onAfterRender = () => {
+      const now = performance.now();
+      atlasFrameSamples.current = atlasFrameSamples.current.filter((stamp) => now - stamp <= 2000);
+      atlasFrameSamples.current.push(now);
+      if (atlasLastSample.current && now - atlasLastSample.current < 1000) return;
+      atlasLastSample.current = now;
+      if (atlasFrameSamples.current.length < 4) return;
+      const first = atlasFrameSamples.current[0];
+      const last = atlasFrameSamples.current[atlasFrameSamples.current.length - 1];
+      const frameRate = last > first ? Math.round(((atlasFrameSamples.current.length - 1) * 1000) / (last - first)) : null;
+      propsRef.current.onAtlasPerformance?.({ layerUpdateMs: atlasFrameCommitMs.current, sampledFrameRate: frameRate });
+    };
+    const startedAt = performance.now();
+    try {
+      if (!atlasOverlay.current) {
+        const overlay = await createAtlasDeckOverlay(cells, selected, beforeId, onHover, () => {
+          if (generationId !== atlasGeneration.current) return;
+          removeAtlasOverlay();
+          setAtlasFallback(true);
+          if (element.current) element.current.dataset.atlasRenderMode = "fallback";
+          propsRef.current.onAtlasRenderStatus?.("fallback");
+        }, onAfterRender);
+        if (generationId !== atlasGeneration.current || mapRef.current !== map) { overlay.finalize(); return; }
+        map.addControl(overlay);
+        atlasOverlay.current = overlay;
+      } else {
+        const layer = await createAtlasDeckLayer(cells, selected, beforeId, onHover);
+        if (generationId !== atlasGeneration.current) return;
+        atlasOverlay.current.setProps({ layers: [layer], onAfterRender });
+      }
+      atlasFrameCommitMs.current = performance.now() - startedAt;
+      if (element.current) {
+        element.current.dataset.atlasLayerUpdateMs = atlasFrameCommitMs.current.toFixed(1);
+        element.current.dataset.atlasCells = String(cells.length);
+        element.current.dataset.atlasScenarioId = cells[0]?.scenarioId ?? "";
+        element.current.dataset.atlasRenderMode = "deck";
+      }
+      p.onAtlasPerformance?.({ layerUpdateMs: atlasFrameCommitMs.current, sampledFrameRate: null });
+      p.onAtlasRenderStatus?.("deck");
+    } catch {
+      if (generationId !== atlasGeneration.current) return;
+      removeAtlasOverlay();
+      setAtlasFallback(true);
+      if (element.current) element.current.dataset.atlasRenderMode = "fallback";
+      p.onAtlasRenderStatus?.("fallback");
+    }
   }
   async function syncOverlay() {
     const map = mapRef.current;
@@ -733,7 +955,65 @@ export default function MapCanvas(props: MapCanvasProps) {
     syncData();
     syncSelectionLayers();
     void syncDrawing();
+    void syncAtlasOverlay();
   }, [props.mode, props.selection, props.drawing]);
+  useEffect(() => {
+    const map = mapRef.current;
+    const next = props.basemap ?? DEFAULT_BASEMAP;
+    const retryRequested = basemapRetry.current !== (props.basemapRetry ?? 0);
+    basemapRetry.current = props.basemapRetry ?? 0;
+    if (!map || (!retryRequested && next === appliedBasemap.current && !fallbackActive.current)) return;
+    if (!retryRequested && pendingBasemap.current === next && fallbackActive.current) return;
+    const drawing = propsRef.current.drawing;
+    if (drawing?.mode === "polygon") return;
+    prepareMapStyleReload(map);
+    fallbackActive.current = false;
+    pendingBasemap.current = next;
+    propsRef.current.onBasemapStatus?.({ selected: next, displayed: appliedBasemap.current, state: "loading" });
+    map.setStyle(getBasemapStyle(next), { diff: false });
+  }, [props.basemap, props.basemapRetry, props.drawing?.mode]);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || props.drawing?.mode === "polygon" || !fallbackStyleDeferred.current) return;
+    fallbackStyleDeferred.current = false;
+    prepareMapStyleReload(map);
+    map.setStyle(localStyle(), { diff: false });
+  }, [props.drawing?.mode]);
+  useEffect(() => { void droughtOverlay.current?.sync(!!props.drought); }, [props.drought, props.droughtRetry]);
+  useEffect(() => { void syncAtlasOverlay(); }, [props.atlasCells, props.atlasSelectedH3, props.mode]);
+  useEffect(()=>{syncRegionalYield();},[props.regionalYield,props.regionalYieldActive,props.mode]);
+  function syncRegionalYield(){
+    const map=mapRef.current;if(!map||!attached.current||!map.getSource("atlas-county-yield"))return;
+    const p=propsRef.current;const enabled=p.mode==="atlas"&&(p.regionalYieldActive??!!p.regionalYield);
+    if (p.mode === "atlas" && enabled !== countyViewActive.current) {
+      const centre = map.getCenter();
+      const current = { center: [centre.lng, centre.lat] as [number, number], zoom: map.getZoom() };
+      if (enabled) {
+        returnCamera.current = { center: [...cameras.current.atlas.center] as [number, number], zoom: cameras.current.atlas.zoom };
+        if (countyCamera.current) map.jumpTo(countyCamera.current);
+      } else {
+        countyCamera.current = current;
+        map.jumpTo(returnCamera.current);
+      }
+      countyViewActive.current = enabled;
+    }
+    syncSelectionLayers();
+    const src=map.getSource("atlas-county-yield") as GeoJSONSource;
+    const hasData=enabled&&!!p.regionalYield;
+    if(element.current)element.current.dataset.regionalReady="false";
+    src.setData(hasData?regionalYieldCollection(p.regionalYield!.data,p.regionalYield!.crop,p.regionalYield!.period,p.regionalYield!.selectedFips):{type:"FeatureCollection",features:[]});
+    if(element.current){element.current.dataset.regionalCountyCount=hasData?String(p.regionalYield!.data.regions.length):"0";element.current.dataset.regionalCrop=hasData?p.regionalYield!.crop:"";element.current.dataset.regionalPeriod=hasData?p.regionalYield!.period:"";}
+    for(const id of ["atlas-county-fill","atlas-county-line"])if(map.getLayer(id))map.setLayoutProperty(id,"visibility",enabled?"visible":"none");
+    for(const id of ["field-h3-fill","field-h3-line"])if(map.getLayer(id))map.setLayoutProperty(id,"visibility",enabled?"none":"visible");
+    if(enabled){for(const id of ["atlas-regional-fill","atlas-regional-line"])if(map.getLayer(id))map.setLayoutProperty(id,"visibility","none");}
+    const datasetId=hasData?p.regionalYield!.data.datasetId:null;
+    if(hasData&&(p.regionalYield!.fitNonce!==countyFitNonce.current||datasetId!==countyFittedDataset.current)){
+      const manualFit=p.regionalYield!.fitNonce!==countyFitNonce.current&&p.regionalYield!.fitNonce!==0;
+      const initialFit=datasetId!==countyFittedDataset.current;
+      countyFitNonce.current=p.regionalYield!.fitNonce;countyFittedDataset.current=datasetId;
+      const bounds=regionalYieldBounds(p.regionalYield!.data);if(bounds&&(manualFit||initialFit))map.fitBounds(bounds,{padding:60,maxZoom:7,duration:motionDuration(500)});
+    }
+  }
   useEffect(() => {
     void syncOverlay();
   }, [props.overlay, props.retry, props.timeMode, props.observationDate]);
@@ -757,11 +1037,12 @@ export default function MapCanvas(props: MapCanvasProps) {
         zoom: m.getZoom() + (n.action === "zoom-in" ? 1 : -1),
         duration: motionDuration(400),
       });
-    else if (n.action === "reset")
-      m.flyTo({
-        ...(props.mode === "field" ? DEFAULT_CAMERA : ATLAS_CAMERA),
-        duration: motionDuration(500),
-      });
+    else if (n.action === "reset") {
+      const county = propsRef.current.regionalYield;
+      const bounds = county && regionalYieldBounds(county.data);
+      if (propsRef.current.regionalYieldActive && bounds) m.fitBounds(bounds, { padding: 60, maxZoom: 7, duration: motionDuration(500) });
+      else m.flyTo({ ...(props.mode === "field" ? DEFAULT_CAMERA : ATLAS_CAMERA), duration: motionDuration(500) });
+    }
     else if (n.action === "selection") {
       if (props.selection.fieldId) {
         focusFieldSelection(m);
@@ -779,7 +1060,8 @@ export default function MapCanvas(props: MapCanvasProps) {
       ref={element}
       className="map-canvas"
       role="region"
-      aria-label="Geographic H3 hex map"
+      aria-label={props.regionalYieldActive?"Published county yield effect map":"Geographic H3 hex map"}
+      data-map-layer={props.regionalYieldActive?"regional-county-yield":"geographic-h3"}
       data-hex-resolution={resolution.current}
     />
   );

@@ -1,0 +1,9 @@
+trial,tillage,treatment,averageCostUsdHaCycle,averageWheatRevenueUsdHaCycle,cycle1NetUsdHaCycle,cycle2NetUsdHaCycle,cycle3NetUsdHaCycle,meanNetUsdHaCycle
+1,NT,fall_cover,272.23,182.14,-10.16,-66.76,-193.3,-90.08
+1,NT,fallow,187.29,281.22,209.99,-8.59,80.39,93.93
+2,NT,fall_cover,236.2,58.43,-198.09,-157.44,NA,-177.8
+2,NT,spring_cover,269.43,119.81,-143.05,-156.19,NA,-149.6
+2,NT,fallow,171.68,162.91,-18.85,1.31,NA,-8.77
+2,CT,fall_cover,217.99,42.38,-222.96,-128.25,NA,-175.6
+2,CT,spring_cover,217.68,103.94,-134.16,-93.34,NA,-113.8
+2,CT,fallow,143.23,125.99,-56.75,22.27,NA,-17.24

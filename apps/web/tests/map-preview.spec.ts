@@ -1,6 +1,21 @@
 import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
 
+async function openMapOptions(page: import("@playwright/test").Page) {
+  const sheet = page.getByRole("dialog", { name: "Map options" });
+  if (!(await sheet.isVisible().catch(() => false)))
+    await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await expect(sheet).toBeVisible();
+}
+
+async function closeMapOptions(page: import("@playwright/test").Page) {
+  const sheet = page.getByRole("dialog", { name: "Map options" });
+  if (await sheet.isVisible().catch(() => false)) {
+    await sheet.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(sheet).toBeHidden();
+  }
+}
+
 async function mockGibs(page: import("@playwright/test").Page) {
   const ids = [
     "SMAP_L4_Analyzed_Surface_Soil_Moisture",
@@ -54,15 +69,17 @@ test("Explore settings persist across workspace routes, browser history, and rel
 
   await page.getByLabel("Field or location").selectOption("benchmark:hays");
   await page.getByLabel("Cash crop").selectOption("corn");
+  await openMapOptions(page);
   await page.getByLabel("Observation period").selectOption("past");
   await page.getByLabel("Observation date", { exact: true }).fill("2026-11-01");
-  await page.getByRole("button", { name: "Layers", exact: true }).click();
   await page
     .getByRole("button", { name: "Soil moisture · SMAP", exact: true })
     .click();
+  await closeMapOptions(page);
   await expect(page.getByRole("status")).toContainText("2026-11-01", {
     timeout: 20000,
   });
+  await closeMapOptions(page);
 
   const selected = page.getByLabel("Cash crop");
   await expect(selected).toBeVisible();
@@ -92,10 +109,10 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(canvas).toHaveAttribute("data-hex-resolution", resolution!);
   await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
+  await openMapOptions(page);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
-  await expect(
-    page.getByLabel("Observation date", { exact: true }),
-  ).toHaveValue("2026-11-01");
+  await expect(page.getByLabel("Observation date", { exact: true })).toHaveValue("2026-11-01");
+  await closeMapOptions(page);
 
   await page.goBack();
   await expect(page).toHaveURL(/\/planner$/);
@@ -107,14 +124,15 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await page.reload();
   await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
+  await openMapOptions(page);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
   await expect(
     page.getByLabel("Observation date", { exact: true }),
   ).toHaveValue("2026-11-01");
-  await page.getByRole("button", { name: "Layers", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Soil moisture · SMAP", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
+  await closeMapOptions(page);
 });
 
 test("mobile navigation opens, routes, and closes", async ({ page }) => {
@@ -148,8 +166,8 @@ test("fallback hex selection opens a detail sheet that can close before zooming"
   await page.route("https://tiles.openfreemap.org/**", (route) =>
     route.abort(),
   );
-  await page.goto("/");
-  await page.getByRole("button", { name: "National Risk Atlas" }).click();
+  await page.goto("/atlas");
+  await page.getByLabel("Atlas layer").selectOption("returns");
   const canvas = page.locator(".map-canvas");
   await expect(canvas).toHaveAttribute("data-hex-resolution", "2", {
     timeout: 30000,
@@ -207,9 +225,7 @@ test("field plan inputs save for the selected field and survive reload", async (
   await expect(
     page.getByRole("heading", { name: "Ask Meridian" }),
   ).toBeVisible();
-  await expect(page.getByRole("note")).toContainText(
-    "Analysis is not connected yet",
-  );
+  await expect(page.getByRole("note").filter({ hasText: "Analysis is not connected yet" })).toBeVisible();
   await page.getByLabel("Your question").fill("What should I review next?");
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.getByRole("button", { name: "Copy request" }).click();
@@ -274,9 +290,11 @@ test("legacy map settings migrate without old scenarios or external imagery", as
   );
   await page.goto("/");
   await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
-  await expect(page.getByLabel("Observation period")).toHaveValue("latest");
   await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
-  await expect(page.getByRole("button", { name: /drought/i })).toHaveCount(0);
+  await openMapOptions(page);
+  await expect(page.getByLabel("Observation period")).toHaveValue("latest");
+  await expect(page.getByRole("button", { name: "No overlay", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await closeMapOptions(page);
   expect(earthdataRequests).toBe(0);
 });
 
@@ -286,17 +304,22 @@ test("historical and latest imagery use the dates advertised by NASA", async ({
   await mockGibs(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await openMapOptions(page);
   await page.getByLabel("Observation period").selectOption("past");
   await page.getByLabel("Observation date", { exact: true }).fill("2026-11-10");
-  await page.getByRole("button", { name: "Layers", exact: true }).click();
   await page
     .getByRole("button", { name: "Vegetation · NDVI", exact: true })
     .click();
+  await closeMapOptions(page);
   await expect(page.getByRole("status")).toContainText("2026-11-09", {
     timeout: 20000,
   });
+  await closeMapOptions(page);
+  await openMapOptions(page);
   await page.getByLabel("Observation period").selectOption("latest");
+  await closeMapOptions(page);
   await expect(page.getByRole("status")).toContainText("2026-11-13", {
     timeout: 20000,
   });
+  await closeMapOptions(page);
 });

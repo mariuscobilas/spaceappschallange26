@@ -1,0 +1,9 @@
+{
+  "status": "unavailable",
+  "message": "USDA soil profile data could not be verified for this point.",
+  "sample": { "latitude": 39.0, "longitude": -99.0 },
+  "retrievedAt": "2026-11-14T12:00:00Z",
+  "source": "USDA NRCS Soil Data Access",
+  "sourceUrl": "https://SDMDataAccess.sc.egov.usda.gov/",
+  "components": []
+}

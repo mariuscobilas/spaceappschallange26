@@ -1,0 +1,135 @@
+{
+  "budgetRoundingChecks": [
+    {
+      "budgetId": "colorado-budget-1-NT-fall_cover",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": -0.00666667,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-1-NT-fall_cover",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": 0.01,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-1-NT-fallow",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": 0.0,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-1-NT-fallow",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": -0.0,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-fall_cover",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": -0.035,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-fall_cover",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": -0.03,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-spring_cover",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": 0.02,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-spring_cover",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": 0.02,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-fallow",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": 0.0,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-NT-fallow",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": 0.0,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-fall_cover",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": 0.005,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-fall_cover",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": 0.01,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-spring_cover",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": -0.05,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-spring_cover",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": -0.06,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-fallow",
+      "check": "cycle_mean",
+      "residualUsdHaCycle": 0.0,
+      "toleranceUsdHaCycle": 0.1
+    },
+    {
+      "budgetId": "colorado-budget-2-CT-fallow",
+      "check": "revenue_minus_cost",
+      "residualUsdHaCycle": -0.0,
+      "toleranceUsdHaCycle": 0.1
+    }
+  ],
+  "counts": {
+    "disturbedControlObservationsRetained": 32,
+    "economicComparisons": 16,
+    "plotObservations": 944,
+    "publishedBudgets": 8,
+    "publishedSiteMeans": 24,
+    "yieldComparisons": 231,
+    "yieldComparisonsMissing": 4
+  },
+  "datasetId": "cover-crop-research-evidence-v1",
+  "excludedFromPreparedMeasures": [
+    "USDA TESTWT (unit description requires review)",
+    "hypothetical forage-sale budgets"
+  ],
+  "limitations": [
+    "Research-site evidence only; regional predictive validity is not established.",
+    "Mandan observations and Colorado economic budgets are never joined across studies.",
+    "No plot coordinates, regional active acreage, H3 assignments, or interpolated values are invented.",
+    "USDA MOISTURE is grain moisture, not soil moisture or root-zone wetness.",
+    "Colorado soil water storage is in mm, not a relative saturation fraction.",
+    "Published Colorado partial budgets use historical inputs and two-year crop cycles; they are not current annual farm profit.",
+    "Hypothetical forage-sale scenarios are excluded.",
+    "Source NE/NA stay null; no imputation or machine-learning model is used.",
+    "Descriptive contrasts do not establish statistical significance or external validity."
+  ],
+  "preparationChecks": "passed",
+  "preparedSha256": "55119217ba35217d32e6f8a516bf2e52ff3bb7149bf64750ec4ccf48d25e0a2e",
+  "regionalPredictiveValidation": "not_established",
+  "validationScope": "source integrity, schema/units, matching controls, arithmetic and missingness",
+  "warnings": [
+    "USDA catalog temporal end precedes 2011 harvest; retain actual YEAR values, do not invent exact dates.",
+    "Colorado repository description and final paper have different study-window descriptions; exact harvest dates withheld.",
+    "Published mean budgets differ slightly from arithmetic on rounded inputs; residuals retained.",
+    "Published statistical-letter groupings are not imported as per-comparison significance claims."
+  ]
+}

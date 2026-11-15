@@ -2,6 +2,7 @@ import { analyzeBoundary } from "@/lib/fields/geometry";
 import { isValidCell } from "h3-js";
 import farms from "@/data/benchmark_farms.json";
 import type { MapSettings, PreviewCrop, Selection } from "@/lib/map/types";
+import { DEFAULT_BASEMAP, isBasemapId } from "@/lib/map/basemaps";
 
 export const today = () => new Date().toISOString().slice(0, 10);
 export const crops: { value: PreviewCrop; label: string }[] = [
@@ -72,6 +73,7 @@ export const initialSettings: MapSettings = {
   observationDate: today(),
   overlay: "off",
   opacity: 0.55,
+  basemap: DEFAULT_BASEMAP,
   selection: {
     latitude: farms[0].latitude,
     longitude: farms[0].longitude,
@@ -142,6 +144,8 @@ export function validMapSettings(value: unknown): value is MapSettings {
     date <= today() &&
     (v.overlay === "off" ||
       ["smap", "ndvi", "imerg"].includes(v.overlay ?? "")) &&
+    (v.drought === undefined || typeof v.drought === "boolean") &&
+    (v.basemap === undefined || isBasemapId(v.basemap)) &&
     typeof v.opacity === "number" &&
     Number.isFinite(v.opacity) &&
     v.opacity >= 0 &&

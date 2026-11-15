@@ -1,0 +1,10 @@
+{
+  "status": "unavailable",
+  "message": "No validated regional dataset is configured on this service.",
+  "datasetId": null,
+  "generatedAt": null,
+  "validation": null,
+  "scenarios": [],
+  "cells": [],
+  "provenance": []
+}

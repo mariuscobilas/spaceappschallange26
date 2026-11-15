@@ -1,9 +1,19 @@
 "use client";
 
+import type { AtlasCell } from "@spaceapps/shared";
+import { useAtlas } from "@/lib/atlas/use-atlas";
+import { useRegionalYield } from "@/lib/atlas/regional-yield";
+import { RegionalYieldDetails } from "@/components/atlas/RegionalYieldDetails";
+import { AtlasContext } from "@/components/atlas/AtlasContext";
+import { AtlasControls, AtlasHover } from "@/components/atlas/AtlasControls";
+import { RegionalYieldControls } from "@/components/atlas/RegionalYieldControls";
 import { FieldDetails } from "@/components/map/FieldDetails";
+import { DroughtControls } from "@/components/map/DroughtControls";
+import { DROUGHT_DATASET, type DroughtStatus } from "@/lib/map/drought";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cellToLatLng, isValidCell } from "h3-js";
 import {
   CloudRain,
@@ -18,36 +28,27 @@ import {
 } from "lucide-react";
 import { FieldContext } from "@/components/workspace/FieldContext";
 import { AtlasRegionOverview } from "@/components/map/AtlasRegionOverview";
+import { MyFieldsPanel } from "@/components/map/MyFieldsPanel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { today, validDate } from "@/lib/workspace";
-import type {
-  MapMode,
-  Overlay,
-  Selection,
-  TimeMode,
-} from "@/lib/map/types";
+import type { Overlay, Selection, TimeMode } from "@/lib/map/types";
+import type { BasemapStatus } from "@/lib/map/types";
+import { BASEMAP_OPTIONS, DEFAULT_BASEMAP } from "@/lib/map/basemaps";
 
 const MapCanvas = dynamic(() => import("@/components/map/MapCanvas"), {
   ssr: false,
@@ -100,158 +101,165 @@ export default function MapPreview() {
     fieldDraft,
     drawing,
     beginField,
+    chooseField,
     editField,
     receiveBoundary,
     finishDrawing,
     cancelField,
     requestTransition,
+    hasUnsavedChanges,
   } = useMeridian();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [mapOptionsOpen, setMapOptionsOpen] = useState(false);
+  const [droughtStatus, setDroughtStatus] = useState<DroughtStatus>("off");
+  const [basemapRetry, setBasemapRetry] = useState(0);
+  const [droughtRetry, setDroughtRetry] = useState(0);
+  const [selectPointArmed, setSelectPointArmed] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isExplore = pathname === "/";
+  const isFields = pathname === "/fields";
+  const isAtlas = pathname === "/atlas";
+  const atlas = useAtlas(isAtlas);
+  const regional = useRegionalYield(isAtlas);
+  const [layerMode,setLayerMode]=useState<"yield"|"returns">("yield");
+  const [countyCrop,setCountyCrop]=useState<"corn"|"soybeans">("corn");
+  const [countyPeriod,setCountyPeriod]=useState<"2019-2020"|"2019"|"2020">("2019-2020");
+  const [selectedFips,setSelectedFips]=useState<string|undefined>();
+  const [fitNonce,setFitNonce]=useState(0);
+  const selectedCounty = regional.data?.regions.find(r => r.fips === selectedFips);
+  const countyTitle = selectedCounty ? `${selectedCounty.name}, ${selectedCounty.state}` : "Corn Belt · six-state study";
+  const regionalLayer=useMemo(()=>isAtlas&&layerMode==="yield"&&regional.data?.status==="available"?{data:regional.data,crop:countyCrop,period:countyPeriod,selectedFips,fitNonce}:null,[isAtlas,layerMode,regional.data,countyCrop,countyPeriod,selectedFips,fitNonce]);
+  const [requestedScenario, setScenarioId] = useState("");
+  const scenarioId = atlas.data?.scenarios.some(s => s.id === requestedScenario) ? requestedScenario : atlas.data?.scenarios[0]?.id ?? "";
+  const scenario = atlas.data?.scenarios.find(s => s.id === scenarioId);
+  const atlasCells = useMemo(() => atlas.data?.status === "available" ? atlas.data.cells.filter(c => c.crop === settings.crop && c.scenarioId === scenarioId) : [], [atlas.data, settings.crop, scenarioId]);
+  const [atlasHover, setAtlasHover] = useState<AtlasCell | null>(null);
+  const [atlasRenderer, setAtlasRenderer] = useState("idle");
+  const [basemapStatus, setBasemapStatus] = useState<BasemapStatus | null>(null);
+  const selectedBasemap = settings.basemap ?? DEFAULT_BASEMAP;
+  const basemapInfo = BASEMAP_OPTIONS.find((option) => option.value === selectedBasemap)!;
+  useEffect(() => setAtlasHover(null), [scenarioId, settings.crop, pathname]);
+
   const isMobile = useIsMobile();
+  const mapDrawing = isFields || drawing.mode === "browse"
+    ? drawing
+    : { ...drawing, mode: "browse" as const };
   const infoButton = useRef<HTMLButtonElement>(null);
-  const atlasRegion = settings.mode === "atlas" && !fieldDraft;
+  const pendingInspectPoint = useRef<Selection | null>(null);
+  const atlasRegion = isAtlas;
   const [mapReady, setMapReady] = useState(false);
   const [drawingReady, setDrawingReady] = useState(false);
   const [drawingMessage, setDrawingMessage] = useState("");
   useEffect(() => {
-    if (fieldDraft?.boundary && drawing.mode === "browse") setDetailsOpen(true);
+    if (isFields && fieldDraft?.boundary && drawing.mode === "browse") setDetailsOpen(true);
   }, [fieldDraft?.boundary, drawing.mode]);
-  const pathname = usePathname();
   useEffect(() => {
-    if (pathname !== "/") setDetailsOpen(false);
+    setDetailsOpen(false);
+    setMapOptionsOpen(false);
+    setSelectPointArmed(false);
+    setDrawingMessage("");
+    if (!isFields && fieldDraft && !hasUnsavedChanges()) cancelField();
+    if (isFields && pendingInspectPoint.current) {
+      const point = pendingInspectPoint.current;
+      pendingInspectPoint.current = null;
+      beginField(point);
+      setDetailsOpen(true);
+    }
   }, [pathname]);
   const select = (selection: Selection) =>
     requestTransition(() => {
-      if (settings.mode === "field") beginField(selection);
-      else {
+      if (isFields && selectPointArmed) {
+        beginField(selection);
+        setSelectPointArmed(false);
+        setDrawingMessage("");
+        setDetailsOpen(true);
+      } else {
+        // Browsing never opens or mutates a field draft; dismiss a clean stale
+        // draft before changing its underlying map selection.
         if (fieldDraft) cancelField();
         selectLocation(selection);
+        setDetailsOpen(isAtlas);
       }
-      setDetailsOpen(true);
     });
   const layer = layers.find((l) => l.value === settings.overlay);
   const showStatus =
     status.loading || status.failed || !!status.message || !!status.layer;
   const inspectField = () => requestTransition(() => {
     const hex = settings.selection.hexId;
-    const [latitude, longitude] = hex && isValidCell(hex)
+    const county=layerMode==="yield"?regional.data?.regions.find(r=>r.fips===selectedFips):undefined;
+    const [latitude, longitude] = county ? [county.centroid[1],county.centroid[0]] : hex && isValidCell(hex)
       ? cellToLatLng(hex) : [settings.selection.latitude, settings.selection.longitude];
-    change("mode", "field");
-    beginField({ name: "Selected point", latitude, longitude });
+    pendingInspectPoint.current = { name: "Selected point", latitude, longitude };
     navigateMap("selection");
+    router.push("/fields");
+  });
+
+  const selectPoint = () => requestTransition(() => {
+    if (fieldDraft) cancelField();
+    setSelectPointArmed(true);
+    setDrawingMessage("Click the map to place a field point.");
+    setDetailsOpen(false);
+  });
+  const drawBoundary = () => requestTransition(() => {
+    setSelectPointArmed(false);
+    beginField(undefined, true);
+    setDrawingReady(false);
+    setDetailsOpen(false);
+    setDrawingMessage("Preparing drawing tools…");
+  });
+  const openField = (id: string) => requestTransition(() => {
+    setSelectPointArmed(false);
+    setDrawingMessage("");
+    chooseField(id);
+    setDetailsOpen(true);
+  });
+  const planField = (id: string) => requestTransition(() => {
+    chooseField(id);
+    router.push("/planner");
   });
 
   return (
+    <AtlasContext.Provider value={{ ...atlas, scenario, scenarioId, setScenarioId, cells: atlasCells, renderer: atlasRenderer, layerMode,setLayerMode,regional:regional.data,regionalLoading:regional.loading,regionalFallback:regional.sourceFallback,retryRegional:regional.retry,countyCrop,setCountyCrop,countyPeriod,setCountyPeriod,selectedFips,setSelectedFips,fitCounties:()=>setFitNonce(n=>n+1),regionalLayer }}>
     <div
       className="workspace-map flex h-full min-h-0 flex-col"
-      aria-label="Explore workspace"
+      aria-label={isExplore ? "Explore workspace" : isAtlas ? "Regional Atlas workspace" : "My fields workspace"}
     >
       <header
-        className="map-toolbar flex shrink-0 flex-wrap items-end gap-2 border-b bg-background px-3 py-3"
+        className="map-toolbar grid grid-cols-[2rem_minmax(0,1fr)_2rem] shrink-0 items-end gap-2 sm:flex sm:flex-wrap border-b bg-background px-3 py-2"
         aria-label="Map toolbar"
       >
         <SidebarTrigger aria-label="Toggle navigation" size="icon" />
-        <h1 className="sr-only">Explore</h1>
-        {pathname === "/" && <FieldContext />}
-        <Field className="w-auto">
-        <FieldLabel id="map-mode-label" className="text-xs text-muted-foreground">Map view</FieldLabel>
-        <ToggleGroup
-          aria-labelledby="map-mode-label"
-          aria-label="Map mode"
-          variant="outline"
-          value={[settings.mode]}
-          onValueChange={(v) => {
-            if (v[0])
-              requestTransition(() => {
-                if (fieldDraft) cancelField();
-                change("mode", v[0] as MapMode);
-              });
-          }}
-          spacing={0}
-        >
-          <ToggleGroupItem value="field" aria-label="Field Simulator">
-            Field
-          </ToggleGroupItem>
-          <ToggleGroupItem value="atlas" aria-label="National Risk Atlas">
-            Atlas
-          </ToggleGroupItem>
-        </ToggleGroup>
-        </Field>
-        <Field className="w-auto">
-        <FieldLabel id="map-tools-label" className="text-xs text-muted-foreground">Field tools</FieldLabel>
-        <div className="flex flex-wrap items-center gap-2" role="group" aria-labelledby="map-tools-label">
-        {drawing.mode === "polygon" || drawing.mode === "edit" ? (
-          <>
-            <Button onClick={finishDrawing} disabled={!drawingReady || !mapReady}>Finish boundary</Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                cancelField();
-                setDrawingMessage("");
-              }}
-            >
-              Cancel drawing
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="outline"
-              disabled={!mapReady}
-              onClick={() =>
-                requestTransition(() => {
-                  change("mode", "field");
-                  setDrawingMessage(
-                    "Click the map to select an exact field point.",
-                  );
-                  setDetailsOpen(false);
-                })
-              }
-            >
-              Select point
-            </Button>
-            <Button
-              variant="outline"
-              disabled={!mapReady}
-              onClick={() =>
-                requestTransition(() => {
-                  change("mode", "field");
-                  beginField(undefined, true);
-                  setDrawingReady(false);
-                  setDetailsOpen(false);
-                  setDrawingMessage(
-                    "Preparing drawing tools…",
-                  );
-                })
-              }
-            >
-              Draw boundary
-            </Button>
-          </>
-        )}
-        </div>
-        </Field>
-        <Field className="w-auto">
-        <FieldLabel htmlFor="map-layers" className="text-xs text-muted-foreground">Map layer</FieldLabel>
-        <Popover>
-          <PopoverTrigger
-            render={<Button variant="outline" />}
-            aria-label="Layers"
-            id="map-layers"
-          >
-            <Layers3 data-icon="inline-start" />
-            {layer?.short ?? "Conditions"}
-          </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="w-80 max-w-[calc(100vw-24px)]"
-          >
-            <PopoverHeader>
-              <PopoverTitle>Map conditions</PopoverTitle>
-              <PopoverDescription>
-                Choose a NASA observation to explore.
-              </PopoverDescription>
-            </PopoverHeader>
+        <h1 className={isFields ? "sr-only sm:not-sr-only sm:col-auto sm:min-w-0 sm:truncate sm:text-sm sm:font-semibold" : "sr-only"}>{isExplore ? "Explore" : isAtlas ? "Regional Atlas" : "My fields"}</h1>
+        {(isExplore || isAtlas && layerMode === "returns") && <div className="col-span-2 min-w-0 sm:w-80"><FieldContext compact includeSavedFields={false} /></div>}
+        {isAtlas && layerMode === "yield" && <div className="col-span-2 min-w-0 flex-1 sm:w-80" aria-label="Regional study area"><p className="text-xs text-muted-foreground">Study area</p><p className="truncate text-sm font-medium">{countyTitle}</p></div>}
+        {isFields && isMobile && <MyFieldsPanel mapReady={mapReady} onSelectPoint={selectPoint} onDrawBoundary={drawBoundary} onSelectField={openField} onPlanField={planField} />}
+        <Sheet open={mapOptionsOpen} onOpenChange={setMapOptionsOpen}>
+          <SheetTrigger render={<Button variant="outline" className="col-start-2 justify-self-start" />} aria-label="Map options">
+            <Layers3 data-icon="inline-start" />Map options{layer ? ` · ${layer.short}` : ""}
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[min(24rem,calc(100vw-2rem))] gap-0 p-0" aria-label="Map options">
+            <SheetHeader className="shrink-0 border-b pr-12">
+              <SheetTitle>Map options</SheetTitle>
+              <SheetDescription>Choose a background map, data layers, and observation dates.</SheetDescription>
+            </SheetHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <FieldGroup className="mb-5">
+              <Field>
+                <FieldLabel htmlFor="map-basemap">Base map</FieldLabel>
+                <NativeSelect id="map-basemap" aria-label="Base map" className="w-full" value={selectedBasemap} disabled={drawing.mode === "polygon"} onChange={(event) => change("basemap", event.target.value as NonNullable<typeof settings.basemap>)}>
+                  {BASEMAP_OPTIONS.map((option) => <NativeSelectOption key={option.value} value={option.value}>{option.label} · {option.provider}</NativeSelectOption>)}
+                </NativeSelect>
+                <p className="text-sm text-muted-foreground">{basemapInfo.description}</p>
+                <p className="text-xs text-muted-foreground">{basemapInfo.sourceNote}</p>
+                {drawing.mode === "polygon" && <FieldDescription>Finish or cancel boundary drawing before changing the base map. Your in-progress vertices stay in place.</FieldDescription>}
+              </Field>
+              {basemapStatus?.state === "fallback" && <Alert role="status"><AlertDescription>{drawing.mode === "polygon" ? "Selected basemap is unavailable. The current map stays visible until boundary drawing is finished or canceled." : "Selected basemap is unavailable. The local fallback map is shown."}</AlertDescription><Button variant="outline" size="sm" disabled={drawing.mode === "polygon"} onClick={() => setBasemapRetry(v => v + 1)}>Retry base map</Button></Alert>}
+            </FieldGroup>
+            <Separator className="my-5" />
+            {!isAtlas && <DroughtControls enabled={!!settings.drought} status={droughtStatus} onChange={value => change("drought", value)} retry={() => setDroughtRetry(v => v + 1)} />}
+            <Field className="mb-5">
+              <FieldLabel className="text-xs text-muted-foreground">Map layer</FieldLabel>
             <ToggleGroup
               orientation="vertical"
               aria-label="Select map layer"
@@ -304,28 +312,13 @@ export default function MapPreview() {
                     />
                   </Field>
                 </FieldGroup>
-                {status.layer && !status.failed && !status.loading && (
-                  <div className="flex flex-col gap-2 text-xs text-muted-foreground">
-                    <span>
-                      Observed {status.layer.date} · {status.layer.units}
-                    </span>
-                    {status.layer.legend && (
-                      <img
-                        src={status.layer.legend}
-                        alt={`${status.layer.label} data legend`}
-                        className="h-14 w-full object-contain object-left"
-                      />
-                    )}
-                    <span>NASA GIBS</span>
-                  </div>
-                )}
               </>
             )}
-          </PopoverContent>
-        </Popover>
-        </Field>
-        <FieldGroup className="ml-auto">
-          <Field className="w-40">
+            {status.layer && !status.failed && !status.loading && <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground"><span>Observed {status.layer.date} · {status.layer.units}</span>{status.layer.legend && <img src={status.layer.legend} alt={`${status.layer.label} data legend`} className="h-14 w-full object-contain object-left" />}<span>NASA GIBS</span></div>}
+            </Field>
+            <Separator className="my-5" />
+            <FieldGroup>
+          <Field>
             <FieldLabel htmlFor="observation-period" className="text-xs text-muted-foreground">
               Observation period
             </FieldLabel>
@@ -345,7 +338,7 @@ export default function MapPreview() {
             </NativeSelect>
           </Field>
           {settings.timeMode === "past" && (
-            <Field className="w-36">
+            <Field>
               <FieldLabel htmlFor="observation-date" className="text-xs text-muted-foreground">
                 Observation date
               </FieldLabel>
@@ -362,40 +355,64 @@ export default function MapPreview() {
               />
             </Field>
           )}
-        </FieldGroup>
-        <Button
+            </FieldGroup>
+            </div>
+          </SheetContent>
+        </Sheet>
+        {(isAtlas || (isFields && (!!activeField || !!fieldDraft))) && <Button
           variant="ghost"
           size="icon"
           aria-label="Selected location details"
           ref={infoButton}
           onClick={() => {
-            if (settings.mode === "field" && !fieldDraft && !activeField)
-              beginField();
             setDetailsOpen(true);
           }}
         >
           <Info />
-        </Button>
+        </Button>}
       </header>
 
+      {isFields && selectPointArmed && <div className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-3 py-2" role="group" aria-label="Point selection actions"><p className="text-sm text-muted-foreground">Click the map to place a field point.</p><Button variant="outline" onClick={() => { setSelectPointArmed(false); setDrawingMessage(""); }}>Cancel point selection</Button></div>}
+      {isFields && (drawing.mode === "polygon" || drawing.mode === "edit") && <div className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-3 py-2" role="group" aria-label="Boundary drawing actions">
+        <p className="min-w-0 flex-1 text-sm text-muted-foreground">{drawingMessage || "Draw or adjust the field boundary on the map."}</p>
+        <div className="flex shrink-0 gap-2"><Button onClick={finishDrawing} disabled={!drawingReady || !mapReady}>Finish boundary</Button><Button variant="outline" onClick={() => { cancelField(); setDrawingMessage(""); }}>Cancel drawing</Button></div>
+      </div>}
+
+      {isAtlas && <RegionalYieldControls />}
+      {isAtlas && layerMode==="returns" && <AtlasControls />}
       <div className="flex min-h-0 flex-1">
+      {isFields && !isMobile && <MyFieldsPanel mapReady={mapReady} onSelectPoint={selectPoint} onDrawBoundary={drawBoundary} onSelectField={openField} onPlanField={planField} />}
       <section
         className="map-stage relative min-h-0 min-w-0 flex-1 overflow-hidden"
         aria-label="Interactive field map"
       >
         <MapCanvas
           {...settings}
+          drought={!isAtlas && !!settings.drought}
+          basemapRetry={basemapRetry}
+          droughtRetry={droughtRetry}
+          onDroughtStatus={setDroughtStatus}
+          atlasCells={isAtlas && layerMode==="returns" && atlas.data?.status === "available" && atlasCells.length ? atlasCells : undefined}
+          regionalYield={regionalLayer??undefined}
+          regionalYieldActive={isAtlas&&layerMode==="yield"}
+          onRegionalSelect={fips=>setSelectedFips(fips??undefined)}
+          atlasSelectedH3={settings.selection.hexId}
+          onAtlasHover={setAtlasHover}
+          onAtlasRenderStatus={setAtlasRenderer}
+          onBasemapStatus={setBasemapStatus}
           onSelect={select}
           onStatus={reportStatus}
           navigation={navigation}
           retry={retry}
-          drawing={drawing}
+          drawing={mapDrawing}
           onBoundaryChange={receiveBoundary}
           onDrawingStatus={setDrawingMessage}
           onMapReady={setMapReady}
           onDrawingReady={setDrawingReady}
         />
-        {(drawingMessage || fieldDraft) && (
+        {!isAtlas && settings.drought && <div className="absolute bottom-3 left-3 max-w-[calc(100%-6rem)] rounded-md border bg-background/95 px-3 py-2 text-xs shadow-xs" role="status"><span className="font-medium">U.S. Drought Monitor · {DROUGHT_DATASET.asOf}</span><span className="block text-muted-foreground">{droughtStatus === "ready" ? "Regional snapshot · legend in Map options" : droughtStatus === "unavailable" ? "Unavailable · retry in Map options" : "Loading regional assessment…"}</span></div>}
+        {isAtlas && atlasHover && <AtlasHover cell={atlasHover} />}
+        {isFields && !selectPointArmed && (drawingMessage || fieldDraft) && (
           <div className="absolute top-3 left-3 right-3 pointer-events-none">
             <Alert role="note" className="w-fit max-w-full">
               <AlertDescription>
@@ -474,24 +491,21 @@ export default function MapPreview() {
       </section>
       {atlasRegion && detailsOpen && !isMobile && <aside className="flex w-[25rem] shrink-0 flex-col overflow-hidden border-l bg-background" aria-label="Region overview">
         <header className="flex shrink-0 items-start justify-between gap-3 border-b p-4">
-          <div>
-            <h2 className="text-lg font-semibold">{settings.selection.name}</h2>
-            <p className="text-sm text-muted-foreground">National Atlas · Regional overview</p>
-          </div>
+          <div><h2 className="text-lg font-semibold">{layerMode === "yield" ? countyTitle : settings.selection.name}</h2><p className="text-sm text-muted-foreground">{layerMode==="yield"?"Published county estimate":"National Atlas · Regional overview"}</p></div>
           <Button variant="ghost" size="icon" aria-label="Close region overview" onClick={() => { setDetailsOpen(false); infoButton.current?.focus(); }}><X /></Button>
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <AtlasRegionOverview enabled={detailsOpen} />
+          {layerMode==="yield" ? <RegionalYieldDetails/>:<AtlasRegionOverview enabled={detailsOpen} />}
         </div>
         <footer className="flex shrink-0 flex-col gap-2 border-t p-4">
-          <p className="text-xs text-muted-foreground">Start at the centre, then select or draw your actual field.</p>
+          <p className="text-xs text-muted-foreground">{layerMode==="yield"?"Choose a real field location in or near this county.":"Start at the centre, then select or draw your actual field."}</p>
           <Button onClick={inspectField} disabled={!settings.selection.hexId}>Inspect field here</Button>
         </footer>
       </aside>}
       </div>
 
       <FieldDetails
-        open={detailsOpen && (!atlasRegion || isMobile)}
+        open={detailsOpen && (isFields || (atlasRegion && isMobile))}
         onOpenChange={setDetailsOpen}
         onEditBoundary={() => {
           editField();
@@ -502,11 +516,11 @@ export default function MapPreview() {
           );
         }}
         onAtlas={() => {
-          change("mode", "atlas");
-          setDetailsOpen(false);
+          requestTransition(() => { setDetailsOpen(false); router.push("/atlas"); });
         }}
         onInspectField={inspectField}
       />
     </div>
+    </AtlasContext.Provider>
   );
 }

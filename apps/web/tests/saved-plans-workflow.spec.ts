@@ -49,12 +49,17 @@ test("lists confirmed plans, opens their saved field and crop, persists, and del
 
 test("compares two saved manual plans and exports their complete decision summary", async ({ page }) => {
   await seed(page);
+  await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/planner/saved");
-  await page.getByLabel("Compare North field wheat plan").check();
-  await page.getByLabel("Compare South field corn plan").check();
+  await expect(page.getByRole("heading", { name: "Plan comparison" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Compare this plan" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Compare plans" }).click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "North field" }).getByRole("button", { name: "Compare this plan" }).click();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "South field" }).getByRole("button", { name: "Compare this plan" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Different field or crop contexts" })).toBeVisible();
   await expect(page.locator("article").getByText("March 26, 2027")).toBeVisible();
-  await expect(page.getByText("Manual calendar comparison. Termination dates are calculated from saved planting dates and lead times; no model prediction is included.")).toBeVisible();
+  await expect(page.getByText("Termination dates are calculated from saved planting dates and lead times; no model prediction is included.")).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download comparison (.txt)" }).click();
   const download = await downloadPromise;
@@ -72,13 +77,14 @@ test("compares two saved manual plans and exports their complete decision summar
 test("clears a deleted comparison selection and lets the user choose a replacement", async ({ page }) => {
   await seed(page);
   await page.goto("/planner/saved");
-  await page.getByLabel("Compare North field wheat plan").check();
-  await page.getByLabel("Compare South field corn plan").check();
+  await page.getByRole("button", { name: "Compare plans" }).click();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "North field" }).getByRole("button", { name: "Compare this plan" }).click();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "South field" }).getByRole("button", { name: "Compare this plan" }).click();
   await page.locator('[data-slot="card"]').filter({ has: page.locator('[data-slot="card-title"]', { hasText: "South field" }) }).getByRole("button", { name: "Delete" }).click();
   await page.getByRole("alertdialog", { name: "Delete saved plan?" }).getByRole("button", { name: "Delete plan" }).click();
   await expect(page.getByText("A selected plan was removed. Clear the selection or select another saved plan.")).toBeVisible();
-  await page.getByLabel("Compare North field wheat plan").uncheck();
-  await page.getByLabel("Compare North field wheat plan").check();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "North field" }).getByRole("button", { name: "Selected for comparison" }).click();
+  await page.getByTestId("saved-plan-card").filter({ hasText: "North field" }).getByRole("button", { name: "Compare this plan" }).click();
   await expect(page.getByText("A selected plan was removed. Clear the selection or select another saved plan.")).toHaveCount(0);
 });
 
@@ -94,7 +100,7 @@ test("saves plans for two different field and crop contexts", async ({ page }) =
   const plans = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.field-plans.v2") ?? "{}"));
   expect(plans["field-a|wheat"]).toBeTruthy();
   expect(plans["field-b|corn"]).toBeTruthy();
-  await page.getByRole("button", { name: "Saved plans" }).click();
+  await page.getByRole("link", { name: "Saved plans", exact: true }).click();
   await expect(page.getByTestId("saved-plan-card")).toHaveCount(2);
 });
 
@@ -119,23 +125,20 @@ test("removes migrated legacy plan aliases on delete and preserves unrelated leg
   await page.addInitScript(() => {
     if (localStorage.getItem("saved-plans-legacy-seeded")) return;
     localStorage.setItem("saved-plans-legacy-seeded", "1");
-    localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, fields: [] }));
+    localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, fields: [{
+      id: "west-field", name: "West field", benchmarkId: "tribune", location: { latitude: 38.4697, longitude: -101.7521 }, currentCrop: "wheat", cropSource: "manual", createdAt: "2026-01-01T00:00:00Z", updatedAt: "2026-01-01T00:00:00Z",
+    }] }));
     const plan = (name: string, benchmarkId: string, latitude: number, longitude: number, crop: "wheat" | "corn") => ({
       location: { name, benchmarkId, latitude, longitude }, crop, coverCrop: "rye", terminationDays: 30,
       plantingDate: "2027-04-20", areaHa: "12", notes: "legacy plan", savedAt: "2026-11-14T10:00:00.000Z",
     });
+    localStorage.setItem("meridian.field-plans.v2", JSON.stringify({ "west-field|wheat": { ...plan("West field", "tribune", 38.4697, -101.7521, "wheat"), location: { name: "West field", benchmarkId: "tribune", fieldId: "west-field", latitude: 38.4697, longitude: -101.7521 } } }));
     localStorage.setItem("meridian.field-plans.v1", JSON.stringify({
       "tribune|wheat": plan("Tribune", "tribune", 38.4697, -101.7521, "wheat"),
       "colby|corn": plan("Colby", "colby", 39.3958, -101.0524, "corn"),
     }));
   });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Selected location details" }).click();
-  await expect(page.getByRole("dialog", { name: "Field details" })).toBeVisible();
-  await page.getByRole("dialog", { name: "Field details" }).getByLabel("Field name").fill("West field");
-  await page.getByRole("dialog", { name: "Field details" }).getByRole("button", { name: "Save field" }).click();
-  await page.getByRole("link", { name: "Field Planner" }).click();
-  await page.getByRole("button", { name: "Saved plans" }).click();
+  await page.goto("/planner/saved");
   await expect(page.locator('[data-slot="card-title"]', { hasText: "West field" })).toHaveCount(1);
   await expect(page.locator('[data-slot="card-title"]', { hasText: "Colby" })).toHaveCount(1);
   await page.locator('[data-slot="card"]').filter({ has: page.locator('[data-slot="card-title"]', { hasText: "West field" }) })
