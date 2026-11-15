@@ -39,6 +39,8 @@ import { crops, locationLabel } from "@/lib/workspace";
 import { today } from "@/lib/workspace";
 import { FieldConditions } from "@/components/fields/FieldConditions";
 import { AtlasRegionOverview } from "@/components/map/AtlasRegionOverview";
+import { RegionalYieldDetails } from "@/components/atlas/RegionalYieldDetails";
+import { useAtlasState } from "@/components/atlas/AtlasContext";
 import type { PreviewCrop } from "@/lib/map/types";
 
 export function FieldDetails({
@@ -68,6 +70,7 @@ export function FieldDetails({
     storageAvailable,
   } = useMeridian();
   const [deleting, setDeleting] = useState(false);
+  const atlasState=useAtlasState();
   const field = fieldDraft ?? activeField;
   const info = field?.boundary ? analyzeBoundary(field.boundary) : null;
   const point = info?.sample ??
@@ -92,7 +95,10 @@ export function FieldDetails({
     result?.suggestedCrop && crops.some((c) => c.value === result.suggestedCrop)
       ? (result.suggestedCrop as PreviewCrop)
       : undefined;
-  const name = field?.name ?? locationLabel(settings.selection);
+  const county = atlasState?.regional?.regions.find(r => r.fips === atlasState.selectedFips);
+  const name = settings.mode === "atlas" && atlasState?.layerMode === "yield"
+    ? county ? `${county.name}, ${county.state}` : "Regional study area"
+    : field?.name ?? locationLabel(settings.selection);
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
@@ -106,7 +112,7 @@ export function FieldDetails({
             </SheetDescription>
           </SheetHeader>
           <div className="flex flex-col gap-5 px-4">
-            {settings.mode === "atlas" && !fieldDraft ? <AtlasRegionOverview enabled={open} /> : <>
+            {settings.mode === "atlas" && !fieldDraft ? (atlasState?.layerMode==="yield"?<RegionalYieldDetails/>:<AtlasRegionOverview enabled={open} />) : <>
 
             {fieldDraft ? (
               <FieldGroup>
@@ -354,7 +360,7 @@ export function FieldDetails({
               </>
             ) : (
               <>
-                <p className="text-sm text-muted-foreground">Start at this hexagon’s centre, then select a point or draw your actual field.</p>
+                <p className="text-sm text-muted-foreground">{atlasState?.layerMode==="yield"?"Choose a real field location in or near this county.":"Start at this hexagon’s centre, then select a point or draw your actual field."}</p>
                 <Button onClick={onInspectField} disabled={!settings.selection.hexId}>Inspect field here</Button>
               </>
             )}

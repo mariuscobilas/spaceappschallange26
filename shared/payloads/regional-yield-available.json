@@ -1,0 +1,187 @@
+{
+  "datasetId": "deines-2022-county-yield-effects-v1-contract-subset",
+  "generatedAt": "2026-11-15T00:00:00Z",
+  "message": "Contract fixture: one actual county subset of the published regional dataset.",
+  "method": {
+    "interpretation": "County mean of historical published cover-crop yield-effect estimates; positive means estimated yield gain. This post-publication summary is not a current field forecast, county-wide crop average, or independently validated county causal effect.",
+    "limitations": [
+      "Research coverage: Iowa, Illinois, Indiana, Michigan, Missouri and Ohio; corn and soybeans only.",
+      "The county-labelled complete-case exports omit 96 corn and 125 soybean records relative to state-only outputs; this summary uses the county-labelled subset.",
+      "Analysis years are 2019 and 2020, independent of NASA imagery observation dates.",
+      "Means weight sample records equally, not land area. Combined years weight their records, not years equally.",
+      "Groups with fewer than 10 records are withheld; uncovered geography is not zero effect or zero acreage.",
+      "Sample records may include repeated fields/years; counts are not independent farms or population acreage.",
+      "County summaries have no newly computed confidence intervals or significance tests.",
+      "No economic returns, regional root-zone saturation, active acreage or soil texture are inferred.",
+      "County geometry is simplified for display; no private sample coordinates are ingested or exported."
+    ],
+    "minimumSampleRecords": 10,
+    "sampleUnit": "model sample record",
+    "summary": "Transform each authors\u2019 published log-yield CATE with 100 \u00d7 (exp(prediction) \u2212 1), then take the arithmetic mean of model sample records within county, crop and period. No model is fitted or rerun.",
+    "units": "percent"
+  },
+  "regions": [
+    {
+      "centroid": [
+        -91.17824,
+        39.95586
+      ],
+      "estimates": [
+        {
+          "crop": "corn",
+          "meanYieldEffectPct": -5.234136,
+          "period": "2019",
+          "sampleRecords": 70,
+          "sampleRecordsByYear": {
+            "2019": 70,
+            "2020": 0
+          }
+        },
+        {
+          "crop": "corn",
+          "meanYieldEffectPct": -5.379931,
+          "period": "2019-2020",
+          "sampleRecords": 155,
+          "sampleRecordsByYear": {
+            "2019": 70,
+            "2020": 85
+          }
+        },
+        {
+          "crop": "corn",
+          "meanYieldEffectPct": -5.499998,
+          "period": "2020",
+          "sampleRecords": 85,
+          "sampleRecordsByYear": {
+            "2019": 0,
+            "2020": 85
+          }
+        },
+        {
+          "crop": "soybeans",
+          "meanYieldEffectPct": -3.396588,
+          "period": "2019",
+          "sampleRecords": 56,
+          "sampleRecordsByYear": {
+            "2019": 56,
+            "2020": 0
+          }
+        },
+        {
+          "crop": "soybeans",
+          "meanYieldEffectPct": -4.690901,
+          "period": "2019-2020",
+          "sampleRecords": 129,
+          "sampleRecordsByYear": {
+            "2019": 56,
+            "2020": 73
+          }
+        },
+        {
+          "crop": "soybeans",
+          "meanYieldEffectPct": -5.683798,
+          "period": "2020",
+          "sampleRecords": 73,
+          "sampleRecordsByYear": {
+            "2019": 0,
+            "2020": 73
+          }
+        }
+      ],
+      "fips": "17001",
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              -90.91197,
+              40.19309
+            ],
+            [
+              -90.91596,
+              39.7572
+            ],
+            [
+              -91.36513,
+              39.75872
+            ],
+            [
+              -91.36157,
+              39.78755
+            ],
+            [
+              -91.36797,
+              39.8004
+            ],
+            [
+              -91.38371,
+              39.8146
+            ],
+            [
+              -91.43216,
+              39.84031
+            ],
+            [
+              -91.44669,
+              39.87164
+            ],
+            [
+              -91.44351,
+              39.89358
+            ],
+            [
+              -91.42088,
+              39.91487
+            ],
+            [
+              -91.41936,
+              39.92772
+            ],
+            [
+              -91.46532,
+              39.98399
+            ],
+            [
+              -91.49488,
+              40.03645
+            ],
+            [
+              -91.48961,
+              40.05744
+            ],
+            [
+              -91.51168,
+              40.13923
+            ],
+            [
+              -91.50822,
+              40.15766
+            ],
+            [
+              -91.51297,
+              40.18106
+            ],
+            [
+              -91.50506,
+              40.19993
+            ],
+            [
+              -90.91197,
+              40.19309
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "name": "Adams",
+      "state": "IL"
+    }
+  ],
+  "source": {
+    "archiveSha256": "619c191fe4231f1aa8d15075879484155d587413c010dac5492b00c50bf88ff0",
+    "doi": "10.1111/gcb.16489",
+    "license": "MIT (archived code/data release); original county geography from U.S. Census",
+    "title": "Deines et al. \u2014 cover crops and crop yields (published model outputs)",
+    "url": "https://doi.org/10.5281/zenodo.7199708"
+  },
+  "status": "available"
+}

@@ -58,7 +58,8 @@ function PlannerForm() {
     ? analyzeBoundary(settings.selection.boundary)?.sample
     : { latitude: settings.selection.latitude, longitude: settings.selection.longitude };
   const [unitSystem, setUnitSystem] = useUnitSystem();
-  const [saved, setSaved] = useState(false);
+  const [saveFeedback, setSaveFeedback] = useState("");
+  const [showConditions, setShowConditions] = useState(false);
   const polygonArea =
     boundaryArea === undefined ? undefined : String(boundaryArea);
   const areaHa = polygonArea ?? draft.areaHa;
@@ -74,8 +75,11 @@ function PlannerForm() {
   const canSave = !areaInvalid && !dateInvalid && !notesInvalid;
   const missingInputs = [
     ...(!draft.plantingDate ? ["cash crop planting date"] : []),
-    ...(!areaHa ? ["managed field area"] : []),
+
   ];
+  const planMatchesSaved = !!savedPlan && !!planDraft &&
+    ["coverCrop", "terminationDays", "plantingDate", "areaHa", "notes"].every((key) =>
+      planDraft[key as keyof typeof planDraft] === savedPlan[key as keyof typeof savedPlan]);
   const terminationDate = useMemo(
     () =>
       draft.plantingDate && validDate(draft.plantingDate, true)
@@ -85,11 +89,13 @@ function PlannerForm() {
   );
   const update = <K extends keyof FieldPlan>(field: K, value: FieldPlan[K]) => {
     updatePlanDraft({ ...draft, [field]: value });
-    setSaved(false);
+    setSaveFeedback("");
   };
   const onSave = () => {
     if (!canSave) return;
-    setSaved(savePlan({ ...draft, areaHa }));
+    setSaveFeedback(savePlan({ ...draft, areaHa })
+      ? "Saved on this device."
+      : "Plan could not be saved on this device. It remains available for this session.");
   };
 
   return (
@@ -108,21 +114,20 @@ function PlannerForm() {
           Set the next cash crop planting date, then work backwards to a
           termination date for your existing cover crop.
         </p>
-        <Button className="self-start" variant="outline" render={<Link href="/planner/saved" />} nativeButton={false}>
-          Saved plans
-        </Button>
       </header>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div className="lg:col-span-2 flex flex-col gap-3">
-        <Alert>
-          <AlertTitle>{missingInputs.length ? "Planning inputs still needed" : "Planning inputs entered"}</AlertTitle>
-          <AlertDescription>
-            {missingInputs.length ? `Add ${missingInputs.join(" and ")} for a complete calendar plan. ` : "The selected date and managed area are available for this plan. "}
-            Moisture suitability, yield impact, and recommended termination timing are not analyzed; the calendar date uses your chosen interval only.
-          </AlertDescription>
-        </Alert>
-        {savedPlan && planDraft && <p className="text-sm text-muted-foreground">This workspace is showing a working draft. The saved plan remains unchanged until you save this draft.</p>}
+        <p className="text-sm text-muted-foreground" role="status">
+          {dateInvalid || areaInvalid
+            ? "Fix the highlighted date or area to calculate this calendar plan."
+            : missingInputs.length
+              ? `Add ${missingInputs.join(" and ")} to complete this calendar plan.`
+              : "Calendar plan inputs are ready."}
+          {savedPlan && planDraft && !planMatchesSaved
+            ? <span> This is a working draft; the saved plan stays unchanged until you save.</span>
+            : null}
+        </p>
       </div>
       <Card>
         <CardHeader>
@@ -155,7 +160,7 @@ function PlannerForm() {
                 <FieldDescription id="planner-date-help">
                   {terminationDate
                     ? `Calculated cover crop termination date: ${terminationDate}.`
-                    : "Optional. Enter a date to calculate a calendar termination date."}
+                  : "Enter a date to calculate a calendar termination date."}
                 </FieldDescription>
                 {dateInvalid && (
                   <FieldDescription id="planner-date-error">
@@ -271,11 +276,9 @@ function PlannerForm() {
             Save field plan
           </Button>
           <p aria-live="polite" className="text-sm text-muted-foreground">
-            {saved
-              ? "Saved on this device."
-              : savedPlan
-                ? "A saved plan exists for this location and crop."
-                : "No saved plan for this location and crop."}
+            {saveFeedback || (savedPlan
+              ? "A saved plan exists for this location and crop."
+              : "No saved plan for this location and crop yet.")}
           </p>
         </CardFooter>
       </Card>
@@ -313,7 +316,11 @@ function PlannerForm() {
         <p className="text-sm text-muted-foreground" role="status">
           {planDraft ? (storageAvailable ? "Working draft kept on this device as you edit." : "Working draft kept for this session.") : "Your working draft follows this field and crop across workspaces."}
         </p>
-        <FieldConditions point={conditionPoint} asOf={settings.timeMode === "past" ? settings.observationDate : today()} />
+        <details className="rounded-lg border px-4 py-3" onToggle={(event) => setShowConditions(event.currentTarget.open)}>
+          <summary className="cursor-pointer text-sm font-medium">Field conditions and sources</summary>
+          <p className="mt-2 text-xs text-muted-foreground">Point or grid context; readings do not assess field-wide suitability.</p>
+          {showConditions && <div className="mt-3"><FieldConditions point={conditionPoint} asOf={settings.timeMode === "past" ? settings.observationDate : today()} /></div>}
+        </details>
       </aside>
       </div>
 

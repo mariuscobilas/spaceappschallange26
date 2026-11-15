@@ -1,0 +1,9 @@
+{
+  "status": "unavailable",
+  "message": "The regional yield dataset is unavailable.",
+  "datasetId": null,
+  "generatedAt": null,
+  "source": null,
+  "method": null,
+  "regions": []
+}

@@ -184,6 +184,46 @@ Source documentation: [NASA POWER daily API](https://power.larc.nasa.gov/docs/se
 [NASA MERRA-2 moisture definitions](https://gmao.gsfc.nasa.gov/gmao-products/merra-2/faq_merra-2/),
 [USDA SDA column descriptions](https://sdmdataaccess.sc.egov.usda.gov/documents/TableColumnDescriptionsReport.pdf).
 
+## 6. `GET /api/v1/atlas`
+
+Reads the explicitly configured regional dataset from `ATLAS_DATASET_PATH`. The JSON file must declare a validation method/reference and source provenance. It is limited to 10 MB and 10,000 cells with real H3 indexes. With no configured dataset, or when validation fails, returns HTTP `200` with `status: "unavailable"`; no benchmark, generated, or model-based values are substituted.
+
+```sh
+curl 'http://localhost:8000/api/v1/atlas'
+```
+
+Each cell includes crop/scenario identifiers and nullable `activeAreaHa`, `netReturnUsdHa`, `yieldPenaltyPct`, `rootZoneWetness`, and `soilTexture`. Missing values remain null; a verified zero-active-area cell cannot include modeled outputs. Fixture: `shared/payloads/atlas-unavailable.json`.
+
+## 7. `GET /api/v1/soil-profile`
+
+Queries USDA NRCS Soil Data Access at a bounded CONUS point and returns the dominant SSURGO component plus horizon data clipped to the 0–30 cm depth interval.
+
+```sh
+curl 'http://localhost:8000/api/v1/soil-profile?latitude=39&longitude=-99'
+```
+
+Texture, sand/silt/clay, organic matter, bulk density, pH, saturated conductivity, drainage class, and hydrologic group carry independent availability and units. Missing source values remain unavailable and are not imputed. The point lookup has a seven-second deadline, 2 MB response limit, and bounded coordinate cache. Upstream failure returns an explicit unavailable DTO. Fixture: `shared/payloads/soil-profile-unavailable.json`.
+
+## 8. `GET /api/v1/atlas/regional-yield`
+
+Returns a validated, bounded county summary of historical maize/soybean yield effects
+from the Deines et al. 2019–2020 study. The default input is
+`shared/data/regional-yield.json`; `ATLAS_REGIONAL_YIELD_PATH` can point to a
+replacement JSON file. Files over 10 MB, malformed/duplicate-key JSON, or data that
+fails the shared `RegionalYieldDataset` schema are withheld. Missing or invalid data
+returns HTTP `200` with a typed empty `status: "unavailable"` result.
+
+These are county-level study sample summaries, not field forecasts, current yield
+estimates, cover-crop profitability, or net returns. Sample counts and study periods
+are retained in each estimate. The endpoint does not spatially interpolate or fill
+counties that are absent from the underlying research sample.
+
+```sh
+curl 'http://localhost:8000/api/v1/atlas/regional-yield'
+```
+
+Source: [Deines et al. data and analysis archive, Zenodo 7199708](https://zenodo.org/records/7199708).
+
 ## Testing Endpoints with curl
 
 ```sh

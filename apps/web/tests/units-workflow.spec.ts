@@ -28,8 +28,7 @@ async function seedFields(page: Page) {
 
 test("keeps economics drafts isolated by field and unit switches leave canonical values and results unchanged", async ({ page }) => {
   await seedFields(page);
-  await page.goto("/");
-  await page.getByRole("link", { name: "Economics", exact: true }).click();
+  await page.goto("/economics");
 
   await page.getByLabel("Grain price (USD/tonne)").fill("201.123456789");
   await page.getByLabel("Baseline yield (tonnes/ha)").fill("7.25");
@@ -42,10 +41,16 @@ test("keeps economics drafts isolated by field and unit switches leave canonical
   const total = await parcelTotal.textContent();
   const before = await page.evaluate(() => localStorage.getItem("meridian.economics.v2"));
 
-  await page.getByLabel("Field or location").selectOption("field:field-b");
+  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "South field", exact: true }).click();
+  await page.getByRole("dialog", { name: "South field", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("link", { name: "Economics", exact: true }).click();
   await expect(page.getByLabel("Grain price (USD/tonne)")).toHaveValue("");
   await expect(page.getByLabel("Baseline yield (tonnes/ha)")).toHaveValue("");
-  await page.getByLabel("Field or location").selectOption("field:field-a");
+  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "North field", exact: true }).click();
+  await page.getByRole("dialog", { name: "North field", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("link", { name: "Economics", exact: true }).click();
   await expect(page.getByLabel("Grain price (USD/tonne)")).toHaveValue("201.123456789");
 
   await page.getByRole("button", { name: "U.S. customary units" }).click();

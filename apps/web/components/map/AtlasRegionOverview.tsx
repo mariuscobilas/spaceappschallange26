@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { useAtlasState } from "@/components/atlas/AtlasContext";
+import { SoilProfile } from "@/components/atlas/SoilProfile";
 import { cellArea, cellToLatLng, getResolution, isValidCell, UNITS } from "h3-js";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
@@ -9,6 +12,12 @@ import { crops, today } from "@/lib/workspace";
 
 export function AtlasRegionOverview({ enabled }: { enabled: boolean }) {
   const { settings } = useMeridian();
+  const atlas = useAtlasState();
+  const [showSoil, setShowSoil] = useState(false);
+  const record = atlas?.cells.find(c => c.h3Index === settings.selection.hexId);
+  const noAcreage = record?.activeAreaHa === 0;
+  const number = (v: number | null | undefined, unit: string) => v === null || v === undefined ? "Unavailable" : `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(v)} ${unit}`;
+
   const hexId = settings.selection.hexId;
   const validHex = !!hexId && isValidCell(hexId);
   const asOf = settings.timeMode === "past" ? settings.observationDate : today();
@@ -51,16 +60,19 @@ export function AtlasRegionOverview({ enabled }: { enabled: boolean }) {
     <Card size="sm">
       <CardHeader>
         <CardTitle>Regional assessment</CardTitle>
-        <CardDescription>Regional model data is not connected yet.</CardDescription>
+        <CardDescription>{atlas?.loading ? "Loading regional assessment…" : noAcreage ? "No active acreage for the selected crop in this region." : !record ? "No validated assessment for this region and filter combination." : `${atlas?.scenario?.label} · ${atlas?.scenario?.periodStart} to ${atlas?.scenario?.periodEnd}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 text-sm">
-          <dt className="text-muted-foreground">Net return</dt><dd>Unavailable</dd>
-          <dt className="text-muted-foreground">Yield effect</dt><dd>Unavailable</dd>
-          <dt className="text-muted-foreground">Active {crop?.toLowerCase()} acreage</dt><dd>Unavailable</dd>
+          <dt className="text-muted-foreground">Net return</dt><dd>{number(record?.netReturnUsdHa, "USD/ha")}</dd>
+          <dt className="text-muted-foreground">Yield penalty</dt><dd>{number(record?.yieldPenaltyPct, "%")}</dd>
+          <dt className="text-muted-foreground">Active {crop?.toLowerCase()} area</dt><dd>{number(record?.activeAreaHa, "ha")}</dd>
+          <dt className="text-muted-foreground">Regional root-zone wetness</dt><dd>{number(record?.rootZoneWetness === null || record?.rootZoneWetness === undefined ? null : record.rootZoneWetness * 100, "%")}</dd>
+          <dt className="text-muted-foreground">Regional soil texture</dt><dd>{record?.soilTexture ?? "Unavailable"}</dd>
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Missing crop coverage is not zero acreage. Regional soil texture and profitability cannot be inferred from the centre sample.</p>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Missing crop coverage is not zero acreage. Negative yield penalty means a yield gain relative to the declared baseline. Regional values come only from the supplied dataset; point observations below do not replace missing aggregates.</p>
       </CardContent>
     </Card>
+    <details onToggle={e => setShowSoil(e.currentTarget.open)} className="rounded-lg border p-4"><summary className="cursor-pointer text-sm font-medium">Soil texture and horizon characteristics at centre</summary>{showSoil && <div className="mt-3"><SoilProfile key={hexId} latitude={latitude} longitude={longitude} /></div>}</details>
   </div>;
 }

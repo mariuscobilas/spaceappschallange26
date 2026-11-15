@@ -2,35 +2,30 @@ import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { cellArea, cellToLatLng, getResolution, UNITS } from "h3-js";
 
-test("Explore aligns input and button centres with latest and past date controls", async ({ page }) => {
-  await page.setViewportSize({ width: 1600, height: 1000 });
+test("Explore keeps secondary controls in Map options on desktop and phone", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const controls = [
-    page.getByRole("button", { name: "Toggle navigation", exact: true }),
-    page.getByLabel("Field or location"), page.getByLabel("Cash crop", { exact: true }),
-    page.getByRole("button", { name: "Field Simulator", exact: true }),
-    page.getByRole("button", { name: "Draw boundary", exact: true }),
-    page.getByRole("button", { name: "Layers", exact: true }),
-    page.getByLabel("Observation period"),
-    page.getByRole("button", { name: "Selected location details", exact: true }),
-  ];
-  await expect(controls[1]).toBeEnabled();
-  for (const mode of ["latest", "past"]) {
-    await page.getByLabel("Observation period").selectOption(mode);
-    const all = mode === "past" ? [...controls, page.getByLabel("Observation date", { exact: true })] : controls;
-    const centres = await Promise.all(all.map(async (control) => {
-      const box = await control.boundingBox();
-      if (!box) throw Error("Toolbar control is not visible");
-      return box.y + box.height / 2;
-    }));
-    expect(Math.max(...centres) - Math.min(...centres)).toBeLessThanOrEqual(1);
-  }
+  const toolbar = page.locator('header[aria-label="Map toolbar"]');
+  await expect(toolbar.getByLabel("Field or location")).toBeVisible();
+  await expect(toolbar.getByRole("button", { name: "Map options", exact: true })).toBeVisible();
+  await expect(toolbar.getByLabel("Observation period")).toHaveCount(0);
+  await expect(toolbar.getByRole("button", { name: "Draw boundary" })).toHaveCount(0);
+  await expect(toolbar.getByRole("button", { name: "Selected location details" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  const options = page.getByRole("dialog", { name: "Map options", exact: true });
+  await options.getByLabel("Observation period").selectOption("past");
+  await expect(options.getByLabel("Observation date", { exact: true })).toBeVisible();
+  await expect(options.getByRole("button", { name: "Draw boundary" })).toHaveCount(0);
+  await expect(options.getByRole("button", { name: "Select point" })).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(options).toBeHidden();
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByLabel("Observation date", { exact: true })).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await expect(options.getByLabel("Observation date", { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test("Atlas has a docked overview with real hex geometry and clearly identified centre samples", async ({ page }) => {
+test("Regional Atlas route has a docked overview with real hex geometry and centre samples", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
   const example = JSON.parse(readFileSync("../../shared/payloads/field-conditions-available.json", "utf8"));
@@ -41,8 +36,10 @@ test("Atlas has a docked overview with real hex geometry and clearly identified 
     response.requestedDate = query.get("as_of");
     return route.fulfill({ json: response });
   });
-  await page.goto("/");
-  await page.getByRole("button", { name: "National Risk Atlas", exact: true }).click();
+  await page.goto("/atlas");
+  await page.getByLabel("Atlas layer").selectOption("returns");
+  await expect(page).toHaveURL(/\/atlas$/);
+  await expect(page.getByRole("link", { name: "Regional Atlas", exact: true })).toHaveAttribute("aria-current", "page");
   const canvas = page.locator(".map-canvas");
   await expect(canvas).toHaveAttribute("data-hex-resolution", "2", { timeout: 30000 });
   await expect(async () => {
@@ -78,5 +75,48 @@ test("Atlas has a docked overview with real hex geometry and clearly identified 
   await expect(mobile).toContainText("Region at a glance");
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await mobile.getByRole("button", { name: "Inspect field here", exact: true }).click();
+  await expect(page).toHaveURL(/\/fields$/);
   await expect(page.getByRole("dialog", { name: "Field details", exact: true })).toBeVisible();
+});
+
+test("phone navigation routes to Atlas and Explore without adding a mode toolbar", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Toggle navigation", exact: true }).click();
+  await page.getByRole("link", { name: "Regional Atlas", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Sidebar", exact: true })).toBeHidden();
+  await expect(page).toHaveURL(/\/atlas$/);
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").mode)).toBe("atlas");
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Map options", exact: true }).getByRole("button", { name: "Draw boundary" })).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Toggle navigation", exact: true }).click();
+  await page.getByRole("link", { name: "Explore", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}").mode)).toBe("field");
+});
+
+test("phone My fields panel closes before placing and saving a point", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
+  await page.goto("/fields");
+  await page.getByRole("button", { name: /My fields \(0\)/ }).click();
+  const panel = page.getByRole("dialog", { name: "My fields", exact: true });
+  await expect(panel).toBeVisible();
+  await panel.getByRole("button", { name: "Select point", exact: true }).click();
+  await expect(panel).toBeHidden();
+  await expect(page.getByText("Click the map to place a field point.")).toBeVisible();
+  const canvas = page.locator(".map-canvas");
+  const bounds = await canvas.boundingBox();
+  if (!bounds) throw new Error("Map canvas is not visible");
+  await page.mouse.click(bounds.x + bounds.width * .5, bounds.y + bounds.height * .5);
+  const details = page.getByRole("dialog", { name: "Field details", exact: true });
+  await expect(details).toBeVisible();
+  await details.getByLabel("Field name", { exact: true }).fill("Mobile point");
+  await details.getByRole("button", { name: "Save field", exact: true }).click();
+  await expect(details).toBeHidden();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}").fields?.length)).toBe(1);
+  await page.getByRole("button", { name: /My fields \(1\)/ }).click();
+  await expect(page.getByRole("dialog", { name: "My fields", exact: true })).toContainText("Mobile point");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

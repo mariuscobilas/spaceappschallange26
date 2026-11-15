@@ -10,3 +10,4 @@ catboost>=1.2.10,<2
 mlflow-skinny>=3.7,<4
 SQLAlchemy>=2,<3
 alembic>=1.13,<2
+h3==4.5.0

@@ -3,16 +3,17 @@ import { expect, test } from "@playwright/test";
 test("draws and saves a boundary that survives reload", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
-  await page.goto("/");
+  await page.goto("/fields");
 
   const canvas = page.locator(".map-canvas");
-  const drawButton = page.getByRole("button", { name: "Draw boundary" });
-  await expect(drawButton).toBeEnabled({ timeout: 30_000 });
   for (let index = 0; index < 7; index++) {
     await page.getByRole("button", { name: "Zoom in", exact: true }).click();
   }
   await expect(canvas).toHaveAttribute("data-hex-resolution", "5");
+  const drawButton = page.getByRole("button", { name: "Draw boundary", exact: true });
+  await expect(drawButton).toBeEnabled({ timeout: 30_000 });
   await drawButton.click();
+  await expect(page.getByRole("group", { name: "Boundary drawing actions", exact: true })).toBeVisible();
   await expect(canvas).toHaveAttribute("data-drawing-ready", "true");
 
   const bounds = await canvas.boundingBox();
@@ -47,9 +48,7 @@ test("draws and saves a boundary that survives reload", async ({ page }) => {
   expect(savedBeforeReload.fields[0].areaHectares).toBeGreaterThan(0);
 
   await page.reload();
-  await expect(page.getByLabel("Field or location")).toHaveValue(
-    `field:${savedBeforeReload.fields[0].id}`,
-  );
+  await expect(page.getByRole("complementary", { name: "My fields", exact: true })).toContainText("Browser test field");
   const savedAfterReload = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}"),
   );

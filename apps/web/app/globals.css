@@ -214,3 +214,13 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Compact map context must fit its own box, including desktop flex layouts. */
+.map-toolbar [data-compact="true"] [data-slot="field"]:first-child {
+  flex: 1 1 0;
+  width: 0;
+}
+.map-toolbar [data-compact="true"] [data-slot="field"]:last-child {
+  flex: 0 0 7rem;
+  width: 7rem;
+}

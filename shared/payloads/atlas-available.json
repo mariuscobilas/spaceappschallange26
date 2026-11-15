@@ -1,0 +1,14 @@
+{
+  "status": "available",
+  "message": "Regional values from the configured validated dataset.",
+  "datasetId": "regional-sample-2026-v1",
+  "generatedAt": "2026-11-14T12:00:00Z",
+  "validation": {
+    "status": "validated",
+    "method": "Fixture contract validation only",
+    "reference": "https://example.org/validation-record"
+  },
+  "scenarios": [{ "id": "historical", "label": "Historical", "baseline": "1991–2020", "periodStart": "1991-01-01", "periodEnd": "2020-12-31" }],
+  "cells": [{ "h3Index": "8928308280fffff", "crop": "corn", "scenarioId": "historical", "activeAreaHa": 0, "netReturnUsdHa": null, "yieldPenaltyPct": null, "rootZoneWetness": null, "soilTexture": null }],
+  "provenance": [{ "title": "Regional dataset source", "url": "https://example.org/dataset", "periodStart": "1991-01-01", "periodEnd": "2020-12-31", "spatialMeaning": "H3 cell aggregate; fixture only." }]
+}

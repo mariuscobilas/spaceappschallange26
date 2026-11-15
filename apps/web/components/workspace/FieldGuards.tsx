@@ -66,11 +66,11 @@ export function FieldGuards() {
     if (
       draftDirty &&
       hasUnsavedChanges() &&
-      pathname !== "/" &&
+      pathname !== "/fields" &&
       !pendingAction
     ) {
       const destination = pathname;
-      router.replace("/");
+      router.replace("/fields");
       requestTransition(() => router.push(destination));
     }
   }, [

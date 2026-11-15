@@ -42,7 +42,7 @@ export function WorkspaceBackup() {
     setMessage(`Import complete. Added ${result.imported} item${result.imported === 1 ? "" : "s"}; skipped ${result.skipped} collision or unavailable reference${result.skipped === 1 ? "" : "s"}. Existing local items win when keys collide. Settings and display units were restored from the backup.`);
   };
   return <Sheet open={open} onOpenChange={setOpen}>
-    <SheetTrigger render={<Button variant="outline" size="sm" className="w-full" />}><Download data-icon="inline-start" />Workspace backup</SheetTrigger>
+    <SheetTrigger render={<Button variant="outline" size="sm" className="w-full min-h-11 group-data-[collapsible=icon]:px-0" aria-label="Workspace backup" title="Workspace backup" />}><Download data-icon="inline-start" /><span className="group-data-[collapsible=icon]:sr-only">Workspace backup</span></SheetTrigger>
     <SheetContent side="bottom" className="max-h-[85dvh] overflow-y-auto">
     <SheetHeader><SheetTitle>Workspace backup</SheetTitle><SheetDescription>Export or restore this browser’s fields, plans, drafts, economics and map preferences.</SheetDescription></SheetHeader>
     <div className="px-4 pb-4">

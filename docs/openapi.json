@@ -130,6 +130,90 @@
         }
       }
     },
+    "/api/v1/atlas": {
+      "get": {
+        "summary": "Get Atlas",
+        "operationId": "get_atlas_api_v1_atlas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AtlasDataset"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/soil-profile": {
+      "get": {
+        "summary": "Get Soil Profile",
+        "operationId": "get_soil_profile_api_v1_soil_profile_get",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Longitude"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoilProfileResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/atlas/regional-yield": {
+      "get": {
+        "summary": "Get Regional Yield",
+        "operationId": "get_regional_yield_api_v1_atlas_regional_yield_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionalYieldDataset"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ready": {
       "get": {
         "tags": [
@@ -855,6 +939,314 @@
           "assumptions"
         ],
         "title": "AnalysisResponse"
+      },
+      "AtlasCell": {
+        "properties": {
+          "h3Index": {
+            "type": "string",
+            "pattern": "^8[0-9a-f]{14}$",
+            "title": "H3Index"
+          },
+          "crop": {
+            "type": "string",
+            "enum": [
+              "wheat",
+              "corn",
+              "soybeans",
+              "cotton",
+              "sorghum"
+            ],
+            "title": "Crop"
+          },
+          "scenarioId": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Scenarioid"
+          },
+          "activeAreaHa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activeareaha"
+          },
+          "netReturnUsdHa": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Netreturnusdha"
+          },
+          "yieldPenaltyPct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Yieldpenaltypct"
+          },
+          "rootZoneWetness": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rootzonewetness"
+          },
+          "soilTexture": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Soiltexture"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "h3Index",
+          "crop",
+          "scenarioId",
+          "activeAreaHa",
+          "netReturnUsdHa",
+          "yieldPenaltyPct",
+          "rootZoneWetness",
+          "soilTexture"
+        ],
+        "title": "AtlasCell"
+      },
+      "AtlasDataset": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Message"
+          },
+          "datasetId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datasetid"
+          },
+          "generatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generatedat"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AtlasValidation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/AtlasScenario"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Scenarios"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/AtlasCell"
+            },
+            "type": "array",
+            "maxItems": 10000,
+            "title": "Cells"
+          },
+          "provenance": {
+            "items": {
+              "$ref": "#/components/schemas/AtlasProvenance"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Provenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "datasetId",
+          "generatedAt",
+          "validation",
+          "scenarios",
+          "cells",
+          "provenance"
+        ],
+        "title": "AtlasDataset"
+      },
+      "AtlasProvenance": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Url"
+          },
+          "periodStart": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Periodstart"
+          },
+          "periodEnd": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Periodend"
+          },
+          "spatialMeaning": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Spatialmeaning"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "spatialMeaning"
+        ],
+        "title": "AtlasProvenance"
+      },
+      "AtlasScenario": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "baseline": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Baseline"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date",
+            "title": "Periodstart"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date",
+            "title": "Periodend"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "baseline",
+          "periodStart",
+          "periodEnd"
+        ],
+        "title": "AtlasScenario"
+      },
+      "AtlasValidation": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "validated",
+            "title": "Status"
+          },
+          "method": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Method"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "method",
+          "reference"
+        ],
+        "title": "AtlasValidation"
       },
       "CalendarLimits": {
         "properties": {
@@ -2753,6 +3145,319 @@
         ],
         "title": "Recommendation"
       },
+      "RegionalYieldDataset": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Message"
+          },
+          "datasetId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datasetid"
+          },
+          "generatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generatedat"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegionalYieldSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegionalYieldMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regions": {
+            "items": {
+              "$ref": "#/components/schemas/RegionalYieldRegion"
+            },
+            "type": "array",
+            "maxItems": 1000,
+            "title": "Regions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "datasetId",
+          "generatedAt",
+          "source",
+          "method",
+          "regions"
+        ],
+        "title": "RegionalYieldDataset"
+      },
+      "RegionalYieldEstimate": {
+        "properties": {
+          "crop": {
+            "type": "string",
+            "enum": [
+              "corn",
+              "soybeans"
+            ],
+            "title": "Crop"
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "2019",
+              "2020",
+              "2019-2020"
+            ],
+            "title": "Period"
+          },
+          "sampleRecords": {
+            "type": "integer",
+            "minimum": 10.0,
+            "title": "Samplerecords"
+          },
+          "sampleRecordsByYear": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "2019",
+                "2020"
+              ]
+            },
+            "type": "object",
+            "title": "Samplerecordsbyyear"
+          },
+          "meanYieldEffectPct": {
+            "type": "number",
+            "exclusiveMinimum": -100.0,
+            "title": "Meanyieldeffectpct"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "crop",
+          "period",
+          "sampleRecords",
+          "sampleRecordsByYear",
+          "meanYieldEffectPct"
+        ],
+        "title": "RegionalYieldEstimate"
+      },
+      "RegionalYieldGeometry": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Polygon",
+              "MultiPolygon"
+            ],
+            "title": "Type"
+          },
+          "coordinates": {
+            "items": {},
+            "type": "array",
+            "title": "Coordinates"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "title": "RegionalYieldGeometry"
+      },
+      "RegionalYieldMethod": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Summary"
+          },
+          "units": {
+            "type": "string",
+            "const": "percent",
+            "title": "Units"
+          },
+          "sampleUnit": {
+            "type": "string",
+            "const": "model sample record",
+            "title": "Sampleunit"
+          },
+          "minimumSampleRecords": {
+            "type": "integer",
+            "const": 10,
+            "title": "Minimumsamplerecords"
+          },
+          "interpretation": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Interpretation"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "summary",
+          "units",
+          "sampleUnit",
+          "minimumSampleRecords",
+          "interpretation",
+          "limitations"
+        ],
+        "title": "RegionalYieldMethod"
+      },
+      "RegionalYieldRegion": {
+        "properties": {
+          "fips": {
+            "type": "string",
+            "pattern": "^\\d{5}$",
+            "title": "Fips"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "IA",
+              "IL",
+              "IN",
+              "MI",
+              "MO",
+              "OH"
+            ],
+            "title": "State"
+          },
+          "centroid": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Centroid"
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/RegionalYieldGeometry"
+          },
+          "estimates": {
+            "items": {
+              "$ref": "#/components/schemas/RegionalYieldEstimate"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Estimates"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fips",
+          "name",
+          "state",
+          "centroid",
+          "geometry",
+          "estimates"
+        ],
+        "title": "RegionalYieldRegion"
+      },
+      "RegionalYieldSource": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 1000,
+            "pattern": "^https://",
+            "title": "Url"
+          },
+          "doi": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Doi"
+          },
+          "archiveSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Archivesha256"
+          },
+          "license": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "License"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "doi",
+          "archiveSha256",
+          "license"
+        ],
+        "title": "RegionalYieldSource"
+      },
       "RiskRules-Input": {
         "properties": {
           "moderate_relative_moisture_loss": {
@@ -3075,6 +3780,231 @@
           "longitude"
         ],
         "title": "SiteOption"
+      },
+      "SoilHorizon": {
+        "properties": {
+          "topCm": {
+            "type": "number",
+            "maximum": 300.0,
+            "minimum": 0.0,
+            "title": "Topcm"
+          },
+          "bottomCm": {
+            "type": "number",
+            "maximum": 300.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Bottomcm"
+          },
+          "texture": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "sandPct": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "siltPct": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "clayPct": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "organicMatterPct": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "bulkDensityGcm3": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "ph": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "saturatedConductivityUmS": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "topCm",
+          "bottomCm",
+          "texture",
+          "sandPct",
+          "siltPct",
+          "clayPct",
+          "organicMatterPct",
+          "bulkDensityGcm3",
+          "ph",
+          "saturatedConductivityUmS"
+        ],
+        "title": "SoilHorizon"
+      },
+      "SoilMeasure": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Unit"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Source"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Sourceurl"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "value",
+          "unit",
+          "source",
+          "sourceUrl",
+          "message"
+        ],
+        "title": "SoilMeasure"
+      },
+      "SoilProfileComponent": {
+        "properties": {
+          "mapUnitSymbol": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "Mapunitsymbol"
+          },
+          "mapUnitName": {
+            "type": "string",
+            "maxLength": 300,
+            "title": "Mapunitname"
+          },
+          "componentName": {
+            "type": "string",
+            "maxLength": 300,
+            "title": "Componentname"
+          },
+          "componentPercent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Componentpercent"
+          },
+          "drainageClass": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "hydrologicGroup": {
+            "$ref": "#/components/schemas/SoilMeasure"
+          },
+          "horizons": {
+            "items": {
+              "$ref": "#/components/schemas/SoilHorizon"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "title": "Horizons"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mapUnitSymbol",
+          "mapUnitName",
+          "componentName",
+          "componentPercent",
+          "drainageClass",
+          "hydrologicGroup",
+          "horizons"
+        ],
+        "title": "SoilProfileComponent"
+      },
+      "SoilProfileResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Message"
+          },
+          "sample": {
+            "$ref": "#/components/schemas/GeoCoordinate"
+          },
+          "retrievedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrievedat"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Source"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Sourceurl"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/SoilProfileComponent"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Components"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "sample",
+          "retrievedAt",
+          "source",
+          "sourceUrl",
+          "components"
+        ],
+        "title": "SoilProfileResult"
       },
       "TrajectoryPoint": {
         "properties": {

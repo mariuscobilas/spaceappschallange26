@@ -10,22 +10,29 @@ No decorative scores, marketing hero, fake telemetry, or simulated model respons
 
 ## Navigation and layout
 
-A full-height application navigation sidebar contains four stacked destinations:
-Explore `/`, Field Planner `/planner`, Economics `/economics`, Ask Meridian `/intel`.
+A full-height application navigation sidebar contains six stacked destinations:
+Explore `/`, My fields `/fields`, Regional Atlas `/atlas`, Field Planner `/planner`,
+Economics `/economics`, Ask Meridian `/intel`.
 Use shadcn Sidebar components; collapse to icons on desktop, Sheet navigation on
 phones. The sidebar contains navigation only, not map filters or field details.
 
-Explore has one horizontal toolbar above the map: unified field/location picker, intended next crop, Field / Atlas
-mode, Conditions, Latest / Past date, and on-demand details. No second header strip.
-The map remains mounted across workspace navigation; other pages have their own
-main content and one compact page header. Controls wrap within one toolbar surface
-on small viewports. Details open in an accessible Sheet after a selection or Info.
-Reuse the same field/location and crop controls in the other workspace headers;
-farmers must not return to the map merely to switch fields.
-Align actual Explore input/button rectangles with consistent label rows above
-control groups and bottom alignment. Keep Saved plans under Field Planner and
-linked from Planner. Confirmed-plan cards expose timing, field/crop, area and date,
-with explicit draft restoration and plan-only deletion confirmation.
+Explore is for map browsing and filters. Its compact map bar has navigation,
+location/crop context, Map options and on-demand details; it does not create or
+edit fields. My fields owns point selection, drawing, saved-field selection and
+management. Regional Atlas `/atlas` owns H3 region browsing and inspection. These
+are native sidebar routes over the same mounted map and shared location/crop/date
+state; direct links and browser history must restore the route's field/atlas mode.
+
+Map options opens a scrollable right Sheet containing NASA layer selection,
+opacity, source legend and Latest/Past dates. Field tools belong to My fields and
+are absent from Explore and Regional Atlas. The My fields panel closes before a
+map selection or drawing starts; Finish/Cancel stay visible while drawing/editing.
+Phones use compact context controls and the existing navigation drawer. Keep
+source dates and missing states in map feedback.
+
+Saved plans belongs to local Plan termination / Saved plans navigation within
+Field Planner. Comparison is opt-in and selects existing plan cards. Preserve
+explicit draft restoration and plan-only deletion confirmation.
 Field mode selects exact points and supports named polygon fields; Atlas selects
 regional hexagons. Keep drawing instructions and Finish/Cancel actions visible.
 Atlas selections open a docked right overview beside the desktop map; phones use
@@ -90,3 +97,11 @@ labels are required. Crop control is clickable across its complete visible area.
 Validate phone/landscape layout, keyboard navigation/focus, reduced motion and
 fallback behavior. Generated Slider was corrected for one scalar thumb and ARIA
 labels on its range input. MapCanvas ResizeObserver tracks container changes.
+
+## Usability and performance pass
+
+MapPreview is dynamically loaded on first Explore visit and remains mounted afterward.
+Planner condition details mount on disclosure; numeric requests share a bounded
+in-memory cache and in-flight work, with explicit refresh invalidation. Preserve
+source validation and stale-response protection. Use native links for page navigation
+and retain a keyboard skip link. Backup remains available in the collapsed sidebar.

@@ -32,6 +32,9 @@ except ImportError:
 
 from app.routers.land_cover import router as land_cover_router
 from app.routers.field_conditions import router as field_conditions_router
+from app.routers.atlas import router as atlas_router
+from app.routers.soil_profile import router as soil_profile_router
+from app.routers.regional_yield import router as regional_yield_router
 
 legacy_router = APIRouter(tags=["Existing Meridian routes"])
 
@@ -185,6 +188,9 @@ def create_app(engine_factory=None) -> FastAPI:
         expose_headers=["X-Request-ID", "X-Process-Time-Ms", "Retry-After"])
     app.include_router(land_cover_router)
     app.include_router(field_conditions_router)
+    app.include_router(atlas_router)
+    app.include_router(soil_profile_router)
+    app.include_router(regional_yield_router)
     app.include_router(router)
     app.include_router(legacy_router)
     return app

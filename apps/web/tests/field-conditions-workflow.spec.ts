@@ -22,6 +22,10 @@ function responseFor(url: string, kind: "available" | "partial" = "available") {
   return response;
 }
 
+async function openFieldConditions(page: Page) {
+  await page.getByText("Field conditions and sources", { exact: true }).click();
+}
+
 async function seedTwoFields(page: Page) {
   await page.addInitScript(() => {
     const now = new Date().toISOString();
@@ -34,11 +38,16 @@ async function seedTwoFields(page: Page) {
 
 test("shows actual source periods and spatial meaning for historical field context", async ({ page }) => {
   await page.route("**/api/v1/field-conditions?**", (route) => route.fulfill({ json: responseFor(route.request().url()) }));
+  await seedTwoFields(page);
   await page.goto("/");
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
   await page.getByLabel("Observation period").selectOption("past");
   await page.getByLabel("Observation date", { exact: true }).fill("2020-05-01");
-  await page.getByRole("link", { name: "Field Planner", exact: true }).click();
-  const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
+  await page.getByRole("dialog", { name: "Map options" }).getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "North field", exact: true }).click();
+  const details = page.getByRole("dialog", { name: "North field", exact: true });
+  const conditions = details.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("30-day precipitation: 24.8 mm")).toBeVisible();
   await expect(conditions.getByLabel("Root-zone wetness: 42%")).toBeVisible();
   await expect(conditions.getByLabel("Available water storage: 146 mm")).toBeVisible();
@@ -47,14 +56,14 @@ test("shows actual source periods and spatial meaning for historical field conte
   await conditions.getByText("Sources and interpretation", { exact: true }).click();
   await expect(conditions).toContainText("0.5° latitude");
   await expect(conditions.getByRole("link", { name: /NASA POWER/ }).first()).toHaveAttribute("href", /^https:\/\/power\.larc\.nasa\.gov\//);
-  await page.getByLabel("Cash crop planting date").fill("2027-04-20");
-  await expect(page.getByLabel("Termination calendar")).toContainText("March 21, 2027");
+  await expect(details).toContainText("North field");
 });
 
 test("partial conditions can refresh while field planning stays usable", async ({ page }) => {
   let recovered = false;
   await page.route("**/api/v1/field-conditions?**", (route) => route.fulfill({ json: responseFor(route.request().url(), recovered ? "available" : "partial") }));
   await page.goto("/planner");
+  await openFieldConditions(page);
   const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("Root-zone wetness: Unavailable")).toBeVisible();
   await expect(conditions.getByLabel("30-day precipitation: 24.8 mm")).toBeVisible();
@@ -78,8 +87,10 @@ test("a late response for another field never replaces the selected field's cond
     await route.fulfill({ json: response }).catch(() => {});
   });
   await page.goto("/planner");
+  await openFieldConditions(page);
   await expect(page.getByLabel("Field or location")).toHaveValue("field:north");
   await page.getByLabel("Field or location").selectOption("field:south");
+  await openFieldConditions(page);
   const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("30-day precipitation: 12 mm")).toBeVisible();
   release();
@@ -90,6 +101,7 @@ test("a late response for another field never replaces the selected field's cond
 test("disconnected conditions leave editable forms and explicit unavailable values", async ({ page }) => {
   await page.route("**/api/v1/field-conditions?**", (route) => route.abort());
   await page.goto("/planner");
+  await openFieldConditions(page);
   const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("Root-zone wetness: Unavailable")).toBeVisible();
   await expect(conditions.getByLabel("30-day precipitation: Unavailable")).toBeVisible();
@@ -105,6 +117,7 @@ test("unverified response values are withheld instead of becoming plausible read
     return route.fulfill({ json: response });
   });
   await page.goto("/planner");
+  await openFieldConditions(page);
   const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("Root-zone wetness: Unavailable")).toBeVisible();
   await expect(conditions.getByText("160%", { exact: true })).toHaveCount(0);

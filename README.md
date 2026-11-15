@@ -62,12 +62,15 @@ Run `pnpm dev` from the root. The web app is at http://localhost:3000 and the AP
 
 Run `pnpm --filter @spaceapps/web dev`, then open http://localhost:3000.
 The frontend uses shadcn/ui (Base UI / Nova), Tailwind v4, and a full-height
-navigation sidebar with separate Explore, Field Planner, Economics and Ask Meridian
-workspaces. Production builds use Next.js Webpack; development uses Turbopack.
+navigation sidebar ordered Explore, My fields, Regional Atlas, Field Planner,
+Economics and Ask Meridian. Explore (`/`) is for map browsing and filters; My fields
+(`/fields`) owns point selection, drawing and saved-field management; Atlas (`/atlas`)
+owns regional inspection. These map routes share one mounted map and preserve context. Production builds use Next.js Webpack; development uses Turbopack.
 
-Explore places map controls in one toolbar. The light OpenFreeMap basemap retains
-roads and place names under selectable H3 cells. Field / Atlas modes preserve crop,
-location and dates. Kansas locality shortcuts are Tribune, Colby, Hays, Salina,
+Explore keeps only location/crop filters and Map options in its toolbar. Layers,
+opacity, source legends and dates live in the options Sheet. Field creation and
+management live on My fields; browsing Explore does not create a field draft. The light OpenFreeMap basemap retains
+roads and place names under selectable H3 cells. The map workspaces preserve crop, location and dates. Kansas locality shortcuts are Tribune, Colby, Hays, Salina,
 Manhattan and Ottawa. H3 resolution is 2 below zoom 4, 3 below 6, 4 below 9, then
 viewport-scoped 5. Cells represent regional geography, not verified farm parcels.
 
@@ -76,7 +79,7 @@ last advertised observation on/before the request; actual dates, units and legen
 remain visible. IMERG depicts precipitation rate. Loading or external failures
 leave map navigation usable. On-demand location details open in a Sheet.
 
-Field mode selects exact map points and supports named, saved polygon fields with
+My fields selects exact map points and supports named, saved polygon fields with
 Terra Draw. Draw or edit a boundary, finish it, then save or cancel. Geodesic area
 and centroid are calculated locally; fields above 5,000 ha remain editable and are
 directed to Atlas. Unsaved changes have Save / Discard / Stay protection.
@@ -103,7 +106,7 @@ change before acreage is entered; parcel totals require a valid managed area.
 Confirmed plans are available under **Field Planner â†’ Saved plans** at
 `/planner/saved`. Open restores the field and crop; differing working drafts have
 an explicit restore choice. Deleting a plan preserves its field and economic inputs.
-Atlas selections open a docked regional overview on desktop and a Sheet on phones:
+Regional Atlas selections open a docked regional overview on desktop and a Sheet on phones:
 hex area/centre/detail, crop/date context and clearly identified centre-point
 conditions. The map remains interactive beside the desktop overview.
 Economics calculates from explicitly entered prices, yields, percentage change,
@@ -151,3 +154,25 @@ are local checks, not deployed acceptance. Earlier backend verification recorded
 20 tests and 13 shared fixtures passing; those were not rerun in the client pass.
 See [client delivery](docs/CLIENT-DELIVERY.md), [PRD](docs/PRD.md), and the
 [future delivery plan](docs/PRODUCT-NEXT.md).
+
+## Regional Atlas assessments
+
+Atlas now supports deck.gl H3 net-return rendering, crop/scenario filters,
+source-aware diagnostics and a real USDA soil horizon profile. The API requires an
+explicitly supplied, reviewed regional JSON dataset via `ATLAS_DATASET_PATH`;
+without one it shows unavailable assessment coverage and retains geographic browsing.
+Illustrative Kansas benchmarks are not used as production regional values.
+See [Atlas delivery and acceptance](docs/ATLAS-DELIVERY.md) for dataset requirements,
+soil-source verification and measured performance limits.
+
+## Map providers and real drought data
+
+Map options offers OpenFreeMap Light, Streets and Dark plus USGS topographic and aerial imagery, with persistent selection, attribution and provider-failure recovery. Aerial imagery is historical and its vintage varies. Explore and My fields also offer an optional, dated U.S. Drought Monitor overlay (2026-11-10), bundled from the official source with a category legend, provenance and reproducible import script. It provides regional context independently of NASA observation dates and Atlas economics. See [map sources and refresh steps](docs/MAP-DATA.md).
+
+Source-backed historical cover-crop observations and published budget comparisons are available in the [prepared research evidence bundle](data/research/cover-crops/v1/README.md), with reproducible preparation and independent source review. Its research-site scope is distinct from regional Atlas predictions.
+
+Regional Atlas now defaults to [published county yield effects](docs/REGIONAL-ATLAS.md):
+486 county geometries and corn/soybean estimates from the authors' archived 2019–2020
+research outputs, with crop/year filters and sample support. The bundled API endpoint
+works without dataset configuration. These historical sample means are separate
+from H3 net-return scenarios and current field forecasts.

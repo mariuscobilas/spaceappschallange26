@@ -34,12 +34,35 @@ test("working termination drafts follow each field through navigation, reload an
   expect(saved.areaHa).toBe("100");
 });
 
+test("Ask Meridian exports the prepared question with explicit unavailable evidence context", async ({ page }) => {
+  await page.route("**/api/v1/field-conditions?**", (route) => route.abort());
+  await page.goto("/intel");
+  await page.getByLabel("Your question").fill("What should I verify before planting?");
+  const prepared = page.getByLabel("Prepared request");
+  await expect(prepared).toHaveValue(/30-day precipitation: Unavailable/);
+  await expect(prepared).toHaveValue(/NASA POWER/);
+  await expect(prepared).toHaveValue(/period unavailable/);
+  await expect(prepared).toHaveValue(/not field-wide measurements/);
+  await expect(page.getByRole("note").filter({ hasText: "Analysis is not connected yet" })).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export .txt" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("meridian-request.txt");
+  const path = await download.path();
+  const { readFile } = await import("node:fs/promises");
+  const text = await readFile(path!, "utf8");
+  expect(text).toContain("What should I verify before planting?");
+  expect(text).toContain("NASA POWER (https://power.larc.nasa.gov/");
+  expect(text).toContain("Field conditions requested for");
+});
+
 test("Atlas drilldown starts an editable point at the regional centroid without treating the hex as a parcel", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
-  await page.goto("/");
+  await page.goto("/atlas");
+  await page.getByLabel("Atlas layer").selectOption("returns");
   await page.getByLabel("Cash crop", { exact: true }).selectOption("corn");
-  await page.getByRole("button", { name: "National Risk Atlas", exact: true }).click();
   await expect(page.locator(".map-canvas")).toHaveAttribute("data-hex-resolution", "2", { timeout: 30000 });
   const region = page.getByRole("complementary", { name: "Region overview", exact: true });
   await expect(async () => {
@@ -48,6 +71,7 @@ test("Atlas drilldown starts an editable point at the regional centroid without 
   }).toPass({ timeout: 20000 });
   const before = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"));
   await region.getByRole("button", { name: "Inspect field here", exact: true }).click();
+  await expect(page).toHaveURL(/\/fields$/);
   const editor = page.getByRole("dialog", { name: "Field details", exact: true });
   await expect(editor).toBeVisible();
   await expect(editor.getByLabel("Cash crop", { exact: true })).toHaveValue("corn");
