@@ -1,0 +1,696 @@
+{
+  "context": {
+    "wheat_2017": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.0816007479846226,
+        -0.007467269109093622,
+        0.3115956676954653,
+        -0.2266878217613177,
+        0.2266878217613161,
+        0.08895617209390977,
+        -0.0889561720939103
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.43833338901960206,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm"
+      ],
+      "numeric_mean": [
+        -35.99771222274194,
+        173.7116512016129,
+        265.6845161290322
+      ],
+      "numeric_scale": [
+        22.242021609233323,
+        30.848526062258816,
+        78.50343706626789
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 18,
+      "training_pairs": 62,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2018": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        -0.023342210312907757,
+        -0.29009636802145444,
+        0.24679565076880478,
+        -0.14539556124769185,
+        0.1453955612476921,
+        0.027490225433109958,
+        -0.027490225433109777
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.4808717968950906,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm"
+      ],
+      "numeric_mean": [
+        -36.306368083191494,
+        163.50759186382976,
+        300.3736170212766
+      ],
+      "numeric_scale": [
+        21.30867888719884,
+        28.93236598498786,
+        84.04606592551171
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 14,
+      "training_pairs": 47,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2019": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.06867341526791475,
+        -0.06825291325181676,
+        -0.020868324014835682,
+        -0.22148551344049078,
+        0.22148551344049056,
+        0.08440544723335784,
+        -0.08440544723335767
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.6034786152732416,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm"
+      ],
+      "numeric_mean": [
+        -42.63535189683333,
+        184.278165615,
+        248.81099999999995
+      ],
+      "numeric_scale": [
+        21.217731876368838,
+        29.758679780071784,
+        41.2454405843846
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 17,
+      "training_pairs": 60,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2020": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.08695569438942818,
+        -0.2914770061505867,
+        0.1994287161215016,
+        -0.3247756592670919,
+        0.32477565926709195,
+        0.18002137436020865,
+        -0.18002137436020865
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.365628236811663,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm"
+      ],
+      "numeric_mean": [
+        -40.26591034318182,
+        191.1442248818182,
+        288.7004545454545
+      ],
+      "numeric_scale": [
+        26.25967080734648,
+        32.81490563675694,
+        96.45366091724483
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 14,
+      "training_pairs": 44,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2021": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.11266474382312103,
+        -0.11974715637194812,
+        0.2166401103317731,
+        -0.23533552143482825,
+        0.23533552143482833,
+        0.082570691901161,
+        -0.082570691901161
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.4503270173132464,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm"
+      ],
+      "numeric_mean": [
+        -38.154552084915245,
+        178.38325841694916,
+        278.0427118644067
+      ],
+      "numeric_scale": [
+        23.93953098099369,
+        34.620138376571965,
+        85.2650131286698
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 17,
+      "training_pairs": 59,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    }
+  },
+  "context_biomass": {
+    "wheat_2017": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.0688580570355918,
+        -0.01710563144331234,
+        0.27411401019516335,
+        -0.13021138459764867,
+        0.09939443349564123,
+        -0.21210137487488803,
+        0.21210137487488806,
+        0.09532087537766826,
+        -0.09532087537766827
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.4426024690186274,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha"
+      ],
+      "numeric_mean": [
+        -35.99771222274194,
+        173.7116512016129,
+        265.6845161290322,
+        2694.6124952967743,
+        688139.2636136877
+      ],
+      "numeric_scale": [
+        22.242021609233323,
+        30.848526062258816,
+        78.50343706626789,
+        1768.4513130754658,
+        417818.0953039771
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 18,
+      "training_pairs": 62,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2018": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        -0.06074713056140224,
+        -0.28839056773631144,
+        0.27483455827151543,
+        0.006027386276321392,
+        -0.08106310455168134,
+        -0.127935937803162,
+        0.12793593780316195,
+        0.05316954184714083,
+        -0.053169541847141046
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.48130717015117186,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha"
+      ],
+      "numeric_mean": [
+        -36.306368083191494,
+        163.50759186382976,
+        300.3736170212766,
+        3125.874291668085,
+        903011.1358216733
+      ],
+      "numeric_scale": [
+        21.30867888719884,
+        28.93236598498786,
+        84.04606592551171,
+        1762.1227223026983,
+        503308.65084895474
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 14,
+      "training_pairs": 47,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2019": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.049566086850925034,
+        -0.08612696371618535,
+        -0.040141433600530886,
+        -0.12170933664791578,
+        0.0879719288279952,
+        -0.20031189376670133,
+        0.20031189376670103,
+        0.09404967674773626,
+        -0.09404967674773648
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.6093762686055896,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha"
+      ],
+      "numeric_mean": [
+        -42.63535189683333,
+        184.278165615,
+        248.81099999999995,
+        3041.15069514,
+        783211.700863644
+      ],
+      "numeric_scale": [
+        21.217731876368838,
+        29.758679780071784,
+        41.2454405843846,
+        1858.2200530964894,
+        536920.0782182952
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 17,
+      "training_pairs": 60,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2020": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.08587349021552326,
+        -0.2509240181568303,
+        0.24929004910665079,
+        0.034988965318030654,
+        -0.07934976270799014,
+        -0.30808140381277344,
+        0.30808140381277277,
+        0.1774882470348134,
+        -0.17748824703481333
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.374598240559296,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha"
+      ],
+      "numeric_mean": [
+        -40.26591034318182,
+        191.1442248818182,
+        288.7004545454545,
+        2260.663679554545,
+        662175.7855306384
+      ],
+      "numeric_scale": [
+        26.25967080734648,
+        32.81490563675694,
+        96.45366091724483,
+        1685.5495857159776,
+        535135.7266942881
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 14,
+      "training_pairs": 44,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    },
+    "wheat_2021": {
+      "categorical_features": [
+        "planting_window",
+        "tillage"
+      ],
+      "coefficients": [
+        0.031197938972633232,
+        -0.15142394509988055,
+        0.1977399178343217,
+        -0.09267566528359845,
+        -0.135375348972231,
+        -0.09359885457646736,
+        0.09359885457646697,
+        0.08252559478109388,
+        -0.08252559478109418
+      ],
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "evaluation_unknown_category_rows": 0,
+      "intercept": -0.5055917595936411,
+      "numeric_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha"
+      ],
+      "numeric_mean": [
+        -38.154552084915245,
+        178.38325841694916,
+        278.0427118644067,
+        3120.6735052203394,
+        849348.7909633992
+      ],
+      "numeric_scale": [
+        23.93953098099369,
+        34.620138376571965,
+        85.2650131286698,
+        1812.2627484296581,
+        505370.6676475555
+      ],
+      "prediction_clipping": false,
+      "training_categories": {
+        "planting_window": [
+          "Fall",
+          "Spring"
+        ],
+        "tillage": [
+          "CT",
+          "NT"
+        ]
+      },
+      "training_control_n": 17,
+      "training_pairs": 59,
+      "transformed_features": [
+        "delta_profile_water_mm",
+        "fallow_profile_water_mm",
+        "season_rain_mm",
+        "cover_biomass_kg_ha",
+        "biomass_rain_kg_mm_ha",
+        "planting_window_Fall",
+        "planting_window_Spring",
+        "tillage_CT",
+        "tillage_NT"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1288 @@
+{
+  "direct/delta_water/gradient_boosting": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 18,
+      "training_n": 62,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 47,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.297183876
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 60,
+      "training_target_max": 0.269359295,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 44,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 59,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    }
+  },
+  "direct/delta_water/random_forest": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 18,
+      "training_n": 62,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 47,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.297183876
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 60,
+      "training_target_max": 0.269359295,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 44,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        1.0
+      ],
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 59,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    }
+  },
+  "direct/delta_water/ridge": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "intercept": -0.5592220093983871,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.28554876014621566
+      ],
+      "scaler_mean": [
+        -35.99771222274194
+      ],
+      "scaler_scale": [
+        22.242021609233323
+      ],
+      "training_control_n": 18,
+      "training_n": 62
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "intercept": -0.6025977506957447,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.3093332209668074
+      ],
+      "scaler_mean": [
+        -36.306368083191494
+      ],
+      "scaler_scale": [
+        21.30867888719884
+      ],
+      "training_control_n": 14,
+      "training_n": 47
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "intercept": -0.7145809399116666,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.22064428365109048
+      ],
+      "scaler_mean": [
+        -42.63535189683333
+      ],
+      "scaler_scale": [
+        21.217731876368838
+      ],
+      "training_control_n": 17,
+      "training_n": 60
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "intercept": -0.6114470134022729,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.41010557173262185
+      ],
+      "scaler_mean": [
+        -40.26591034318182
+      ],
+      "scaler_scale": [
+        26.25967080734648
+      ],
+      "training_control_n": 14,
+      "training_n": 44
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm"
+      ],
+      "intercept": -0.5630605320847456,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.31412360112669185
+      ],
+      "scaler_mean": [
+        -38.154552084915245
+      ],
+      "scaler_scale": [
+        23.93953098099369
+      ],
+      "training_control_n": 17,
+      "training_n": 59
+    }
+  },
+  "direct/delta_water_weather/gradient_boosting": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.6937692398991053,
+        0.09041283405225817,
+        0.015059512433847585,
+        0.028022324317393266,
+        0.04683648039609264,
+        0.0795110783615129,
+        0.04638853053979011
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 18,
+      "training_n": 62,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.25816496444175324,
+        0.3162144593627865,
+        0.005072971723679876,
+        0.003073813976933416,
+        0.12983147283193905,
+        0.2091827004963608,
+        0.07845961716654712
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 47,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.297183876
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.6770230301004899,
+        0.05882934177022367,
+        0.027205644122573983,
+        0.013783815554297283,
+        0.03630889316976189,
+        0.11524116456529718,
+        0.07160811071735604
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 60,
+      "training_target_max": 0.269359295,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.8466147053718315,
+        0.034578059882832884,
+        0.024085809379203214,
+        0.018666805520466154,
+        0.026193978868222962,
+        0.03469784948186665,
+        0.015162791495576653
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 44,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "alpha": 0.9,
+        "ccp_alpha": 0.0,
+        "criterion": "deprecated",
+        "init": null,
+        "learning_rate": 0.03,
+        "loss": "squared_error",
+        "max_depth": 2,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "n_estimators": 100,
+        "n_iter_no_change": null,
+        "random_state": 42,
+        "subsample": 1.0,
+        "tol": 0.0001,
+        "validation_fraction": 0.1,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.7724965419718411,
+        0.03195278288705622,
+        0.009623515104905245,
+        0.016870851542281746,
+        0.04448235742561415,
+        0.11622531782215666,
+        0.00834863324614479
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 59,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    }
+  },
+  "direct/delta_water_weather/random_forest": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.6927826607234431,
+        0.05677432057899606,
+        0.04786166759358788,
+        0.04261120596457809,
+        0.05435146393459246,
+        0.04960687076804234,
+        0.05601181043676012
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 18,
+      "training_n": 62,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.2996005925386362,
+        0.2859817540850421,
+        0.005538090937791218,
+        0.003187783182418152,
+        0.08398625622231948,
+        0.2674216957970631,
+        0.054283827236729795
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 47,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.297183876
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.7465019700726615,
+        0.05869667568479109,
+        0.02396345642705018,
+        0.025349190782868642,
+        0.03383438099941324,
+        0.056432568855092444,
+        0.05522175717812286
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 60,
+      "training_target_max": 0.269359295,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.8798745191000925,
+        0.018021710521657228,
+        0.012523564558195312,
+        0.012203943062008081,
+        0.028810879139358127,
+        0.03782359585210907,
+        0.010741787766579686
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 14,
+      "training_n": 44,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 3,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "feature_importances": [
+        0.7823824854759658,
+        0.047193875677758165,
+        0.0068788474389065435,
+        0.009828483176979907,
+        0.021486671432886736,
+        0.11951954630989527,
+        0.012710090487607665
+      ],
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "prediction_clipping": false,
+      "preprocessing": "none",
+      "training_control_n": 17,
+      "training_n": 59,
+      "training_target_max": 0.3259095060000001,
+      "training_target_min": -1.674568534
+    }
+  },
+  "direct/delta_water_weather/ridge": {
+    "wheat_2017": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "intercept": -0.559222009398385,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.20059274009132502,
+        0.15658869565596276,
+        -0.016271512759333043,
+        0.10598647745342489,
+        0.06414969841927869,
+        0.19722482240017178,
+        -0.15843747312207807
+      ],
+      "scaler_mean": [
+        -35.99771222274194,
+        265.68451612903203,
+        15.541357909278231,
+        1.7559235873373527,
+        46.00727243870752,
+        1.401947352841529,
+        18.65959821893105
+      ],
+      "scaler_scale": [
+        22.242021609233323,
+        78.50343706626782,
+        1.066070408821795,
+        0.6443193597162796,
+        4.954472536587722,
+        0.04435185414722057,
+        0.4381292150036397
+      ],
+      "training_control_n": 18,
+      "training_n": 62
+    },
+    "wheat_2018": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "intercept": -0.6025977506957313,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.11512558710702173,
+        0.3426593545073225,
+        -0.13845682926959166,
+        0.05420546391138964,
+        0.13552426539679072,
+        -0.028433710684159123,
+        0.43853997338666184
+      ],
+      "scaler_mean": [
+        -36.30636808319149,
+        300.3736170212766,
+        14.710639833902812,
+        1.2273897225610717,
+        49.53091451295653,
+        1.3885100476555576,
+        18.331284497700167
+      ],
+      "scaler_scale": [
+        21.30867888719884,
+        84.04606592551177,
+        0.8645331910282137,
+        0.4264657351512183,
+        4.748674904504973,
+        0.04625086149570288,
+        0.7562149507259018
+      ],
+      "training_control_n": 14,
+      "training_n": 47
+    },
+    "wheat_2019": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "intercept": -0.7145809399116654,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.1956007937847098,
+        -0.018813194461798532,
+        0.0035469030941539456,
+        0.011951878997186558,
+        -0.01228084924768761,
+        0.09841641786632865,
+        0.005850875641993003
+      ],
+      "scaler_mean": [
+        -42.63535189683331,
+        248.81099999999978,
+        15.546611727253982,
+        1.7168100886948436,
+        45.584799315790086,
+        1.4120843665137413,
+        18.622986092393585
+      ],
+      "scaler_scale": [
+        21.217731876368834,
+        41.245440584384625,
+        1.1302570742718536,
+        0.7298508902327547,
+        4.469246706308453,
+        0.030760231382197276,
+        0.6136081029912092
+      ],
+      "training_control_n": 17,
+      "training_n": 60
+    },
+    "wheat_2020": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "intercept": -0.6114470134022747,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.3023956255031617,
+        0.42626548407639486,
+        0.009130849043560362,
+        0.2633049729620125,
+        0.10734840604405153,
+        0.12249569591139892,
+        0.09540382744284592
+      ],
+      "scaler_mean": [
+        -40.26591034318182,
+        288.70045454545436,
+        15.640905899624142,
+        1.891051058616789,
+        46.71549110675959,
+        1.384943606178947,
+        18.298233302984116
+      ],
+      "scaler_scale": [
+        26.25967080734648,
+        96.4536609172449,
+        1.39912171955734,
+        0.7844404020401204,
+        6.902169152734676,
+        0.04577818173412574,
+        0.7706226728243731
+      ],
+      "training_control_n": 14,
+      "training_n": 44
+    },
+    "wheat_2021": {
+      "estimator_parameters": {
+        "alpha": 1.0,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "svd",
+        "tol": 0.0001
+      },
+      "features": [
+        "delta_profile_water_mm",
+        "season_rain_mm",
+        "season_mean_tmax_c",
+        "season_mean_tmin_c",
+        "season_mean_rh_pct",
+        "season_mean_wind_m_s",
+        "season_mean_solar_mj_m2_day"
+      ],
+      "intercept": -0.5630605320847469,
+      "prediction_clipping": false,
+      "scaled_coefficients": [
+        0.20224760025977737,
+        0.1287807119609299,
+        0.014815383131596926,
+        0.04787120785316185,
+        0.016679192185309354,
+        -0.20017067155665424,
+        0.20782397490795096
+      ],
+      "scaler_mean": [
+        -38.154552084915245,
+        278.04271186440656,
+        15.229960081432667,
+        1.593155935622537,
+        47.287462807864344,
+        1.4091873682375429,
+        18.468737335898112
+      ],
+      "scaler_scale": [
+        23.93953098099369,
+        85.26501312866978,
+        1.2398726556879183,
+        0.7556485336563343,
+        5.879226363142426,
+        0.03923697667791381,
+        0.7207272551158578
+      ],
+      "training_control_n": 17,
+      "training_n": 59
+    }
+  },
+  "training_mean_difference": {
+    "wheat_2017": {
+      "predicted_difference": -0.5592220093983871,
+      "training_pairs": 62
+    },
+    "wheat_2018": {
+      "predicted_difference": -0.6025977506957447,
+      "training_pairs": 47
+    },
+    "wheat_2019": {
+      "predicted_difference": -0.7145809399116667,
+      "training_pairs": 60
+    },
+    "wheat_2020": {
+      "predicted_difference": -0.6114470134022727,
+      "training_pairs": 44
+    },
+    "wheat_2021": {
+      "predicted_difference": -0.5630605320847457,
+      "training_pairs": 59
+    }
+  },
+  "zero_difference": {
+    "wheat_2017": {
+      "predicted_difference": 0.0,
+      "training_pairs": 62
+    },
+    "wheat_2018": {
+      "predicted_difference": 0.0,
+      "training_pairs": 47
+    },
+    "wheat_2019": {
+      "predicted_difference": 0.0,
+      "training_pairs": 60
+    },
+    "wheat_2020": {
+      "predicted_difference": 0.0,
+      "training_pairs": 44
+    },
+    "wheat_2021": {
+      "predicted_difference": 0.0,
+      "training_pairs": 59
+    }
+  }
+}

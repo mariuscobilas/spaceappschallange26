@@ -1,7 +1,9 @@
 # Preserve exact bytes used by provenance and artifact hashes.
 apps/api/app/ml/** -text
-data/** -text
+# Immutable source snapshots retain provider whitespace as well as exact newlines.
+data/** -text -whitespace
 examples/** -text
 *.csv -text
+scripts/*.py -text
 shared/data/** -text
 apps/web/public/data/** -text

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "community": "AG",
+    "end": "20211231",
+    "format": "JSON",
+    "latitude": 37.533333,
+    "longitude": -108.733333,
+    "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+    "start": "20210101",
+    "time-standard": "LST"
+  },
+  "retrieved_utc": "2026-11-15T08:54:48.016501+00:00",
+  "sha256": "10f94761b472009068d6542fe269fbdeaf8e30c2926e50713824d0ac225c07aa",
+  "site": "Yellow Jacket Colorado, published study coordinates rounded to arcminutes",
+  "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&latitude=37.533333&longitude=-108.733333&start=20210101&end=20211231&format=JSON&time-standard=LST"
+}

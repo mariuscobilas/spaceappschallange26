@@ -1,10 +1,16 @@
 # Meridian — continuation handoff
 
-Updated 14 November 2026 after the client completion and documentation passes.
-Start with Current state and Next authorized work below. Later delivery sections
-retain implementation history; earlier test counts are historical checkpoints.
+Frontend checkpoint: 14 November 2026. ML continuation update: 15 November 2026.
 
-## Current state
+## Current ML research continuation
+
+Start with [ML_RESEARCH_PLAN.md](ML_RESEARCH_PLAN.md) for the current user decisions, completed audit, dataset paths, experiment rationale and continuation steps. The user reopened ML research and clarified the decision as **planting a proposed cover crop versus leaving the interval fallow before a following cash crop**, while protecting water and yield. Current payloads are retained.
+
+Auditing, NASA acquisition, preparation and absolute-yield/model-family/matched-contrast experiments are complete. Read [COVER_FALLOW_EVALUATION.md](COVER_FALLOW_EVALUATION.md): benefit discrimination is inadequate despite some magnitude predictability. **Next address paired-data/context and initial-water gaps before Phase 4.** No model was promoted. [WATER_YIELD_DATA_FEASIBILITY.md](WATER_YIELD_DATA_FEASIBILITY.md) records source eligibility and gaps.
+
+The remaining sections retain the earlier frontend delivery checkpoint. Its repository path, branch/HEAD, test counts, termination-first framing and instruction to defer ML are historical; inspect the current workspace and follow the ML plan for this research track. Frontend delivery remains intact.
+
+## Frontend checkpoint (14 November 2026)
 
 - Repository: `/Users/mariuscobilas/Developer/projects/spaceappschallange26`.
 - Branch: `feat/meridian-sidebar`. Current HEAD is `d4cadaa` (`feat: milestone 5 done.`);
@@ -22,7 +28,7 @@ retain implementation history; earlier test counts are historical checkpoints.
   failed to bind local ports in this environment. Development still uses Turbopack.
   The latest production build passed the four workspace routes and `/planner/saved`.
 
-## User decisions
+## Frontend decisions recorded on 14 November 2026
 
 - Meridian is the working name (earlier PRD: FieldShift). One modern restrained UI;
   no A/B design, fake risk scores, severe drought demo or invented model outputs.
@@ -34,13 +40,14 @@ retain implementation history; earlier test counts are historical checkpoints.
   explicit user assumptions; no live prices or predicted yields are implied.
 - Ask Meridian prepares/copies/exports selected map and plan/draft context plus numeric
   evidence with source dates, units and missing states. Analysis remains disconnected.
-- Current scope instruction: complete client work and documentation; leave the AI model,
-  training and inference untouched. Planning future work does not authorize it.
+- Scope during that frontend pass: complete client work and documentation while leaving
+  the AI model, training and inference untouched. The later ML research scope and
+  completed/prepared work are recorded in the current ML continuation section above.
 - Deployment last: Azure with GoDaddy domain. Meteomatics remains an optional future
   backend integration. User leads the project and prefers hackathon speed.
 - Any workers must be `gpt-6-luna` with a fresh, non-inherited context.
 
-## Next authorized work
+## Next work proposed at the frontend checkpoint
 
 The completed client scope is recorded in [CLIENT-DELIVERY.md](CLIENT-DELIVERY.md).
 [PRODUCT-NEXT.md](PRODUCT-NEXT.md) is the future plan with dependencies, proposed

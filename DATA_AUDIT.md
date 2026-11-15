@@ -1,5 +1,7 @@
 # Water Debt data audit (14 November 2026)
 
+**15 November follow-up:** the [water/yield feasibility audit](docs/WATER_YIELD_DATA_FEASIBILITY.md) checks actual joint-label availability rather than advertised variables. Colorado has 88 joint water/yield observations and 68 matched cover/fallow pairs. The Beltsville yield workbook's 64 corn-yield cells are all blank, including in a fresh byte-identical provider copy. New Mandan soil/yield releases require a plot/strip crosswalk before accepting joined labels. NASA POWER weather for Colorado in 2016–2021 has now been downloaded separately. The earlier source descriptions below are retained as the historical inventory.
+
 ## What is in this repository
 
 Before this audit, the repository contained planning documents and the web/API scaffold, but no crop, weather, soil-moisture, or model dataset. This audit downloaded two small public field-study datasets into [`data/`](data/) and inspected their actual files.

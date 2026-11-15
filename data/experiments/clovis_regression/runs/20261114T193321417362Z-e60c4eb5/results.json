@@ -1,0 +1,1463 @@
+{
+  "candidates": {
+    "forest_depth_4": {
+      "adoption_checks": {
+        "mae_improves_at_least_5_percent": false,
+        "no_one_day_clipping": true,
+        "no_seven_day_clipping": true,
+        "no_treatment_mae_above_limit": false,
+        "seven_day_endpoint_not_worse": false
+      },
+      "artifact_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d",
+      "eligible_for_adoption": false,
+      "fit_seconds": 0.2461055000021588,
+      "largest_validation_errors": [
+        {
+          "absolute_error": 0.005833028836425058,
+          "actual_change": -0.006425695,
+          "actual_moisture": 0.195941319,
+          "clipped": false,
+          "date": "2023-04-28",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.0005926661635749508,
+          "predicted_moisture": 0.20177434783642506,
+          "previous_moisture": 0.202367014,
+          "rain_mm": 1.17,
+          "treatment": "pea",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.005502472836425049,
+          "actual_change": -0.006095139,
+          "actual_moisture": 0.193054514,
+          "clipped": false,
+          "date": "2023-04-28",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.0005926661635749508,
+          "predicted_moisture": 0.19855698683642506,
+          "previous_moisture": 0.199149653,
+          "rain_mm": 1.17,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.005182457168027649,
+          "actual_change": -0.000622222,
+          "actual_moisture": 0.142354514,
+          "clipped": false,
+          "date": "2023-05-08",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005804679168027654,
+          "predicted_moisture": 0.13717205683197234,
+          "previous_moisture": 0.142976736,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.00507690116802767,
+          "actual_change": -0.000727778,
+          "actual_moisture": 0.182096528,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005804679168027654,
+          "predicted_moisture": 0.17701962683197234,
+          "previous_moisture": 0.182824306,
+          "rain_mm": 0.0,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.004918598032116223,
+          "actual_change": 0.003503125,
+          "actual_moisture": 0.146059375,
+          "clipped": false,
+          "date": "2023-04-30",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.0014154730321162268,
+          "predicted_moisture": 0.14114077696788377,
+          "previous_moisture": 0.14255625,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.0046411381680276365,
+          "actual_change": -0.001163541,
+          "actual_moisture": 0.144596181,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005804679168027654,
+          "predicted_moisture": 0.13995504283197235,
+          "previous_moisture": 0.145759722,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.004555026168027637,
+          "actual_change": -0.001249653,
+          "actual_moisture": 0.191220486,
+          "clipped": false,
+          "date": "2023-05-08",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005804679168027654,
+          "predicted_moisture": 0.18666545983197236,
+          "previous_moisture": 0.192470139,
+          "rain_mm": 0.0,
+          "treatment": "pea",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.004551494740450968,
+          "actual_change": -0.001289931,
+          "actual_moisture": 0.199772222,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005841425740450962,
+          "predicted_moisture": 0.19522072725954903,
+          "previous_moisture": 0.201062153,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.0043695836738860405,
+          "actual_change": 0.001490278,
+          "actual_moisture": 0.145759722,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.002879305673886029,
+          "predicted_moisture": 0.14139013832611397,
+          "previous_moisture": 0.144269444,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.004295652168027658,
+          "actual_change": -0.001509027,
+          "actual_moisture": 0.179033681,
+          "clipped": false,
+          "date": "2023-05-08",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005804679168027654,
+          "predicted_moisture": 0.17473802883197234,
+          "previous_moisture": 0.180542708,
+          "rain_mm": 0.0,
+          "treatment": "fallow",
+          "unseen_phase": false
+        }
+      ],
+      "mae_improvement_fraction": -0.3297493096114108,
+      "mlflow_run_id": "15e6b92b5b2f4eb68c20e7ae95791b74",
+      "rain_probe": {
+        "note": "All other first-validation-row inputs held constant; not a field trial.",
+        "predicted_moisture": [
+          0.20356812866557386,
+          0.26113947574971635
+        ],
+        "rain_mm": [
+          0,
+          25
+        ]
+      },
+      "rollouts": {
+        "30": {
+          "horizon_days": 30,
+          "status": "insufficient_contiguous_validation_data",
+          "windows": 0
+        },
+        "7": {
+          "clipped_steps": 0,
+          "endpoint": {
+            "mae": 0.008637345677945161,
+            "mean_error": -0.005697652027843558,
+            "n": 28,
+            "r2": 0.7901932929041428,
+            "rmse": 0.010201144581106759
+          },
+          "horizon_days": 7,
+          "note": "Overlapping windows and treatment series share dates; not independent seasons.",
+          "status": "evaluated",
+          "trajectory": {
+            "mae": 0.00479645813161168,
+            "mean_error": -0.0013000154116907497,
+            "n": 196,
+            "r2": 0.9321101156022037,
+            "rmse": 0.006086045151745994
+          },
+          "unseen_phase_steps": 0,
+          "windows": 28
+        }
+      },
+      "status": "finished",
+      "validation": {
+        "by_phase": {
+          "cover_period": {
+            "mae": 0.002558808492745021,
+            "mean_error": -0.0010309304525035917,
+            "n": 52,
+            "r2": 0.9830139138973674,
+            "rmse": 0.003063567932037294
+          }
+        },
+        "by_treatment": {
+          "fallow": {
+            "mae": 0.0026325181520282515,
+            "mean_error": -0.0002565820390796635,
+            "n": 13,
+            "r2": 0.8010662503965644,
+            "rmse": 0.003130173943547955
+          },
+          "oat": {
+            "mae": 0.0020556997774171847,
+            "mean_error": -0.0009329567430650195,
+            "n": 13,
+            "r2": 0.48092512910561613,
+            "rmse": 0.0025634040007850465
+          },
+          "pea": {
+            "mae": 0.002484536034875847,
+            "mean_error": -0.0009874313467719725,
+            "n": 13,
+            "r2": 0.37561812693570173,
+            "rmse": 0.002973298177875286
+          },
+          "six_species_mix": {
+            "mae": 0.003062480006658802,
+            "mean_error": -0.001946751681097711,
+            "n": 13,
+            "r2": -2.6986643632645992,
+            "rmse": 0.003511732172897757
+          }
+        },
+        "by_water_event": {
+          "no_water_event": {
+            "mae": 0.002759770809023698,
+            "mean_error": -0.0023907484155341165,
+            "n": 32,
+            "r2": 0.9798901359506701,
+            "rmse": 0.0032406382882319124
+          },
+          "rain": {
+            "mae": 0.0022372687866991383,
+            "mean_error": 0.0011447782883452482,
+            "n": 20,
+            "r2": 0.9873278618952396,
+            "rmse": 0.0027566986793429956
+          }
+        },
+        "clipped_predictions": 0,
+        "daily_change": {
+          "mae": 0.0025588084927450233,
+          "mean_error": -0.0010309304525035923,
+          "n": 52,
+          "r2": -1.2961595294786048,
+          "rmse": 0.003063567932037294
+        },
+        "distinct_dates": 13,
+        "moisture": {
+          "mae": 0.002558808492745021,
+          "mean_error": -0.0010309304525035917,
+          "n": 52,
+          "r2": 0.9830139138973674,
+          "rmse": 0.003063567932037294
+        },
+        "pooled_fallbacks": 0,
+        "unseen_phase_rows": 0
+      }
+    },
+    "forest_depth_8": {
+      "adoption_checks": {
+        "mae_improves_at_least_5_percent": false,
+        "no_one_day_clipping": true,
+        "no_seven_day_clipping": true,
+        "no_treatment_mae_above_limit": false,
+        "seven_day_endpoint_not_worse": false
+      },
+      "artifact_sha256": "3b8d5e76ee0a5a6795572f6a96a3ba70cccf60ecb8a340de08b6c18b35b50887",
+      "eligible_for_adoption": false,
+      "fit_seconds": 0.3904917000036221,
+      "largest_validation_errors": [
+        {
+          "absolute_error": 0.00846724787725514,
+          "actual_change": -0.000727778,
+          "actual_moisture": 0.182096528,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009195025877255125,
+          "predicted_moisture": 0.17362928012274487,
+          "previous_moisture": 0.182824306,
+          "rain_mm": 0.0,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008301011108202444,
+          "actual_change": 0.003503125,
+          "actual_moisture": 0.146059375,
+          "clipped": false,
+          "date": "2023-04-30",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.004797886108202448,
+          "predicted_moisture": 0.13775836389179755,
+          "previous_moisture": 0.14255625,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008027170407629208,
+          "actual_change": -0.001163541,
+          "actual_moisture": 0.144596181,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009190711407629226,
+          "predicted_moisture": 0.13656901059237078,
+          "previous_moisture": 0.145759722,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007964493147663426,
+          "actual_change": -0.001289931,
+          "actual_moisture": 0.199772222,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.00925442414766342,
+          "predicted_moisture": 0.19180772885233657,
+          "previous_moisture": 0.201062153,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007641205877255114,
+          "actual_change": -0.00155382,
+          "actual_moisture": 0.180542708,
+          "clipped": false,
+          "date": "2023-05-07",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009195025877255125,
+          "predicted_moisture": 0.17290150212274488,
+          "previous_moisture": 0.182096528,
+          "rain_mm": 0.0,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007628828680152661,
+          "actual_change": -0.000622222,
+          "actual_moisture": 0.142354514,
+          "clipped": false,
+          "date": "2023-05-08",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.008251050680152666,
+          "predicted_moisture": 0.13472568531984733,
+          "previous_moisture": 0.142976736,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.0076273511489236,
+          "actual_change": -0.001551736,
+          "actual_moisture": 0.194803125,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009179087148923598,
+          "predicted_moisture": 0.1871757738510764,
+          "previous_moisture": 0.196354861,
+          "rain_mm": 0.0,
+          "treatment": "pea",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007571266407629229,
+          "actual_change": -0.001619445,
+          "actual_moisture": 0.142976736,
+          "clipped": false,
+          "date": "2023-05-07",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009190711407629226,
+          "predicted_moisture": 0.13540546959237076,
+          "previous_moisture": 0.144596181,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007560873645096916,
+          "actual_change": 0.001490278,
+          "actual_moisture": 0.145759722,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.0060705956450969045,
+          "predicted_moisture": 0.1381988483549031,
+          "previous_moisture": 0.144269444,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007289503429292354,
+          "actual_change": 0.002251737,
+          "actual_moisture": 0.205289931,
+          "clipped": false,
+          "date": "2023-04-30",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.005037766429292351,
+          "predicted_moisture": 0.19800042757070765,
+          "previous_moisture": 0.203038194,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        }
+      ],
+      "mae_improvement_fraction": -1.2848976442871827,
+      "mlflow_run_id": "06d3af8d93e94c96807e021069f6cfbf",
+      "rain_probe": {
+        "note": "All other first-validation-row inputs held constant; not a field trial.",
+        "predicted_moisture": [
+          0.201651289280008,
+          0.2610559210100497
+        ],
+        "rain_mm": [
+          0,
+          25
+        ]
+      },
+      "rollouts": {
+        "30": {
+          "horizon_days": 30,
+          "status": "insufficient_contiguous_validation_data",
+          "windows": 0
+        },
+        "7": {
+          "clipped_steps": 0,
+          "endpoint": {
+            "mae": 0.02227689739054806,
+            "mean_error": -0.02213379279240976,
+            "n": 28,
+            "r2": -0.21937619145411213,
+            "rmse": 0.024592805476129888
+          },
+          "horizon_days": 7,
+          "note": "Overlapping windows and treatment series share dates; not independent seasons.",
+          "status": "evaluated",
+          "trajectory": {
+            "mae": 0.011179544246252539,
+            "mean_error": -0.010449589739080419,
+            "n": 196,
+            "r2": 0.6176271355635548,
+            "rmse": 0.014443623781323063
+          },
+          "unseen_phase_steps": 0,
+          "windows": 28
+        }
+      },
+      "status": "finished",
+      "validation": {
+        "by_phase": {
+          "cover_period": {
+            "mae": 0.00439678024646892,
+            "mean_error": -0.0034179810376415544,
+            "n": 52,
+            "r2": 0.9535262658302623,
+            "rmse": 0.005067393605260723
+          }
+        },
+        "by_treatment": {
+          "fallow": {
+            "mae": 0.0036406868344062214,
+            "mean_error": -0.002088322782681624,
+            "n": 13,
+            "r2": 0.5771383717167097,
+            "rmse": 0.004563661000853614
+          },
+          "oat": {
+            "mae": 0.004130474330393586,
+            "mean_error": -0.0035593211317881254,
+            "n": 13,
+            "r2": -0.7615128993498239,
+            "rmse": 0.004722206442753893
+          },
+          "pea": {
+            "mae": 0.004438418199579713,
+            "mean_error": -0.0035842787160527624,
+            "n": 13,
+            "r2": -0.8008805156600811,
+            "rmse": 0.005049585978468652
+          },
+          "six_species_mix": {
+            "mae": 0.0053775416214961605,
+            "mean_error": -0.004440001520043706,
+            "n": 13,
+            "r2": -9.224003044944286,
+            "rmse": 0.005838609237644123
+          }
+        },
+        "by_water_event": {
+          "no_water_event": {
+            "mae": 0.005471367378519301,
+            "mean_error": -0.00547037474214209,
+            "n": 32,
+            "r2": 0.9326405448025266,
+            "rmse": 0.005930963817272512
+          },
+          "rain": {
+            "mae": 0.0026774408351883106,
+            "mean_error": -0.00013415111044069727,
+            "n": 20,
+            "r2": 0.9825211924132586,
+            "rmse": 0.0032375780745464273
+          }
+        },
+        "clipped_predictions": 0,
+        "daily_change": {
+          "mae": 0.004396780246468919,
+          "mean_error": -0.003417981037641555,
+          "n": 52,
+          "r2": -5.2822657873940555,
+          "rmse": 0.005067393605260723
+        },
+        "distinct_dates": 13,
+        "moisture": {
+          "mae": 0.00439678024646892,
+          "mean_error": -0.0034179810376415544,
+          "n": 52,
+          "r2": 0.9535262658302623,
+          "rmse": 0.005067393605260723
+        },
+        "pooled_fallbacks": 0,
+        "unseen_phase_rows": 0
+      }
+    },
+    "ridge_alpha_1": {
+      "adoption_checks": {
+        "mae_improves_at_least_5_percent": false,
+        "no_one_day_clipping": true,
+        "no_seven_day_clipping": true,
+        "no_treatment_mae_above_limit": false,
+        "seven_day_endpoint_not_worse": false
+      },
+      "artifact_sha256": "ce24932252df945a6017ef70305717397c5b0719a2ee34e20620dd4d6e9edb46",
+      "eligible_for_adoption": false,
+      "fit_seconds": 0.06314719998044893,
+      "largest_validation_errors": [
+        {
+          "absolute_error": 0.01619123244844431,
+          "actual_change": -0.004150695,
+          "actual_moisture": 0.186116319,
+          "clipped": false,
+          "date": "2023-05-02",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.0120405374484443,
+          "predicted_moisture": 0.2023075514484443,
+          "previous_moisture": 0.190267014,
+          "rain_mm": 2.75,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.015964239341790476,
+          "actual_change": -0.001284722,
+          "actual_moisture": 0.182781597,
+          "clipped": false,
+          "date": "2023-05-04",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.01467951734179046,
+          "predicted_moisture": 0.19874583634179047,
+          "previous_moisture": 0.184066319,
+          "rain_mm": 3.17,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.01126295604704397,
+          "actual_change": 0.001490278,
+          "actual_moisture": 0.145759722,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009772678047043959,
+          "predicted_moisture": 0.13449676595295604,
+          "previous_moisture": 0.144269444,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.011172966925518224,
+          "actual_change": -0.002493056,
+          "actual_moisture": 0.202372222,
+          "clipped": false,
+          "date": "2023-04-26",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.008679910925518203,
+          "predicted_moisture": 0.21354518892551821,
+          "previous_moisture": 0.204865278,
+          "rain_mm": 2.64,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.010904219994802844,
+          "actual_change": -0.00205,
+          "actual_moisture": 0.184066319,
+          "clipped": false,
+          "date": "2023-05-03",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.008854219994802848,
+          "predicted_moisture": 0.19497053899480285,
+          "previous_moisture": 0.186116319,
+          "rain_mm": 0.64,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.010478385064621926,
+          "actual_change": -0.001289931,
+          "actual_moisture": 0.199772222,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.01176831606462192,
+          "predicted_moisture": 0.18929383693537807,
+          "previous_moisture": 0.201062153,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.010121138255346773,
+          "actual_change": -0.003222569,
+          "actual_moisture": 0.199149653,
+          "clipped": false,
+          "date": "2023-04-27",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.0068985692553467926,
+          "predicted_moisture": 0.20927079125534678,
+          "previous_moisture": 0.202372222,
+          "rain_mm": 0.05,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.009941861152521075,
+          "actual_change": -0.001546528,
+          "actual_moisture": 0.201062153,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.011488389152521095,
+          "predicted_moisture": 0.19112029184747892,
+          "previous_moisture": 0.202608681,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.009096995827537396,
+          "actual_change": -0.001163541,
+          "actual_moisture": 0.144596181,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.010260536827537414,
+          "predicted_moisture": 0.1354991851724626,
+          "previous_moisture": 0.145759722,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008998121073336113,
+          "actual_change": -0.001624652,
+          "actual_moisture": 0.204885417,
+          "clipped": false,
+          "date": "2023-04-28",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.010622773073336117,
+          "predicted_moisture": 0.19588729592666387,
+          "previous_moisture": 0.206510069,
+          "rain_mm": 1.17,
+          "treatment": "oat",
+          "unseen_phase": false
+        }
+      ],
+      "mae_improvement_fraction": -1.8729691467462097,
+      "mlflow_run_id": "a292c3b5e9b04dac96422e311292d741",
+      "rain_probe": {
+        "note": "All other first-validation-row inputs held constant; not a field trial.",
+        "predicted_moisture": [
+          0.20472684905016908,
+          0.28823385544552077
+        ],
+        "rain_mm": [
+          0,
+          25
+        ]
+      },
+      "rollouts": {
+        "30": {
+          "horizon_days": 30,
+          "status": "insufficient_contiguous_validation_data",
+          "windows": 0
+        },
+        "7": {
+          "clipped_steps": 0,
+          "endpoint": {
+            "mae": 0.021798408811109025,
+            "mean_error": 0.002330348553258123,
+            "n": 28,
+            "r2": -0.4654444669387272,
+            "rmse": 0.026960249178400578
+          },
+          "horizon_days": 7,
+          "note": "Overlapping windows and treatment series share dates; not independent seasons.",
+          "status": "evaluated",
+          "trajectory": {
+            "mae": 0.01339710091281897,
+            "mean_error": 0.0028467265479439046,
+            "n": 196,
+            "r2": 0.3705935682075613,
+            "rmse": 0.01853097301902902
+          },
+          "unseen_phase_steps": 0,
+          "windows": 28
+        }
+      },
+      "status": "finished",
+      "validation": {
+        "by_phase": {
+          "cover_period": {
+            "mae": 0.005528393809985803,
+            "mean_error": -8.214632186493196e-05,
+            "n": 52,
+            "r2": 0.9187677373288479,
+            "rmse": 0.006699542237439475
+          }
+        },
+        "by_treatment": {
+          "fallow": {
+            "mae": 0.007332789146047325,
+            "mean_error": 0.007332789146047325,
+            "n": 13,
+            "r2": -0.603775597140876,
+            "rmse": 0.008887631472301288
+          },
+          "oat": {
+            "mae": 0.005512868595878167,
+            "mean_error": -0.003746489031939714,
+            "n": 13,
+            "r2": -2.288360314249948,
+            "rmse": 0.0064519613129268485
+          },
+          "pea": {
+            "mae": 0.004092524082627485,
+            "mean_error": -0.0009104685390970338,
+            "n": 13,
+            "r2": -0.5982060019734254,
+            "rmse": 0.004756962198119323
+          },
+          "six_species_mix": {
+            "mae": 0.005175393415390233,
+            "mean_error": -0.003004416862470306,
+            "n": 13,
+            "r2": -9.883707979841958,
+            "rmse": 0.006024033319932815
+          }
+        },
+        "by_water_event": {
+          "no_water_event": {
+            "mae": 0.005425816397915469,
+            "mean_error": -0.0026621302440227304,
+            "n": 32,
+            "r2": 0.9242319279230202,
+            "rmse": 0.006290267432138812
+          },
+          "rain": {
+            "mae": 0.0056925176692983375,
+            "mean_error": 0.004045827953587546,
+            "n": 20,
+            "r2": 0.9109708741162563,
+            "rmse": 0.00730685357104482
+          }
+        },
+        "clipped_predictions": 0,
+        "daily_change": {
+          "mae": 0.005528393809985802,
+          "mean_error": -8.214632186493261e-05,
+          "n": 52,
+          "r2": -9.980883583568229,
+          "rmse": 0.006699542237439474
+        },
+        "distinct_dates": 13,
+        "moisture": {
+          "mae": 0.005528393809985803,
+          "mean_error": -8.214632186493196e-05,
+          "n": 52,
+          "r2": 0.9187677373288479,
+          "rmse": 0.006699542237439475
+        },
+        "pooled_fallbacks": 0,
+        "unseen_phase_rows": 0
+      }
+    },
+    "ridge_alpha_10": {
+      "adoption_checks": {
+        "mae_improves_at_least_5_percent": false,
+        "no_one_day_clipping": true,
+        "no_seven_day_clipping": true,
+        "no_treatment_mae_above_limit": false,
+        "seven_day_endpoint_not_worse": false
+      },
+      "artifact_sha256": "7ac61c9c8c5da24dfdd3d09b5a2343004b520a9ac6229c9de7714c70cdd69f64",
+      "eligible_for_adoption": false,
+      "fit_seconds": 0.012299399997573346,
+      "largest_validation_errors": [
+        {
+          "absolute_error": 0.015554121231122736,
+          "actual_change": -0.001284722,
+          "actual_moisture": 0.182781597,
+          "clipped": false,
+          "date": "2023-05-04",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.01426939923112272,
+          "predicted_moisture": 0.19833571823112273,
+          "previous_moisture": 0.184066319,
+          "rain_mm": 3.17,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.015394403031682435,
+          "actual_change": -0.004150695,
+          "actual_moisture": 0.186116319,
+          "clipped": false,
+          "date": "2023-05-02",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.011243708031682426,
+          "predicted_moisture": 0.20151072203168244,
+          "previous_moisture": 0.190267014,
+          "rain_mm": 2.75,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.011140875952170642,
+          "actual_change": -0.002493056,
+          "actual_moisture": 0.202372222,
+          "clipped": false,
+          "date": "2023-04-26",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.008647819952170621,
+          "predicted_moisture": 0.21351309795217063,
+          "previous_moisture": 0.204865278,
+          "rain_mm": 2.64,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.01016428877158973,
+          "actual_change": -0.00205,
+          "actual_moisture": 0.184066319,
+          "clipped": false,
+          "date": "2023-05-03",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.008114288771589734,
+          "predicted_moisture": 0.19423060777158974,
+          "previous_moisture": 0.186116319,
+          "rain_mm": 0.64,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.009496118083049843,
+          "actual_change": 0.001490278,
+          "actual_moisture": 0.145759722,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.008005840083049831,
+          "predicted_moisture": 0.13626360391695017,
+          "previous_moisture": 0.144269444,
+          "rain_mm": 0.0,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008665243674477685,
+          "actual_change": -0.001289931,
+          "actual_moisture": 0.199772222,
+          "clipped": false,
+          "date": "2023-05-06",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.00995517467447768,
+          "predicted_moisture": 0.19110697832552231,
+          "previous_moisture": 0.201062153,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008643369268724749,
+          "actual_change": -0.003222569,
+          "actual_moisture": 0.199149653,
+          "clipped": false,
+          "date": "2023-04-27",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.005420800268724768,
+          "predicted_moisture": 0.20779302226872476,
+          "previous_moisture": 0.202372222,
+          "rain_mm": 0.05,
+          "treatment": "fallow",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008139259309684732,
+          "actual_change": -0.001546528,
+          "actual_moisture": 0.201062153,
+          "clipped": false,
+          "date": "2023-05-05",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.009685787309684751,
+          "predicted_moisture": 0.19292289369031526,
+          "previous_moisture": 0.202608681,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.008050387191603253,
+          "actual_change": 0.002251737,
+          "actual_moisture": 0.205289931,
+          "clipped": false,
+          "date": "2023-04-30",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": -0.00579865019160325,
+          "predicted_moisture": 0.19723954380839676,
+          "previous_moisture": 0.203038194,
+          "rain_mm": 0.0,
+          "treatment": "oat",
+          "unseen_phase": false
+        },
+        {
+          "absolute_error": 0.007847274055311798,
+          "actual_change": -0.003501042,
+          "actual_moisture": 0.141133333,
+          "clipped": false,
+          "date": "2023-05-02",
+          "irrigation_mm": 0.0,
+          "management_phase": "cover_period",
+          "pooled_fallback": false,
+          "predicted_change": 0.004346232055311788,
+          "predicted_moisture": 0.1489806070553118,
+          "previous_moisture": 0.144634375,
+          "rain_mm": 2.75,
+          "treatment": "six_species_mix",
+          "unseen_phase": false
+        }
+      ],
+      "mae_improvement_fraction": -1.6129486610159591,
+      "mlflow_run_id": "5e0eeef6245e42ff87111f6a10de4094",
+      "rain_probe": {
+        "note": "All other first-validation-row inputs held constant; not a field trial.",
+        "predicted_moisture": [
+          0.20481810058700017,
+          0.28715709078747814
+        ],
+        "rain_mm": [
+          0,
+          25
+        ]
+      },
+      "rollouts": {
+        "30": {
+          "horizon_days": 30,
+          "status": "insufficient_contiguous_validation_data",
+          "windows": 0
+        },
+        "7": {
+          "clipped_steps": 0,
+          "endpoint": {
+            "mae": 0.01747678487498026,
+            "mean_error": 0.005737858182492818,
+            "n": 28,
+            "r2": -0.10654405525400357,
+            "rmse": 0.023427372002275224
+          },
+          "horizon_days": 7,
+          "note": "Overlapping windows and treatment series share dates; not independent seasons.",
+          "status": "evaluated",
+          "trajectory": {
+            "mae": 0.011597808937072398,
+            "mean_error": 0.0044867301300712615,
+            "n": 196,
+            "r2": 0.4982545522893801,
+            "rmse": 0.016545288938934373
+          },
+          "unseen_phase_steps": 0,
+          "windows": 28
+        }
+      },
+      "status": "finished",
+      "validation": {
+        "by_phase": {
+          "cover_period": {
+            "mae": 0.0050280418847280395,
+            "mean_error": 0.000517486508531142,
+            "n": 52,
+            "r2": 0.9319953770265472,
+            "rmse": 0.006129853184169443
+          }
+        },
+        "by_treatment": {
+          "fallow": {
+            "mae": 0.00666674675165768,
+            "mean_error": 0.00666674675165768,
+            "n": 13,
+            "r2": -0.40129032147124155,
+            "rmse": 0.008307652054232093
+          },
+          "oat": {
+            "mae": 0.005040271823604548,
+            "mean_error": -0.002624795361755111,
+            "n": 13,
+            "r2": -1.5748601511019982,
+            "rmse": 0.00570924760705692
+          },
+          "pea": {
+            "mae": 0.0037652479439876695,
+            "mean_error": -4.6579791549016087e-05,
+            "n": 13,
+            "r2": -0.3904140814930135,
+            "rmse": 0.0044369588439279175
+          },
+          "six_species_mix": {
+            "mae": 0.004639901019662263,
+            "mean_error": -0.001925425564228984,
+            "n": 13,
+            "r2": -7.697975933004635,
+            "rmse": 0.0053852767396213716
+          }
+        },
+        "by_water_event": {
+          "no_water_event": {
+            "mae": 0.004504607424189174,
+            "mean_error": -0.002211993510944541,
+            "n": 32,
+            "r2": 0.9473210582943371,
+            "rmse": 0.00524498816294318
+          },
+          "rain": {
+            "mae": 0.005865537021590225,
+            "mean_error": 0.004884654539692235,
+            "n": 20,
+            "r2": 0.9104884440967058,
+            "rmse": 0.007326623972032778
+          }
+        },
+        "clipped_predictions": 0,
+        "daily_change": {
+          "mae": 0.005028041884728039,
+          "mean_error": 0.0005174865085311414,
+          "n": 52,
+          "r2": -8.19278650453161,
+          "rmse": 0.006129853184169442
+        },
+        "distinct_dates": 13,
+        "moisture": {
+          "mae": 0.0050280418847280395,
+          "mean_error": 0.000517486508531142,
+          "n": 52,
+          "r2": 0.9319953770265472,
+          "rmse": 0.006129853184169443
+        },
+        "pooled_fallbacks": 0,
+        "unseen_phase_rows": 0
+      }
+    }
+  },
+  "experiment_version": "clovis-regression-v1",
+  "limitations": [
+    "Only 13 correlated validation dates in one cover-crop season.",
+    "Current-day weather is observed hindcast input; future runs require scenarios.",
+    "Post-cover and wheat phases are absent from the initial training window; future extrapolation must be flagged.",
+    "30-day validation is unavailable; one-week performance does not validate seasonal forecasts.",
+    "No final test evaluation, all-data refit, yield model, or financial verification in this task."
+  ],
+  "mlflow_parent_run_id": "e60c4eb5b91d4a13b6bce45138efb0af",
+  "recommendation_ready": false,
+  "reference": {
+    "largest_validation_errors": [
+      {
+        "absolute_error": 0.006425695000000009,
+        "actual_change": -0.006425695,
+        "actual_moisture": 0.195941319,
+        "clipped": false,
+        "date": "2023-04-28",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.202367014,
+        "previous_moisture": 0.202367014,
+        "rain_mm": 1.17,
+        "treatment": "pea"
+      },
+      {
+        "absolute_error": 0.006095138999999999,
+        "actual_change": -0.006095139,
+        "actual_moisture": 0.193054514,
+        "clipped": false,
+        "date": "2023-04-28",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.199149653,
+        "previous_moisture": 0.199149653,
+        "rain_mm": 1.17,
+        "treatment": "fallow"
+      },
+      {
+        "absolute_error": 0.004669096999999983,
+        "actual_change": -0.004669097,
+        "actual_moisture": 0.140462153,
+        "clipped": false,
+        "date": "2023-04-28",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.14513125,
+        "previous_moisture": 0.14513125,
+        "rain_mm": 1.17,
+        "treatment": "six_species_mix"
+      },
+      {
+        "absolute_error": 0.004513542000000009,
+        "actual_change": -0.004513542,
+        "actual_moisture": 0.208,
+        "clipped": false,
+        "date": "2023-04-26",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.212513542,
+        "previous_moisture": 0.212513542,
+        "rain_mm": 2.64,
+        "treatment": "oat"
+      },
+      {
+        "absolute_error": 0.00415069500000001,
+        "actual_change": -0.004150695,
+        "actual_moisture": 0.186116319,
+        "clipped": false,
+        "date": "2023-05-02",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.190267014,
+        "previous_moisture": 0.190267014,
+        "rain_mm": 2.75,
+        "treatment": "fallow"
+      },
+      {
+        "absolute_error": 0.0037822919999999927,
+        "actual_change": -0.003782292,
+        "actual_moisture": 0.202367014,
+        "clipped": false,
+        "date": "2023-04-27",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.206149306,
+        "previous_moisture": 0.206149306,
+        "rain_mm": 0.05,
+        "treatment": "pea"
+      },
+      {
+        "absolute_error": 0.003503124999999996,
+        "actual_change": 0.003503125,
+        "actual_moisture": 0.146059375,
+        "clipped": false,
+        "date": "2023-04-30",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.14255625,
+        "previous_moisture": 0.14255625,
+        "rain_mm": 0.0,
+        "treatment": "six_species_mix"
+      },
+      {
+        "absolute_error": 0.0035010420000000098,
+        "actual_change": -0.003501042,
+        "actual_moisture": 0.141133333,
+        "clipped": false,
+        "date": "2023-05-02",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.144634375,
+        "previous_moisture": 0.144634375,
+        "rain_mm": 2.75,
+        "treatment": "six_species_mix"
+      },
+      {
+        "absolute_error": 0.0032225689999999807,
+        "actual_change": -0.003222569,
+        "actual_moisture": 0.199149653,
+        "clipped": false,
+        "date": "2023-04-27",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.202372222,
+        "previous_moisture": 0.202372222,
+        "rain_mm": 0.05,
+        "treatment": "fallow"
+      },
+      {
+        "absolute_error": 0.0028947910000000077,
+        "actual_change": -0.002894791,
+        "actual_moisture": 0.196877431,
+        "clipped": false,
+        "date": "2023-05-07",
+        "irrigation_mm": 0.0,
+        "management_phase": "cover_period",
+        "pooled_fallback": false,
+        "predicted_change": 0.0,
+        "predicted_moisture": 0.199772222,
+        "previous_moisture": 0.199772222,
+        "rain_mm": 0.0,
+        "treatment": "oat"
+      }
+    ],
+    "mlflow_run_id": "763bbd6942594b1d8645a93279037681",
+    "rollouts": {
+      "30": {
+        "horizon_days": 30,
+        "status": "insufficient_contiguous_validation_data",
+        "windows": 0
+      },
+      "7": {
+        "clipped_steps": 0,
+        "endpoint": {
+          "mae": 0.007194890964285715,
+          "mean_error": 0.006612748107142859,
+          "n": 28,
+          "r2": 0.8425427111145237,
+          "rmse": 0.00883732046170242
+        },
+        "horizon_days": 7,
+        "note": "Overlapping windows and same-date treatment readings are correlated; not independent seasons.",
+        "status": "evaluated",
+        "trajectory": {
+          "mae": 0.004861348515306122,
+          "mean_error": 0.004249557198979592,
+          "n": 196,
+          "r2": 0.9246307740070092,
+          "rmse": 0.006412533738343725
+        },
+        "windows": 28
+      }
+    },
+    "status": "finished",
+    "validation": {
+      "by_phase": {
+        "cover_period": {
+          "mae": 0.0019242788653846153,
+          "mean_error": 0.001208600442307693,
+          "n": 52,
+          "r2": 0.9899587438949636,
+          "rmse": 0.0023554553507178534
+        }
+      },
+      "by_treatment": {
+        "fallow": {
+          "mae": 0.0020733708461538472,
+          "mean_error": 0.001987045923076924,
+          "n": 13,
+          "r2": 0.8619891674717023,
+          "rmse": 0.0026071788568657155
+        },
+        "oat": {
+          "mae": 0.0018495728461538458,
+          "mean_error": 0.0013361111538461546,
+          "n": 13,
+          "r2": 0.6497237102988238,
+          "rmse": 0.0021057529893355547
+        },
+        "pea": {
+          "mae": 0.001854326769230769,
+          "mean_error": 0.001256196615384615,
+          "n": 13,
+          "r2": 0.586364835752468,
+          "rmse": 0.0024200372325546182
+        },
+        "six_species_mix": {
+          "mae": 0.001919844999999999,
+          "mean_error": 0.00025504807692307817,
+          "n": 13,
+          "r2": -0.5309367408670631,
+          "rmse": 0.0022593189651236947
+        }
+      },
+      "by_water_event": {
+        "no_water_event": {
+          "mae": 0.0015601019999999998,
+          "mean_error": 0.0008446071874999997,
+          "n": 32,
+          "r2": 0.9938027214284662,
+          "rmse": 0.0017989806861759751
+        },
+        "rain": {
+          "mae": 0.0025069618500000003,
+          "mean_error": 0.0017909896500000022,
+          "n": 20,
+          "r2": 0.9845802480250799,
+          "rmse": 0.003040906336803431
+        }
+      },
+      "clipped_predictions": 0,
+      "daily_change": {
+        "mae": 0.0019242788653846153,
+        "mean_error": 0.0012086004423076922,
+        "n": 52,
+        "r2": -0.35736541980326675,
+        "rmse": 0.0023554553507178534
+      },
+      "distinct_dates": 13,
+      "moisture": {
+        "mae": 0.0019242788653846153,
+        "mean_error": 0.001208600442307693,
+        "n": 52,
+        "r2": 0.9899587438949636,
+        "rmse": 0.0023554553507178534
+      },
+      "pooled_fallbacks": 0
+    }
+  },
+  "reference_name": "persistence",
+  "selection": {
+    "adoption_policy": {
+      "maximum_clipped_seven_day_steps": 0,
+      "maximum_clipped_validation_predictions": 0,
+      "maximum_seven_day_endpoint_mae_ratio": 1.0,
+      "maximum_treatment_mae_ratio": 1.25,
+      "minimum_relative_mae_improvement": 0.05
+    },
+    "best_experimental_candidate": "forest_depth_4",
+    "final_test_evaluated": false,
+    "protocol_version": "clovis-regression-v1",
+    "recommended_reference": "persistence",
+    "refit_on_all_data": false,
+    "selected_artifact": null,
+    "selected_artifact_sha256": null,
+    "selected_regression": null,
+    "selection_policy": "Lowest validation moisture MAE among candidates passing every adoption check; fixed candidate order breaks ties."
+  },
+  "tracking_uri": "sqlite:///C:/Users/Lenovo/NasaHackathon/data/experiments/clovis_regression/tracking/mlflow.db",
+  "train_rows": 1048,
+  "validation_dates": 13,
+  "validation_rows": 52
+}

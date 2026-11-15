@@ -1,0 +1,73 @@
+{
+  "all_data_refit": true,
+  "estimator_parameters": {
+    "alpha": 1.0,
+    "class": "Ridge",
+    "fit_intercept": true,
+    "positive": false,
+    "solver": "svd"
+  },
+  "farmer_ready": false,
+  "feature_units": {
+    "profile_water_at_wheat_sowing_mm": "mm",
+    "season_mean_rh_pct": "%",
+    "season_mean_solar_mj_m2_day": "MJ/m^2/day",
+    "season_mean_tmax_c": "C",
+    "season_mean_tmin_c": "C",
+    "season_mean_wind_m_s": "m/s",
+    "season_rain_mm": "mm"
+  },
+  "features": [
+    "profile_water_at_wheat_sowing_mm",
+    "season_rain_mm",
+    "season_mean_tmax_c",
+    "season_mean_tmin_c",
+    "season_mean_rh_pct",
+    "season_mean_wind_m_s",
+    "season_mean_solar_mj_m2_day"
+  ],
+  "format": "field-shift-research-ridge-v1",
+  "intercept": 1.04196485003751,
+  "limitations": [
+    "Realized crop-season weather and observed sowing water are unavailable at earlier cover planting",
+    "No validated cover-versus-fallow decision or causal treatment effect",
+    "Five exposed historical seasons, not an untouched final test",
+    "Negative predictions are possible and deliberately not clipped",
+    "Refit training fit is not held-out performance",
+    "No extrapolation validation outside the source site, crop, depth and measurement definitions"
+  ],
+  "prediction_clipping": false,
+  "scaled_coefficients": [
+    0.43433735480074953,
+    -0.04829441946995836,
+    -0.12171227030156365,
+    -0.14240415824063893,
+    0.112324844137542,
+    0.17135845409914233,
+    -0.5348587464225559
+  ],
+  "scaler_mean": [
+    148.16316501352273,
+    276.345227272727,
+    15.337901398450787,
+    1.640207656605552,
+    47.01119716766612,
+    1.399392167445176,
+    18.478939437762214
+  ],
+  "scaler_scale": [
+    32.609782000362365,
+    81.67958283574346,
+    1.2026180392402637,
+    0.716620934698389,
+    5.640097434177947,
+    0.04316968803472544,
+    0.6839212091194636
+  ],
+  "status": "retrospective_research_only",
+  "target": "wheat_yield_t_ha",
+  "target_unit": "t/ha",
+  "task": "Colorado winter-wheat absolute yield from observed sowing water and realized crop-season weather",
+  "training_n": 88,
+  "water_definition": "0-90 cm stored water, not verified plant-available water"
+}

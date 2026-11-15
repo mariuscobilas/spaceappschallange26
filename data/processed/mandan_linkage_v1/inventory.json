@@ -1,0 +1,108 @@
+{
+  "bridge": {
+    "crop_biomass_plot_matches": 236,
+    "other_crop_plot_matches": {
+      "Corn": 0,
+      "DryPea": 0,
+      "Soybean": 0
+    },
+    "soil_biomass_plot_matches": 236,
+    "spring_wheat": 236
+  },
+  "cohort_by_year": {
+    "initial_spring_water_yield": {
+      "2009": 54,
+      "2010": 48,
+      "2011": 62
+    },
+    "initial_water_yield_pairs": {
+      "2009": 28,
+      "2010": 40,
+      "2011": 42
+    },
+    "spring_water_yield": {
+      "2009": 55,
+      "2010": 49,
+      "2011": 72
+    },
+    "water_yield_pairs": {
+      "2009": 29,
+      "2010": 45,
+      "2011": 68
+    },
+    "yield_pairs": {
+      "2009": 72,
+      "2010": 72,
+      "2011": 72
+    }
+  },
+  "counts": {
+    "initial_spring_water_yield": 164,
+    "initial_water_yield_pairs": 110,
+    "observations": 236,
+    "spring_shallow_water_yield": 225,
+    "spring_water_yield": 176,
+    "water_phase_rows": 684,
+    "water_phase_rows_missing_deep_profile": 166,
+    "water_yield_pairs": 142,
+    "yield_pairs": 216
+  },
+  "evidence_sha256": "d61df61c569ab19b079f1d902f98e5da2d87f14f3b05ca5066ebceaa56413d44",
+  "farmer_ready": false,
+  "limitations": [
+    "Water file omits raw plot IDs; linkage is supported by published sampling design and biomass identities, not a direct water-PLOT equality check or author confirmation.",
+    "Soil-nitrogen PLOT IDs disagree and remain unverified for response-crop linkage; do not import nitrate via this bridge.",
+    "Use the soil-study AGBIOMASS kg/ha column only; do not merge or reconcile species-component biomass amounts from the other release without a separate unit audit.",
+    "Water is stored water at seven 30-cm layers to 210 cm, in cm per layer. Convert cm to mm by ten. It is not verified PAW.",
+    "PREPLANT is before cover seeding, not before wheat sowing. SPRING has no exact per-row sampling date and is not an exact wheat-sowing observation.",
+    "The catalog's 2011 spring endpoint and wheat planting date differ by a day; do not invent row-level sample ordering from phase labels.",
+    "New land was used across years within the Mandan area; the catalog's three site coordinates are not assigned to years here.",
+    "This is spring wheat at Mandan in 2009-2011, kept separate from Colorado winter wheat. No model fitting or production promotion is authorized by linkage eligibility alone."
+  ],
+  "models_fitted": false,
+  "output_sha256": {
+    "fold_memberships.csv": "cb519d4e0c020893f1a18019c9f5ae783a7c927ef34939fdddf135dbf4aeaebf",
+    "initial_spring_water_yield.csv": "763db8fdd339834d1ac6042d394c6bb8602906cb8e5e6e351d0c2100c05f5838",
+    "initial_water_yield_pairs.csv": "36b9a1f42a104c88fa17c81cd1c58347d8e292dd49b428f237b85e1b338d98f0",
+    "observations.csv": "ab4ff33fff6a034c7075743bd8ffd2667bf11576bd9fd6b276f72e5942043197",
+    "plot_crosswalk.csv": "623b5e25f10df5af6049c9f7b67e4317b245ad3f299e372d2d96d8c29ee4b348",
+    "spring_water_yield.csv": "36e839d30ca4e4ed4a8fe43b8f8b927f9c63663e3dfa681e49d43f5d33ed623c",
+    "water_yield_pairs.csv": "359a3ac175d46e99022a5fbc19531fe44692ea675d6fc6c72e61679ebcfcfd24",
+    "yield_pairs.csv": "266cc30f66f3d5405b9f0f7a23d6a6c415f79d990cfad16bf5fbd5f892e15a2a"
+  },
+  "paired_outcomes": {
+    "initial_water_yield_pairs": {
+      "benefits": 71,
+      "controls": 8,
+      "harms": 39
+    },
+    "water_yield_pairs": {
+      "benefits": 96,
+      "controls": 10,
+      "harms": 46
+    },
+    "yield_pairs": {
+      "benefits": 129,
+      "controls": 12,
+      "harms": 87
+    }
+  },
+  "preparation_code_sha256": "cc69c282f7027fc3da4a7271260b2f70367cdda38d939ff0cec0f581677e8e69",
+  "soil_nitrogen_plot_mismatches_retained": 236,
+  "source_sha256": {
+    "data/analysis/water_yield_research_v1/inventory.json": "4d79e73f9857163064f9477881e3c3bb67edaff40edc75f31488ec1022abc9ea",
+    "data/raw/mandan_linkage_v1/cover_biomass.csv": "e50f49705d8c28487763c0174aa9f21e266a02a05710a5b02f7b16784fdc49cf",
+    "data/raw/mandan_linkage_v1/cover_biomass_metadata.csv": "42cab21875ec7737e5f3ea416031bb08b8e5d87248e1fecee206bda9fc28dd92",
+    "data/raw/mandan_linkage_v1/response_crop_yield_metadata.csv": "97d87628d192d5151587cce23d880be3b46f80cf9d0404047cb5d2595b5f3f7a",
+    "data/raw/mandan_linkage_v1/soil_study_biomass.csv": "5b19c7e69b1b007cc3c469b04b278656e67698fe5e2190af4670570d95ed54bc",
+    "data/raw/mandan_linkage_v1/soil_study_biomass_metadata.csv": "7ff696772d74c2dc6e40c8043222f2edd7da7ace873027c6721eb0cd73eb10fe",
+    "data/raw/mandan_linkage_v1/soil_study_dictionary.xlsx": "41843f28f6793fdac8b30b308bd4512917101f608434963c32b8d09412130e0d",
+    "data/raw/usda_mandan_cover_2009_2012/management.xlsx": "f27812c72383f6162fe4b57a004ccab1004fce019e322507bccc10f76e88f4a9",
+    "data/raw/usda_mandan_cover_2009_2012/response_crop_yield.csv": "58a888761483477e7859624d0324adf655f96cf5d8c1ac3cb8c89ce190647d1a",
+    "data/raw/usda_mandan_cover_2009_2012/treatments.csv": "bd1f2d62e2e40c9aa8740335cbbdf6eea03f56594a0b8f9d57ed10ae471f72a8",
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_nitrogen.csv": "1fea6b567eb8ef240700d14a1a3a69b10194174718548a05086f3a99db7a3c4d",
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water.csv": "8c61aa61172bf4300101defac7ce468c95707dbaf5696a767b06dc99b448d003",
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water_metadata.csv": "bd6a37a57b4d623f56ab16c81f4cae1934556466c32eb13bf9f49dbe57bfbb72"
+  },
+  "version": "mandan-linkage-v1"
+}

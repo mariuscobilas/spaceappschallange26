@@ -1,0 +1,36 @@
+{
+  "all_data_refit": false,
+  "evaluation_code_sha256": "3b72761c2f6ae2dc7b7f1182995d497a63d470ea949712203b659372a143d420",
+  "git": {
+    "commit": "25c595230078e897ac413b000411f5df86b8c108",
+    "status_porcelain": "M AGENTS.md\n M DATA_AUDIT.md\n M README.md\n M apps/api/app/ml/README.md\n M docs/HANDOFF.md\n M docs/PRODUCT-NEXT.md\n?? apps/api/app/ml/compare_water_yield_models.py\n?? apps/api/app/ml/cover_fallow_context_protocol_v1.json\n?? apps/api/app/ml/cover_fallow_protocol_v1.json\n?? apps/api/app/ml/evaluate_cover_fallow.py\n?? apps/api/app/ml/evaluate_cover_fallow_context.py\n?? apps/api/app/ml/evaluate_mandan.py\n?? apps/api/app/ml/evaluate_water_yield.py\n?? apps/api/app/ml/mandan_protocol_v1.json\n?? apps/api/app/ml/prepare_mandan.py\n?? apps/api/app/ml/prepare_water_yield.py\n?? apps/api/app/ml/water_yield_model_comparison_v1.json\n?? apps/api/app/ml/water_yield_protocol_v1.json\n?? apps/api/tests/test_cover_fallow_context.py\n?? apps/api/tests/test_cover_fallow_evaluation.py\n?? apps/api/tests/test_mandan_evaluation.py\n?? apps/api/tests/test_prepare_mandan.py\n?? apps/api/tests/test_prepare_water_yield.py\n?? apps/api/tests/test_water_yield_evaluation.py\n?? apps/api/tests/test_water_yield_model_comparison.py\n?? data/analysis/cover_fallow_diagnosis_v1/\n?? data/analysis/water_yield_research_v1/\n?? data/processed/mandan_linkage_v1/\n?? data/processed/water_yield_v1/\n?? data/raw/\n?? docs/COVER_FALLOW_CONTEXT_EVALUATION.md\n?? docs/COVER_FALLOW_EVALUATION.md\n?? docs/COVER_FALLOW_NEXT_EXPERIMENT.md\n?? docs/MANDAN_LINKAGE.md\n?? docs/ML_RESEARCH_PLAN.md\n?? docs/ML_WORK_LOG.md\n?? docs/WATER_YIELD_CALENDAR.md\n?? docs/WATER_YIELD_DATA_FEASIBILITY.md\n?? docs/WATER_YIELD_EVALUATION.md\n?? docs/WATER_YIELD_MODEL_COMPARISON.md\n?? scripts/audit_water_yield_data.py\n?? scripts/diagnose_cover_fallow.py\n?? scripts/fetch_mandan_linkage_sources.py"
+  },
+  "packages": {
+    "mlflow-skinny": "3.18.0",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "pinned_sha256": {
+    "apps/api/app/ml/evaluate_cover_fallow.py": "4740ec4f794f1193ea9d141ab2b2919e06ebaf16cf4a1cad68ac889ce5839c5a",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1",
+    "apps/api/app/ml/prepare_mandan.py": "cc69c282f7027fc3da4a7271260b2f70367cdda38d939ff0cec0f581677e8e69",
+    "data/processed/mandan_linkage_v1/inventory.json": "f24b12960a2cc21a4ac5b880b5f756ba5c5f24281b53eca9c0389b9202fef628",
+    "data/raw/mandan_linkage_v1/linkage_evidence.json": "d61df61c569ab19b079f1d902f98e5da2d87f14f3b05ca5066ebceaa56413d44"
+  },
+  "prepared_sha256": {
+    "fold_memberships.csv": "cb519d4e0c020893f1a18019c9f5ae783a7c927ef34939fdddf135dbf4aeaebf",
+    "initial_spring_water_yield.csv": "763db8fdd339834d1ac6042d394c6bb8602906cb8e5e6e351d0c2100c05f5838",
+    "initial_water_yield_pairs.csv": "36b9a1f42a104c88fa17c81cd1c58347d8e292dd49b428f237b85e1b338d98f0",
+    "inventory.json": "f24b12960a2cc21a4ac5b880b5f756ba5c5f24281b53eca9c0389b9202fef628",
+    "observations.csv": "ab4ff33fff6a034c7075743bd8ffd2667bf11576bd9fd6b276f72e5942043197",
+    "plot_crosswalk.csv": "623b5e25f10df5af6049c9f7b67e4317b245ad3f299e372d2d96d8c29ee4b348",
+    "spring_water_yield.csv": "36e839d30ca4e4ed4a8fe43b8f8b927f9c63663e3dfa681e49d43f5d33ed623c",
+    "water_yield_pairs.csv": "359a3ac175d46e99022a5fbc19531fe44692ea675d6fc6c72e61679ebcfcfd24",
+    "yield_pairs.csv": "266cc30f66f3d5405b9f0f7a23d6a6c415f79d990cfad16bf5fbd5f892e15a2a"
+  },
+  "protocol_sha256": "055913c53cc08ca0529bb0306a043bda5fd111c7cad459190d54db42b5dd13dd",
+  "python": "3.14.4",
+  "seed": 42,
+  "serving_selection_changed": false
+}

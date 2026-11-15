@@ -1,0 +1,50 @@
+{
+  "version": "water-yield-model-comparison-v1",
+  "purpose": "Exploratory fixed Ridge versus Random Forest versus Gradient Boosting comparison on unchanged retrospective yield cohorts",
+  "exposure": "Ridge results on all five seasons were inspected before this extension. Tree settings are fixed before tree fitting. These folds are development evidence, not a fresh final test.",
+  "seed": 42,
+  "pinned_sha256": {
+    "apps/api/app/ml/water_yield_protocol_v1.json": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+    "apps/api/app/ml/prepare_water_yield.py": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1",
+    "data/processed/water_yield_v1/manifest.json": "9d2908f4a5833eceb82bd9384c41764491325778c75951ce993a1c9ae0864e12",
+    "data/experiments/water_yield_v1/runs/20261115T103053452786Z/results.json": "85e96b32189f13def3fed326b309ea545fef60321c4092cfbbfaea6f1637b20f",
+    "data/experiments/water_yield_v1/runs/20261115T103053452786Z/oof_predictions.csv": "6464559ac4b5f020d325ef16d2ee9ca5359b753f741fbae4bb8a11b497773b48"
+  },
+  "reference_directory": "data/experiments/water_yield_v1/runs/20261115T103053452786Z",
+  "feature_families": {
+    "main": ["water", "weather", "water_weather"],
+    "nitrate_common": ["water", "weather", "water_weather", "water_weather_nitrate"]
+  },
+  "tree_candidates": {
+    "random_forest": {
+      "n_estimators": 300,
+      "criterion": "squared_error",
+      "max_depth": 3,
+      "min_samples_split": 2,
+      "min_samples_leaf": 5,
+      "max_features": 1.0,
+      "bootstrap": true,
+      "random_state": 42,
+      "n_jobs": 1
+    },
+    "gradient_boosting": {
+      "loss": "squared_error",
+      "learning_rate": 0.03,
+      "n_estimators": 100,
+      "subsample": 1.0,
+      "max_depth": 2,
+      "min_samples_split": 2,
+      "min_samples_leaf": 5,
+      "max_features": null,
+      "n_iter_no_change": null,
+      "random_state": 42
+    }
+  },
+  "preprocessing": "Reuse fold-fitted StandardScaler for Ridge only. Trees consume the same raw numeric features without scaling or imputation. No new features or target transforms.",
+  "selection": "No parameter search, early stopping, seed selection, clipping or changes after scores are seen. Mean baseline and exact Ridge replay retained. Report all declared configurations.",
+  "primary_comparison": "main cohort, water_weather inputs: unweighted mean of five held-out-season MAEs; pair each tree model against Ridge on identical observations",
+  "secondary": "All feature-family/cohort comparisons, pooled MAE/RMSE/bias, season and management errors, negative predictions, descriptive paired season changes",
+  "uncertainty": "Five folds share training seasons; do not treat folds or plot rows as independent replicates for confidence intervals. No significance or farmer accuracy threshold.",
+  "scope": "Absolute following-wheat-yield component only. Matched cover-minus-fallow prediction remains the next separate experiment. No changes to API payloads, serving selection, original protocols or prepared data."
+}

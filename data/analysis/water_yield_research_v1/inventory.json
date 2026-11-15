@@ -1,0 +1,263 @@
+{
+  "beltsville": {
+    "daily_water_rows": 4348,
+    "limitations": [
+      "Corn in humid Maryland; keep separate from dryland winter wheat.",
+      "Daily water measurements are repeated observations, not independent yield labels.",
+      "Source Table 2 contains 2023 Excel dates under 2017-2020 year labels; do not silently repair.",
+      "No-cover and cover systems differ in rotation and planting schedule; not a pure water-only contrast.",
+      "Source metadata describes replaced sensor errors; measured/imputed provenance needs audit."
+    ],
+    "numeric_yield_observations": 0,
+    "provider_yield_copy_matches": true,
+    "series_by_year": {
+      "2017": 8,
+      "2018": 12,
+      "2019": 12,
+      "2020": 12
+    },
+    "water_series": 44,
+    "water_series_with_yield": 0,
+    "water_source_sha256": "19d373e9fd9e15fc4d7305d815414afd715b429e4c2b16f881bcaa191fe07b97",
+    "yield_source_sha256": "96249aac77defc3b5668babe2c1393625d19d4c63952f02c278970a17d2bce74",
+    "yield_table_rows": 64,
+    "yield_year_counts": {}
+  },
+  "eash": {
+    "by_trial_cycle": [
+      {
+        "cycle": 1,
+        "rows": 8,
+        "trial": "T1"
+      },
+      {
+        "cycle": 2,
+        "rows": 11,
+        "trial": "T1"
+      },
+      {
+        "cycle": 3,
+        "rows": 12,
+        "trial": "T1"
+      },
+      {
+        "cycle": 1,
+        "rows": 27,
+        "trial": "T2"
+      },
+      {
+        "cycle": 2,
+        "rows": 30,
+        "trial": "T2"
+      }
+    ],
+    "calendar_join_ready": false,
+    "distinct_fallow_controls_used": 20,
+    "fresh_independent_test": false,
+    "joint_water_yield_nitrate_observations": 86,
+    "joint_water_yield_observations": 88,
+    "limitations": [
+      "One location, two adjacent trials, repeated plots, only three cycles per trial.",
+      "Exact operation dates and T2 third-cycle calendar unresolved; no new weather join assigned.",
+      "Storage at 0-90 cm is not automatically plant-available water.",
+      "Water at wheat sowing is a future intermediate outcome at the earlier cover-planting decision.",
+      "Shared fallow controls and plots create dependence among paired rows."
+    ],
+    "matched_cover_fallow_pairs": 68,
+    "plot_cycles": 198,
+    "plots": 66,
+    "source_sha256": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb",
+    "water_observations": 115,
+    "yield_observations": 144
+  },
+  "garba": {
+    "cash_crop_yield_sheet_present": false,
+    "duplicate_plot_phase_depth_rows": 365,
+    "phases": [
+      "Cash crop sowing",
+      "Cover crop sowing",
+      "Cover crop termination",
+      "Start Fallow"
+    ],
+    "sha256": "b45495c2d6deb0d291ddfe811ac85f3415e5c943bcadd9d367ef1756fbf45abb",
+    "sheets": [
+      "MetaData",
+      "Variable",
+      "Dataset2_Soil_water",
+      "Dataset3_Soil_nitrogen",
+      "Dataset1_Cover crop"
+    ],
+    "sites": [
+      "Mendel"
+    ],
+    "water_rows": 2159,
+    "years": [
+      "2020/2021",
+      "2021/2022"
+    ]
+  },
+  "mandan": {
+    "all_crop_yield_rows": 944,
+    "distinct_controls_used": 0,
+    "joint_by_year": {},
+    "joint_spring_water_wheat_yield_rows": 0,
+    "joint_start_water_spring_water_yield_rows": 0,
+    "limitations": [
+      "Soil-nitrogen and response-crop plot IDs disagree for every candidate; do not train on a treatment/rep/year join without a documented crosswalk.",
+      "Three northern Great Plains spring-wheat seasons, not winter wheat in Kansas/New Mexico.",
+      "Spring soil sampling has a phase label, not an exact sowing-date water measurement.",
+      "0-210 cm total storage is not plant-available water without soil extraction limits.",
+      "Winterkill cover management differs from the current spring-cover demo.",
+      "Shared controls and four response-crop strips do not create independent weather seasons.",
+      "Harvest test weight, grain moisture and kernel weight are outcome-time variables, excluded."
+    ],
+    "matched_cover_control_pairs": 0,
+    "operation_dates": [
+      {
+        "date": "2009-09-04",
+        "operation": "Harvest",
+        "year": 2009
+      },
+      {
+        "date": "2009-05-20",
+        "operation": "Planting",
+        "year": 2009
+      },
+      {
+        "date": "2010-09-14",
+        "operation": "Harvest",
+        "year": 2010
+      },
+      {
+        "date": "2010-05-21",
+        "operation": "Planting",
+        "year": 2010
+      },
+      {
+        "date": "2011-08-26",
+        "operation": "Harvest",
+        "year": 2011
+      },
+      {
+        "date": "2011-05-17",
+        "operation": "Planting",
+        "year": 2011
+      }
+    ],
+    "parent_plot_id_mismatches": 236,
+    "parent_plot_ids_verified": 0,
+    "soil_calendar_mapping": "1 = Late summer 2008, Late fall 2008, Spring 2009; 2 = Late summer 2009, Late fall 2009, Spring 2010; 3 = Late summer 2010, Late fall 2010, Spring 2011",
+    "spring_wheat_rows": 236,
+    "treatment_rep_year_candidate_water_yield_rows": 176,
+    "water_rows": 684,
+    "water_rows_with_missing_layer_or_total": 166,
+    "water_sha256": "8c61aa61172bf4300101defac7ce468c95707dbaf5696a767b06dc99b448d003",
+    "yield_rows_by_crop": {
+      "Corn": 236,
+      "DryPea": 236,
+      "Soybean": 236,
+      "SpringWheat": 236
+    },
+    "yield_sha256": "58a888761483477e7859624d0324adf655f96cf5d8c1ac3cb8c89ce190647d1a"
+  },
+  "nasa_power_colorado": [
+    {
+      "days": 1827,
+      "first_date": "20160101",
+      "geometry": {
+        "coordinates": [
+          -108.733,
+          37.533,
+          2051.26
+        ],
+        "type": "Point"
+      },
+      "last_date": "20201231",
+      "missing_values": 0,
+      "parameter_units": {
+        "ALLSKY_SFC_SW_DWN": "MJ/m^2/day",
+        "PRECTOTCORR": "mm/day",
+        "RH2M": "%",
+        "T2M_MAX": "C",
+        "T2M_MIN": "C",
+        "WS2M": "m/s"
+      },
+      "path": "data\\raw\\nasa_power_water_yield_v1\\yellow_jacket_20160101_20201231.json",
+      "sha256": "cde7b2e1b37adca1df2465d33ba0601a15b4d5b96fb9f7e2bc219eb1eec7e8b6",
+      "time_standard": "LST"
+    },
+    {
+      "days": 365,
+      "first_date": "20210101",
+      "geometry": {
+        "coordinates": [
+          -108.733,
+          37.533,
+          2051.26
+        ],
+        "type": "Point"
+      },
+      "last_date": "20211231",
+      "missing_values": 0,
+      "parameter_units": {
+        "ALLSKY_SFC_SW_DWN": "MJ/m^2/day",
+        "PRECTOTCORR": "mm/day",
+        "RH2M": "%",
+        "T2M_MAX": "C",
+        "T2M_MIN": "C",
+        "WS2M": "m/s"
+      },
+      "path": "data\\raw\\nasa_power_water_yield_v1\\yellow_jacket_20210101_20211231.json",
+      "sha256": "10f94761b472009068d6542fe269fbdeaf8e30c2926e50713824d0ac225c07aa",
+      "time_standard": "LST"
+    }
+  ],
+  "new_downloads": {
+    "data/raw/usda_beltsville_weather_2023/et_inputs_outputs.xlsx": {
+      "bytes": 300445,
+      "sha256": "4fe5f6f9fa59c2cdec3c1dd45d5c2981b28bb2dc21ff69b913af796e1be122dd"
+    },
+    "data/raw/usda_beltsville_weather_2023/station_weather.xlsx": {
+      "bytes": 273791,
+      "sha256": "7b24b4b01753226ae2150bda5eed2e3ec27e25412fb25cc5ac912e1c5a8ec9ec"
+    },
+    "data/raw/usda_beltsville_weather_2023/yield_biomass_provider.xlsx": {
+      "bytes": 33218,
+      "sha256": "96249aac77defc3b5668babe2c1393625d19d4c63952f02c278970a17d2bce74"
+    },
+    "data/raw/usda_mandan_cover_2009_2012/data_dictionary.csv": {
+      "bytes": 10123,
+      "sha256": "a37fcb41c42acf7b7e0500e03403de6ecbd1247db4d99c1467ab49b13d2cc377"
+    },
+    "data/raw/usda_mandan_cover_2009_2012/management.xlsx": {
+      "bytes": 14225,
+      "sha256": "f27812c72383f6162fe4b57a004ccab1004fce019e322507bccc10f76e88f4a9"
+    },
+    "data/raw/usda_mandan_cover_2009_2012/response_crop_yield.csv": {
+      "bytes": 60220,
+      "sha256": "58a888761483477e7859624d0324adf655f96cf5d8c1ac3cb8c89ce190647d1a"
+    },
+    "data/raw/usda_mandan_cover_2009_2012/treatments.csv": {
+      "bytes": 1249,
+      "sha256": "bd1f2d62e2e40c9aa8740335cbbdf6eea03f56594a0b8f9d57ed10ae471f72a8"
+    },
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_nitrogen.csv": {
+      "bytes": 39462,
+      "sha256": "1fea6b567eb8ef240700d14a1a3a69b10194174718548a05086f3a99db7a3c4d"
+    },
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_nitrogen_metadata.csv": {
+      "bytes": 1060,
+      "sha256": "c604e0f530edb93f5a29d0f476a08146fa6131fc3cdd7834cf67557ef7fcf75c"
+    },
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water.csv": {
+      "bytes": 46632,
+      "sha256": "8c61aa61172bf4300101defac7ce468c95707dbaf5696a767b06dc99b448d003"
+    },
+    "data/raw/usda_mandan_soil_2008_2011/profile_soil_water_metadata.csv": {
+      "bytes": 1658,
+      "sha256": "bd6a37a57b4d623f56ab16c81f4cae1934556466c32eb13bf9f49dbe57bfbb72"
+    }
+  },
+  "purpose": "Source eligibility and joins; no model fitting, feature selection, or correlation claims.",
+  "version": "water-yield-feasibility-v1"
+}

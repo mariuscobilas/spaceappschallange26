@@ -1,0 +1,45 @@
+{
+  "version": "eash-calendar-evidence-v1",
+  "verification_date": "2026-11-15",
+  "primary_source": {
+    "title": "Cover Crops for Ecological Management of U.S. Agricultural Systems: Quantifying Ecosystem Services Across Multiple Scales",
+    "author": "Lisa Eash",
+    "year": 2023,
+    "url": "https://api.mountainscholar.org/server/api/core/bitstreams/42a6dd40-29c2-40c5-83ba-707bc8f75239/content",
+    "pdf_sha256": "8851a494d41f160238bdd09e069fa956f65a9bd919eceff8c3264e38b861bf12",
+    "table": "S4.1",
+    "printed_page": 196,
+    "pdf_page_one_based": 206,
+    "verification": "Dates transcribed from table and visually checked against a Poppler rendering of PDF page 206. The full PDF is a temporary source, not a redistributed repository artifact."
+  },
+  "corroborating_sources": [
+    {
+      "url": "https://www.mdpi.com/2073-4395/11/6/1102",
+      "locator": "Table 2",
+      "scope": "Corroborates exact wheat sowing/harvest dates for T1/C1, T2/C1 and T1/C2. Later cycles were not complete at that paper's preparation."
+    },
+    {
+      "url": "https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/ecs2.70397",
+      "locator": "Methods: Experimental design; Appendix S1, Table S4",
+      "scope": "Confirms the two-year rotation and points to an operation-date supplement. Generic September/July prose does not override exact dates in the author's table."
+    },
+    {
+      "url": "https://datadryad.org/dataset/doi:10.5061/dryad.6t1g1jxb0",
+      "locator": "Methods and source workbook Metadata/Field Data",
+      "scope": "Release with C1/C2/C3 outcome columns. Metadata describes profile water near wheat sowing and yields by cycle."
+    }
+  ],
+  "records": [
+    {"trial": "T1", "cycle": 1, "season_id": "wheat_2017", "cover_planting_dates": {"Fall": "2015-09-28"}, "cover_termination_dates": {"Fall": "2016-06-10"}, "wheat_sowing_date": "2016-09-19", "wheat_harvest_date": "2017-06-20", "calendar_status": "exact_author_table", "include_if_joint_labels": true},
+    {"trial": "T2", "cycle": 1, "season_id": "wheat_2018", "cover_planting_dates": {"Fall": "2016-08-11", "Spring": "2017-04-13"}, "cover_termination_dates": {"Fall": "2017-06-20", "Spring": "2017-06-20"}, "wheat_sowing_date": "2017-09-21", "wheat_harvest_date": "2018-07-25", "calendar_status": "exact_author_table", "include_if_joint_labels": true},
+    {"trial": "T1", "cycle": 2, "season_id": "wheat_2019", "cover_planting_dates": {"Fall": "2017-08-30"}, "cover_termination_dates": {"Fall": "2018-06-08"}, "wheat_sowing_date": "2018-09-28", "wheat_harvest_date": "2019-08-07", "calendar_status": "exact_author_table", "include_if_joint_labels": true},
+    {"trial": "T2", "cycle": 2, "season_id": "wheat_2020", "cover_planting_dates": {"Fall": "2018-09-05", "Spring": "2019-05-07"}, "cover_termination_dates": {"Fall": "2019-06-19", "Spring": "2019-07-10"}, "wheat_sowing_date": "2019-10-23", "wheat_harvest_date": "2020-07-27", "calendar_status": "exact_author_table", "include_if_joint_labels": true},
+    {"trial": "T1", "cycle": 3, "season_id": "wheat_2021", "cover_planting_dates": {"Fall": "2019-09-13"}, "cover_termination_dates": {"Fall": "2020-06-18"}, "wheat_sowing_date": "2020-09-18", "wheat_harvest_date": "2021-07-27", "calendar_status": "exact_author_table", "include_if_joint_labels": true},
+    {"trial": "T2", "cycle": 3, "season_id": null, "cover_planting_dates": {"Fall": "2020-09-16", "Spring": "2021-04-29"}, "cover_termination_dates": {"Fall": "2021-06-12", "Spring": "2021-07-13"}, "wheat_sowing_date": "2021-09-07", "wheat_harvest_date": null, "calendar_status": "project_ended_before_harvest", "include_if_joint_labels": false}
+  ],
+  "retained_uncertainties": [
+    "Exact soil-water and nitrate sampling days are not recorded per row in the release; calendar verification does not invent those dates.",
+    "The workbook's T2/C3 cycle-year label is inconsistent with the exact operation calendar; excluded from yield evaluation because no final harvest was observed.",
+    "Profile water is source-defined 0-90 cm total storage in mm, not verified plant-available water."
+  ]
+}

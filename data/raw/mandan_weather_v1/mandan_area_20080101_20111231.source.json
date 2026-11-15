@@ -1,0 +1,17 @@
+{
+  "bytes": 145257,
+  "request": {
+    "community": "AG",
+    "end": "20111231",
+    "format": "JSON",
+    "latitude": 46.7801,
+    "longitude": -100.9352,
+    "parameters": "PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M,WS2M,ALLSKY_SFC_SW_DWN",
+    "start": "20080101",
+    "time-standard": "LST"
+  },
+  "retrieved_utc": "2026-11-15T12:01:47.161554+00:00",
+  "sha256": "48b2bb02a9c8d5609bd4ba27afdd4ac3f1e8d1848db71ef02a2bef57c31c4ae2",
+  "spatial_interpretation": "Use the first catalog point for every year as an explicitly regional proxy; no verified annual field assignment or plot-level weather claim",
+  "url": "https://power.larc.nasa.gov/api/temporal/daily/point?latitude=46.7801&longitude=-100.9352&start=20080101&end=20111231&parameters=PRECTOTCORR%2CT2M_MAX%2CT2M_MIN%2CRH2M%2CWS2M%2CALLSKY_SFC_SW_DWN&community=AG&format=JSON&time-standard=LST"
+}

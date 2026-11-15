@@ -1,0 +1,21 @@
+{
+  "spring_water/mean_change": "86205befe92e4b5ba85a837d18158c18",
+  "spring_water/mean_spring": "4f39dc75c3e4495ea8b05d27cb84fcc0",
+  "spring_water/persistence": "c501920a1295431c85200d1de66c196c",
+  "spring_water/ridge_initial": "e0fc3fe375d34e0481e6b7640036f2b0",
+  "spring_water/ridge_initial_treatment": "34a04482fe9145648e9d06948870b117",
+  "spring_water_difference/initial_difference": "47e90d15059342e1a034c1ec4de43cb7",
+  "spring_water_difference/mean_change": "b7e4d71f6b274c478baef6564c0c38d9",
+  "spring_water_difference/subtract_ridge_initial": "2780c4d6a5d846c8b8dbbcf49e641cd8",
+  "spring_water_difference/subtract_ridge_initial_treatment": "899b8033a676404bb1f143cc833fa39d",
+  "spring_water_difference/zero": "0f9c687476f2416daa6dead1c33fdcf8",
+  "yield_absolute/mean": "166e02f0d7184738a435ddf909092c97",
+  "yield_absolute/water": "54af4cbaa59b472193f52843cafb32f1",
+  "yield_absolute/water_treatment": "1d92a71c171743d69b155769ab9faf9a",
+  "yield_difference/direct_water": "bc96d0edc76542f998993f0c9884583e",
+  "yield_difference/direct_water_treatment": "5f3f43c725714d15ba553fcf41dff872",
+  "yield_difference/mean_difference": "0c2b1fd9d0ca42d0b5d15938e784b44d",
+  "yield_difference/subtract_water": "bfc351294da74a33addbbb8c078acd2a",
+  "yield_difference/subtract_water_treatment": "2042b92deeb3489aaee9e9337021731a",
+  "yield_difference/zero": "5a16df5333544d8cb8de5cf0729159b0"
+}

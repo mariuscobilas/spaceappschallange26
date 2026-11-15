@@ -1,0 +1,11 @@
+{
+  "main/mean": "224cd91b28c44bbfaf0b8362004d4ff5",
+  "main/water": "346ac9457e7c48519a3203c3e4278df9",
+  "main/water_weather": "474fa02176664249be2189f2a1a17118",
+  "main/weather": "e8cce77d407d4de799b959324079e2c1",
+  "nitrate_common/mean": "b375a769f05043699910061180715f7d",
+  "nitrate_common/water": "d840e0cef5eb436fbc206f5f1c6007f8",
+  "nitrate_common/water_weather": "ee063ad04ba5458bb2bc8bf32baeefb4",
+  "nitrate_common/water_weather_nitrate": "4c7c6220623f4dd4b50a5b9b7e522dbc",
+  "nitrate_common/weather": "a9a1754ac4a84418b5c61e7f178a0276"
+}

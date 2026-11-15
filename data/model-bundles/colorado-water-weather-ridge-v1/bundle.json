@@ -1,0 +1,240 @@
+{
+  "all_data_refit": true,
+  "artifact": "model.json",
+  "artifact_sha256": "3b32cd1b2f0aae6fccf5096c29b02678ac7f9e2373440d3c2dd01f2c5b4bfeee",
+  "export_code_sha256": "86f1ba59573f34b96df7e22951f139d288187c32d69bccf3e433b383343d4d07",
+  "export_policy_sha256": "502ff076c908062ce3c2add0d2d94879fa6ef8ee019d1a273847a503c89bc112",
+  "farmer_ready": false,
+  "format": "field-shift-research-bundle-v1",
+  "held_out_validation": {
+    "macro_season_mae": 0.5453522631074303,
+    "per_management": {
+      "cover_mix": {
+        "CCM1": {
+          "bias": -0.010233152018444892,
+          "mae": 0.4627062201297512,
+          "n": 12,
+          "negative_predictions": 2,
+          "r2": 0.6811966253903479,
+          "rmse": 0.5821612227317831
+        },
+        "CCM2": {
+          "bias": 0.20217758424415733,
+          "mae": 0.4978562940824215,
+          "n": 13,
+          "negative_predictions": 0,
+          "r2": 0.619957160714026,
+          "rmse": 0.591466989451417
+        },
+        "CCM3": {
+          "bias": 0.3291399628228504,
+          "mae": 0.49059160555091597,
+          "n": 14,
+          "negative_predictions": 0,
+          "r2": 0.6236335035789221,
+          "rmse": 0.562097277709996
+        },
+        "CCM5": {
+          "bias": 0.0807056210863508,
+          "mae": 0.3674403193233807,
+          "n": 11,
+          "negative_predictions": 2,
+          "r2": -1.9669366356761824,
+          "rmse": 0.40257835109777623
+        },
+        "CCM6": {
+          "bias": -0.05691234985760838,
+          "mae": 0.43729849348842814,
+          "n": 12,
+          "negative_predictions": 1,
+          "r2": -13.008503151914178,
+          "rmse": 0.5108418428991855
+        },
+        "CCM8": {
+          "bias": -0.4878345653096569,
+          "mae": 0.6243660044182974,
+          "n": 6,
+          "negative_predictions": 0,
+          "r2": -1.3223775358496366,
+          "rmse": 0.7396051640484514
+        },
+        "Fallow": {
+          "bias": -0.010463011019505397,
+          "mae": 0.5463597568304334,
+          "n": 20,
+          "negative_predictions": 0,
+          "r2": 0.44771435860480213,
+          "rmse": 0.664610863962799
+        }
+      },
+      "planting_window": {
+        "Fall": {
+          "bias": 0.16002464164844946,
+          "mae": 0.4586946490979701,
+          "n": 50,
+          "negative_predictions": 4,
+          "r2": 0.6283787200989186,
+          "rmse": 0.5444424924084206
+        },
+        "Fallow": {
+          "bias": -0.010463011019505397,
+          "mae": 0.5463597568304334,
+          "n": 20,
+          "negative_predictions": 0,
+          "r2": 0.44771435860480213,
+          "rmse": 0.664610863962799
+        },
+        "Spring": {
+          "bias": -0.20055308834162455,
+          "mae": 0.49965433046505126,
+          "n": 18,
+          "negative_predictions": 1,
+          "r2": -2.4758633096949056,
+          "rmse": 0.5969183572316539
+        }
+      },
+      "tillage": {
+        "CT": {
+          "bias": 0.1636502667125044,
+          "mae": 0.3718711631812099,
+          "n": 28,
+          "negative_predictions": 3,
+          "r2": -0.4690047745613961,
+          "rmse": 0.42729384862381964
+        },
+        "NT": {
+          "bias": -0.006669853267783364,
+          "mae": 0.540721882846737,
+          "n": 60,
+          "negative_predictions": 2,
+          "r2": 0.5439390618574175,
+          "rmse": 0.6449341040568345
+        }
+      },
+      "trial": {
+        "T1": {
+          "bias": 0.08867934674861672,
+          "mae": 0.5818723807968741,
+          "n": 31,
+          "negative_predictions": 0,
+          "r2": 0.6436618787571957,
+          "rmse": 0.6952426163302019
+        },
+        "T2": {
+          "bias": 0.025139588117122868,
+          "mae": 0.43539757430131576,
+          "n": 57,
+          "negative_predictions": 5,
+          "r2": -0.48957868793934733,
+          "rmse": 0.5144305261967222
+        }
+      }
+    },
+    "per_season": {
+      "wheat_2017": {
+        "bias": -0.8365030162488754,
+        "mae": 0.8365030162488754,
+        "n": 8,
+        "negative_predictions": 0,
+        "r2": -1.9519563027743354,
+        "rmse": 0.8609844471884116
+      },
+      "wheat_2018": {
+        "bias": -0.41040626505199646,
+        "mae": 0.45026556369543785,
+        "n": 27,
+        "negative_predictions": 5,
+        "r2": -0.16882908366996263,
+        "rmse": 0.5634825691677064
+      },
+      "wheat_2019": {
+        "bias": 0.8696965462426995,
+        "mae": 0.8696965462426995,
+        "n": 11,
+        "negative_predictions": 0,
+        "r2": -60.24569038176057,
+        "rmse": 0.8868630583552409
+      },
+      "wheat_2020": {
+        "bias": 0.41713085596933025,
+        "mae": 0.42201638384660584,
+        "n": 30,
+        "negative_predictions": 0,
+        "r2": -1.446794227499418,
+        "rmse": 0.4658887321641448
+      },
+      "wheat_2021": {
+        "bias": -0.010464844122631253,
+        "mae": 0.14827980550353323,
+        "n": 12,
+        "negative_predictions": 0,
+        "r2": 0.8076227458665792,
+        "rmse": 0.18305065077312843
+      }
+    },
+    "pooled": {
+      "bias": 0.047522912180490026,
+      "mae": 0.48699665386225105,
+      "n": 88,
+      "negative_predictions": 5,
+      "r2": 0.5299299601348155,
+      "rmse": 0.5845417867532953
+    }
+  },
+  "historical_macro_season_mae_t_ha": {
+    "gradient_boosting": 0.7344194299443052,
+    "random_forest": 0.7253629543768156,
+    "ridge": 0.5453522631074303
+  },
+  "input_ranges": {
+    "profile_water_at_wheat_sowing_mm": {
+      "max": 225.77272570000002,
+      "min": 94.74443029
+    },
+    "season_mean_rh_pct": {
+      "max": 56.893184713375796,
+      "min": 41.060974025974026
+    },
+    "season_mean_solar_mj_m2_day": {
+      "max": 18.8612012987013,
+      "min": 16.79341818181818
+    },
+    "season_mean_tmax_c": {
+      "max": 16.772954545454546,
+      "min": 13.344654545454546
+    },
+    "season_mean_tmin_c": {
+      "max": 2.5716233766233767,
+      "min": 0.4706909090909091
+    },
+    "season_mean_wind_m_s": {
+      "max": 1.4295340501792113,
+      "min": 1.3151592356687898
+    },
+    "season_rain_mm": {
+      "max": 465.98,
+      "min": 216.14
+    }
+  },
+  "portable_parity_checked_rows": 88,
+  "prediction_code_sha256": "4edfa0e0577ff1233d3af8b4e9b672990ede2ba973a4f3a66e46d26448e9b72b",
+  "production_serving_changed": false,
+  "ranking_scope": "Colorado main: 88 observations, five winter-wheat harvest seasons; identical water_weather features",
+  "runtime": {
+    "numpy": "2.5.4",
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "source_sha256": {
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1",
+    "apps/api/app/ml/prepare_water_yield.py": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+    "apps/api/app/ml/water_yield_protocol_v1.json": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+    "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/results.json": "08c7c763e173f74dbf30f70e0a96175b4d8c5e23f5120f7f387f0b476cdc6e8d",
+    "data/experiments/water_yield_v1/runs/20261115T103053452786Z/results.json": "85e96b32189f13def3fed326b309ea545fef60321c4092cfbbfaea6f1637b20f",
+    "data/processed/water_yield_v1/feature_schema.json": "b09f0d2ca141394101759d38ed2461c98acff0af2aac63f7cffb0c4eafbded7a",
+    "data/processed/water_yield_v1/observations.csv": "eceaebc88c3d95e0c6cd29e4256181c6b27c605a323382259012aa68be627f60"
+  },
+  "status": "retrospective_research_only",
+  "validation_belongs_to": "Original cross-season fold fits, not this all-data refit"
+}

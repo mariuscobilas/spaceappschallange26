@@ -1,0 +1,48 @@
+{
+  "all_data_refit": false,
+  "evaluation_code_sha256": "4740ec4f794f1193ea9d141ab2b2919e06ebaf16cf4a1cad68ac889ce5839c5a",
+  "git": {
+    "commit": "25c595230078e897ac413b000411f5df86b8c108",
+    "status_porcelain": "M AGENTS.md\n M DATA_AUDIT.md\n M README.md\n M apps/api/app/ml/README.md\n M docs/HANDOFF.md\n M docs/PRODUCT-NEXT.md\n?? apps/api/app/ml/compare_water_yield_models.py\n?? apps/api/app/ml/cover_fallow_protocol_v1.json\n?? apps/api/app/ml/evaluate_cover_fallow.py\n?? apps/api/app/ml/evaluate_water_yield.py\n?? apps/api/app/ml/prepare_water_yield.py\n?? apps/api/app/ml/water_yield_model_comparison_v1.json\n?? apps/api/app/ml/water_yield_protocol_v1.json\n?? apps/api/tests/test_cover_fallow_evaluation.py\n?? apps/api/tests/test_prepare_water_yield.py\n?? apps/api/tests/test_water_yield_evaluation.py\n?? apps/api/tests/test_water_yield_model_comparison.py\n?? data/analysis/water_yield_research_v1/\n?? data/processed/water_yield_v1/\n?? data/raw/\n?? docs/ML_RESEARCH_PLAN.md\n?? docs/ML_WORK_LOG.md\n?? docs/WATER_YIELD_CALENDAR.md\n?? docs/WATER_YIELD_DATA_FEASIBILITY.md\n?? docs/WATER_YIELD_EVALUATION.md\n?? docs/WATER_YIELD_MODEL_COMPARISON.md\n?? scripts/audit_water_yield_data.py"
+  },
+  "packages": {
+    "mlflow_module": "3.18.0",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1"
+  },
+  "pinned_sha256": {
+    "apps/api/app/ml/compare_water_yield_models.py": "00f9cb21bacf14d160290ed9c84207bc07b2b7b7e4be2a1d160026ec05b1414f",
+    "apps/api/app/ml/evaluate_water_yield.py": "17431d70b2879561ea209d9dc5f74a39374546e3b5ebfd52a124d7f924bf97f1",
+    "apps/api/app/ml/prepare_water_yield.py": "4eefd80e39a42e1abee0bdc4d7c2b1395cfab7ae7aca3fd78d3c6ddad3dc0c00",
+    "apps/api/app/ml/water_yield_model_comparison_v1.json": "a7901ef8725cdb3b71a58cb60877484653076e1533f558d2b5c0f34cc9f013e3",
+    "apps/api/app/ml/water_yield_protocol_v1.json": "de6db5488acc6d6697a1b362bac2e9d471f6edd3c49805614deadc038bb7d78a",
+    "data/experiments/water_yield_model_comparison_v1/runs/20261115T104457678358Z/oof_predictions.csv": "f7c1ad77892d7a1a5018b85e50b119aa8426d7d463a61f01b3bd8a35100e8b73",
+    "data/processed/water_yield_v1/manifest.json": "9d2908f4a5833eceb82bd9384c41764491325778c75951ce993a1c9ae0864e12",
+    "data/processed/water_yield_v1/paired_observations.csv": "a5421d4dc3444ccfbf4914a679494c99cd72fb2c7370dfcfabde7b4177edd0b1"
+  },
+  "prepared_sha256": {
+    "exclusions.csv": "ee8bba3df69822a929c7a60e5ec621c870146f389b8d15a118432ac627211539",
+    "feature_schema.json": "b09f0d2ca141394101759d38ed2461c98acff0af2aac63f7cffb0c4eafbded7a",
+    "fold_memberships.csv": "f45c60f6c3a0e66c36a74154855d892bf6301ff8e339e5a1d6c4b77d86ce0f5e",
+    "manifest.json": "9d2908f4a5833eceb82bd9384c41764491325778c75951ce993a1c9ae0864e12",
+    "observations.csv": "eceaebc88c3d95e0c6cd29e4256181c6b27c605a323382259012aa68be627f60",
+    "paired_observations.csv": "a5421d4dc3444ccfbf4914a679494c99cd72fb2c7370dfcfabde7b4177edd0b1",
+    "season_weather.csv": "c58a9ffb121e52b064c178d602b2a10faffbb8eb914253619fc6bbc945110ad7"
+  },
+  "protocol_sha256": "73ab64bc76b9c4fe6043791bf614935c1b97d54e4df1ab1df8f9281f292015dc",
+  "python": "3.14.4",
+  "seed": 42,
+  "serving_selection_changed": false,
+  "source_sha256": {
+    "data/analysis/water_yield_research_v1/eash_matched_water_yield_pairs.csv": "0deccea8d0702135032d49edc10fce8da33378076279ce1d8129b0a25e3e2bfb",
+    "data/analysis/water_yield_research_v1/eash_plot_cycles.csv": "b08447797a0fa376208d8a0075f9c68ffd3a041e0f2804416945c18a181b68cb",
+    "data/analysis/water_yield_research_v1/inventory.json": "4d79e73f9857163064f9477881e3c3bb67edaff40edc75f31488ec1022abc9ea",
+    "data/dryad_eash_2025/Cover_Crop_Trials_Data.xlsx": "8348b72108ec48d65309e7f062afab5622c4858321416141e49a2b436c0bf2bb",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.json": "cde7b2e1b37adca1df2465d33ba0601a15b4d5b96fb9f7e2bc219eb1eec7e8b6",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20160101_20201231.source.json": "d60c67e9c2755dcefafe743bc6cb13fc05791cfa8e8fe2730526d93de497d3db",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.json": "10f94761b472009068d6542fe269fbdeaf8e30c2926e50713824d0ac225c07aa",
+    "data/raw/nasa_power_water_yield_v1/yellow_jacket_20210101_20211231.source.json": "9ec1863219caaa11b0d74fd572c7602784dbde8178f0d41381198036a17c0f9e",
+    "data/raw/water_yield_calendar_v1/eash_calendar_evidence.json": "86b7b9b6d6d7ff97d689622a57ed1cf49d55908dec7963f95a087dc19619e8bd"
+  }
+}

@@ -1,0 +1,21 @@
+TREATMENT,CROPCODE,TREATMENTDESCIPTION,MONOCULTURE_MIXTURE
+1,C,Non-Seeded Control ,All years
+2,PTT,Purple Top Turnip Monoculture,Root-Crop
+3,PM,Proso Millet Monoculture,Warm-season Grass
+4,ST,Spring Triticale Monoculture,Cool-Season Grass
+5,S,Soybean Monoculture,Warm-season Legume
+6,VP,Vine Pea Monoculture,Cool-Season Legume
+7,WC,Winter Canola  Monoculture,Cool-Season Forb
+8,SF,Sunflower Monoculture,Warm-season Forb
+9,ALL,All species Mixture ,Mixture of All Monocultures
+10,DPTT,ALL species minus PTT,Removal of Root-Crop from Mixture
+11,DPM,ALL species minus PM,Removal of Warm-Season Grass from Mixture
+12,DST,ALL species minus ST,Removal of Cool-Season Grass from Mixture
+13,DS,ALL species minus S,Removal of Warm-Season Legume from Mixture
+14,DVP,ALL species minus VP,Removal of Cool-Season Legume from Mixture
+15,DWC,ALL species minus WC,Removal of Cool-Season Forb from Mixture
+16,DSF,ALL species minus SF,Removal of Warm-Season Forb from Mixture
+17,DPMST,ALL species minus PMST,Removal of Grasses from Mixture
+18,DSVP,ALL species minus SVP,Removal of Legumes from Mixture 
+19,DWCSF,ALL species minus WCSF,Removal of Forbs from Mixture
+20,CD,Non-Seeded Control disturbed using the No-Till Drill ,In 2009 and 2010 only

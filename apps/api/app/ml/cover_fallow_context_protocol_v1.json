@@ -1,0 +1,30 @@
+{
+  "version": "cover-fallow-context-v1",
+  "purpose": "Fixed retrospective common-cohort Ridge feature ablation: water/management context versus context plus measured cover growth",
+  "exposure": "Designed after inspecting all previous contrast outcomes and the same trial's published biomass/rainfall analysis. Settings fixed before this experiment. Historical development evidence, not an independent final test.",
+  "seed": 42,
+  "target": "delta_yield_t_ha",
+  "pinned_sha256": {
+    "apps/api/app/ml/evaluate_cover_fallow.py": "4740ec4f794f1193ea9d141ab2b2919e06ebaf16cf4a1cad68ac889ce5839c5a",
+    "apps/api/app/ml/cover_fallow_protocol_v1.json": "73ab64bc76b9c4fe6043791bf614935c1b97d54e4df1ab1df8f9281f292015dc",
+    "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z/paired_features.csv": "7cd324ed6ff361dcb66b627e3891269f9fcb789dd0acd21e944fdff89069d8a3",
+    "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z/oof_predictions.csv": "1d459939dc7a3a76e601c1f399cd1d3141e584dc32e08bbbe458bfa4db43bebb",
+    "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z/results.json": "a5950e5b757bb6ffd2e1c91eee041e51d5f7e30b3bcd86818cbf4ea0e71963d3"
+  },
+  "reference_directory": "data/experiments/cover_fallow_v1/runs/20261115T105621737490Z",
+  "reference_methods": ["zero_difference", "training_mean_difference", "direct/delta_water/ridge", "subtract_absolute/ridge"],
+  "cohort": "Exactly the 68 existing joint-water/yield pairs, 20 shared controls and five paired whole-season folds; no extra yield-only rows or missing-value imputation",
+  "numeric_features": {
+    "context": ["delta_profile_water_mm", "fallow_profile_water_mm", "season_rain_mm"],
+    "context_biomass": ["delta_profile_water_mm", "fallow_profile_water_mm", "season_rain_mm", "cover_biomass_kg_ha", "biomass_rain_kg_mm_ha"]
+  },
+  "categorical_features": ["planting_window", "tillage"],
+  "interaction": "biomass_rain_kg_mm_ha = measured cover_biomass_kg_ha * exact wheat-sowing-through-harvest season_rain_mm; raw product, no threshold or transformation search",
+  "estimator": {"alpha": 1.0, "fit_intercept": true, "solver": "svd", "positive": false},
+  "preprocessing": "ColumnTransformer inside Pipeline: StandardScaler(with_mean=True,with_std=True) on numeric columns; OneHotEncoder(drop=None,handle_unknown=ignore,sparse_output=False) on both categories. Fit entirely on each training fold; full one-hot coding is regularized symmetrically by Ridge. No target encoding or imputation.",
+  "primary": "Equal-season MAE of context_biomass against context and frozen direct water-only Ridge",
+  "secondary": "All reference errors, pooled MAE/RMSE/bias, control-balanced MAE, season/management slices, benefit/harm recall and confusion counts, balanced decision accuracy, observed paired yield opportunity loss, per-season average precision where both classes exist",
+  "decision": "Same 1e-12 numerical zero and choose-fallow-on-tie diagnostic as cover_fallow_protocol_v1; no threshold tuning or calibrated probabilities",
+  "interpretation": "Lower magnitude error alone is insufficient: inspect benefits identified and harmful cover choices. Adding biomass is a two-feature family increment. Original-model versus context differences change multiple representation choices, not a causal single-variable ablation.",
+  "restrictions": ["No hyperparameter/seed/feature/threshold search", "No changes after results", "No nitrate or 123-row sensitivity in this primary run", "No confidence intervals treating repeated controls/folds as independent", "Measured sowing water, cover biomass and realized weather are future intermediates at cover planting", "No farmer readiness, serving refit, payload changes or model promotion"]
+}

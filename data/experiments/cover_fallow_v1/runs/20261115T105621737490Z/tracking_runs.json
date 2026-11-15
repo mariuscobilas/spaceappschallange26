@@ -1,0 +1,13 @@
+{
+  "direct/delta_water/gradient_boosting": "4a61b35a365f4b6db612978cec22f370",
+  "direct/delta_water/random_forest": "8a8244578b9c4512b8a433334c77ddf0",
+  "direct/delta_water/ridge": "f04b5cd549c14a4190348a80fbf81ac9",
+  "direct/delta_water_weather/gradient_boosting": "6ddb09bb7af7413fac4935ce5b1032c4",
+  "direct/delta_water_weather/random_forest": "6ea85c8e15be4f739fab68c0a48f0b5f",
+  "direct/delta_water_weather/ridge": "34185e047c5a4792a649a4d1b46fe636",
+  "subtract_absolute/gradient_boosting": "e330e1af3f7e4be79d5787361810cc65",
+  "subtract_absolute/random_forest": "36fae9943c904c3399322cd0759ce93c",
+  "subtract_absolute/ridge": "d08c4f62800b4e2387053ed213035dad",
+  "training_mean_difference": "e2b31b9a07c1419eac432896ad85fada",
+  "zero_difference": "c6265d09e3fb4deaadf3e2c22203a50a"
+}
