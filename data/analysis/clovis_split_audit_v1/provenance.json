@@ -1,0 +1,34 @@
+{
+  "all_model_artifacts_untouched": "No model is loaded or fitted by this script.",
+  "input_sha256": {
+    "apps/api/app/ml/audit_clovis_splits.py": "de1d997e7c3d3a8bb90d1549d11fb9eab8ef2a9cfc18ef7ea609bb04be90cde5",
+    "apps/api/app/ml/clovis_protocol.json": "39c656c85f36d5bb2debe4aae624621703bb60611ad2656c87994885e456b57c",
+    "apps/api/app/ml/clovis_split_audit_protocol.json": "b649514007a375a522f89c5340a17ac96a60e4654732fded9e298af88bcc743d",
+    "data/figshare_yin_daily.csv": "50b4daa47ea01f7dde810fa65606f15ac1ec34934fbd789fde3bf30c6860eb09",
+    "data/processed/clovis_v1/split_manifest.json": "051edd66afe8f90ecf009fdddd2027327cdcc7cbb80087ec80775ee4da8f8354",
+    "data/processed/clovis_v1/test_pairs.csv": "a0f10ab034eca8fb6173ebf2f4abdb809d0b5cb24383969cc13f5ffa1bc83558",
+    "data/processed/clovis_v1/train_pairs.csv": "a99bef9d8de3be4a63beae98025f452a0b3909877cdbc0492b07f9dd9bf91448",
+    "data/processed/clovis_v1/validation_pairs.csv": "f43727e7fe2d5cfcc452539f097ee5a065ee717a5945eaf0ae6570e2799804ef"
+  },
+  "policy": {
+    "boundary_buffer_calendar_days": 3,
+    "candidate_context_policy": "A target requires real eligible moisture for every day from D-lookback through D. Historical context may come from its own partition or the preceding unscored buffer; never from another non-gap partition. No imputation. All four treatments on a date share the same assignment.",
+    "cut_selection": "Sort eligible daily-pair target dates. Use floor(0.70*N) for training and floor(0.15*N) for validation; remainder test. Apply globally or within each management phase. Set cutoff at the last target date in each initial allocation.",
+    "future_history_sensitivity_days": 3,
+    "model_training": false,
+    "primary_lookback_days": 1,
+    "proportions_before_buffers": {
+      "test": 0.15,
+      "train": 0.7,
+      "validation": 0.15
+    },
+    "purpose": "Compare category coverage and data allocation before a new model experiment. Do not alter the original dataset/model or choose boundaries using target values or scores.",
+    "test_status": "All candidate data comes from the previously exposed site/sequence; none is a fresh independent final test.",
+    "variants": {
+      "global_chronological_70_15_15": "One global training block followed by validation and test with three-day unscored buffers. Forecast-oriented, but cannot contain every unique phase in every partition.",
+      "original_v1": "Existing frozen global chronological split; preserve its stricter same-partition history rule and existing pair counts.",
+      "phase_balanced_70_15_15": "Within each phase: early 70% training, middle 15% validation, final 15% test, with three-day buffers. Historical phase-coverage experiment only; globally later training phases occur after earlier validation/test dates."
+    },
+    "version": "clovis-split-audit-v1"
+  }
+}

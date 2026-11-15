@@ -1,0 +1,17 @@
+{
+  "version": "clovis-split-audit-v1",
+  "purpose": "Compare category coverage and data allocation before a new model experiment. Do not alter the original dataset/model or choose boundaries using target values or scores.",
+  "proportions_before_buffers": {"train": 0.70, "validation": 0.15, "test": 0.15},
+  "boundary_buffer_calendar_days": 3,
+  "primary_lookback_days": 1,
+  "future_history_sensitivity_days": 3,
+  "cut_selection": "Sort eligible daily-pair target dates. Use floor(0.70*N) for training and floor(0.15*N) for validation; remainder test. Apply globally or within each management phase. Set cutoff at the last target date in each initial allocation.",
+  "candidate_context_policy": "A target requires real eligible moisture for every day from D-lookback through D. Historical context may come from its own partition or the preceding unscored buffer; never from another non-gap partition. No imputation. All four treatments on a date share the same assignment.",
+  "variants": {
+    "original_v1": "Existing frozen global chronological split; preserve its stricter same-partition history rule and existing pair counts.",
+    "global_chronological_70_15_15": "One global training block followed by validation and test with three-day unscored buffers. Forecast-oriented, but cannot contain every unique phase in every partition.",
+    "phase_balanced_70_15_15": "Within each phase: early 70% training, middle 15% validation, final 15% test, with three-day buffers. Historical phase-coverage experiment only; globally later training phases occur after earlier validation/test dates."
+  },
+  "test_status": "All candidate data comes from the previously exposed site/sequence; none is a fresh independent final test.",
+  "model_training": false
+}

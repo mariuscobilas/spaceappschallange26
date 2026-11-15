@@ -1,0 +1,218 @@
+{
+  "source": "Garba and Williams 2022, supplementary mmc1.xlsx",
+  "n_plot_treatment_year_units": 87,
+  "n_raw_soil_depth_rows": 2159,
+  "years": [
+    "2020/2021",
+    "2021/2022"
+  ],
+  "target": "cash-crop-sowing 0-120 cm PAW minus same-year/rep fallow (mm)",
+  "features": [
+    "treatment",
+    "start_0-10",
+    "start_10-30",
+    "start_30-60",
+    "start_60-90",
+    "start_90-120"
+  ],
+  "models": {
+    "Treatment mean": {
+      "r2": -0.6644134002201891,
+      "mae_mm": 22.84638200284662,
+      "rmse_mm": 27.545032171483363,
+      "mean_error_mm": -0.10885540335866481,
+      "mae_by_year_mm": {
+        "2020/2021": 21.785393495816294,
+        "2021/2022": 23.88325713471717
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          1,
+          12
+        ],
+        [
+          3,
+          71
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "Starting difference": {
+      "r2": -2.433030008304252,
+      "mae_mm": 33.312626844779864,
+      "rmse_mm": 39.559562679548854,
+      "mean_error_mm": 27.633672645592405,
+      "mae_by_year_mm": {
+        "2020/2021": 36.982000877253604,
+        "2021/2022": 29.72664767668051
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          9,
+          4
+        ],
+        [
+          55,
+          19
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "Ridge": {
+      "r2": -1.0749467765942446,
+      "mae_mm": 25.241099585009476,
+      "rmse_mm": 30.755030551923543,
+      "mean_error_mm": -22.85592045758676,
+      "mae_by_year_mm": {
+        "2020/2021": 27.516098120854636,
+        "2021/2022": 23.017805561342616
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          74
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "Random Forest": {
+      "r2": -0.33545655717570755,
+      "mae_mm": 20.280132301842094,
+      "rmse_mm": 24.67331847745983,
+      "mean_error_mm": -5.887248045902059,
+      "mae_by_year_mm": {
+        "2020/2021": 16.98345796212479,
+        "2021/2022": 23.501882224747636
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          74
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "LightGBM": {
+      "r2": -0.33394489153098883,
+      "mae_mm": 20.238204761920585,
+      "rmse_mm": 24.659350082739795,
+      "mean_error_mm": -6.78386818826312,
+      "mae_by_year_mm": {
+        "2020/2021": 16.793600919920447,
+        "2021/2022": 23.60452215296618
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          1,
+          12
+        ],
+        [
+          3,
+          71
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "CatBoost": {
+      "r2": -0.2702853546639836,
+      "mae_mm": 19.96533039060458,
+      "rmse_mm": 24.063751143463385,
+      "mean_error_mm": -5.378950367608561,
+      "mae_by_year_mm": {
+        "2020/2021": 17.150593417469153,
+        "2021/2022": 22.71609606889602
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          74
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    },
+    "SVR": {
+      "r2": -0.7953527722848854,
+      "mae_mm": 25.213458986138846,
+      "rmse_mm": 28.60800548935032,
+      "mean_error_mm": -1.4036952796875906,
+      "mae_by_year_mm": {
+        "2020/2021": 25.18880311251139,
+        "2021/2022": 25.237554499002044
+      },
+      "confusion_labels": [
+        "no_water_loss",
+        "water_loss"
+      ],
+      "confusion_counts": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          74
+        ]
+      ],
+      "actual_class_counts": [
+        13,
+        74
+      ]
+    }
+  },
+  "best_ml_by_mae": "CatBoost",
+  "warning": "Only two years at one Australian site; model transfer to Kansas is untested."
+}

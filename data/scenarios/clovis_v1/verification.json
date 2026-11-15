@@ -1,0 +1,8 @@
+{
+  "final_test_evaluated": false,
+  "refit_on_all_data": false,
+  "scenario_code_sha256": "d81243c1851cdc338baa4d5ab3f6d521a09b8451100f3d882fa4fccda0164a92",
+  "scenario_protocol_sha256": "5f798045631603ad2c762f3aa67491c2a745cdd7bdef201ac114690188a0d082",
+  "simulation_seconds": 2.240548500000159,
+  "source_model_artifact_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d"
+}

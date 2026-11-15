@@ -1,0 +1,60 @@
+{
+  "context_policy": "Both endpoints in the same original partition.",
+  "cutoffs": [
+    {
+      "end": "2023-04-23",
+      "name": "train",
+      "start": "2022-07-16"
+    },
+    {
+      "end": "2023-04-24",
+      "name": "gap",
+      "start": "2023-04-24"
+    },
+    {
+      "end": "2023-05-08",
+      "name": "validation",
+      "start": "2023-04-25"
+    },
+    {
+      "end": "2023-05-09",
+      "name": "gap",
+      "start": "2023-05-09"
+    },
+    {
+      "end": "2024-06-23",
+      "name": "test",
+      "start": "2023-05-10"
+    }
+  ],
+  "fresh_independent_test": false,
+  "partitions": [
+    {
+      "end": "2023-04-23",
+      "name": "train",
+      "start": "2022-07-16"
+    },
+    {
+      "end": "2023-04-24",
+      "name": "gap",
+      "start": "2023-04-24"
+    },
+    {
+      "end": "2023-05-08",
+      "name": "validation",
+      "start": "2023-04-25"
+    },
+    {
+      "end": "2023-05-09",
+      "name": "gap",
+      "start": "2023-05-09"
+    },
+    {
+      "end": "2024-06-23",
+      "name": "test",
+      "start": "2023-05-10"
+    }
+  ],
+  "status": "allocation_audit_only_no_model_training",
+  "variant": "original_v1"
+}

@@ -1,0 +1,9 @@
+{
+  "computed_response_status": 200,
+  "analysis_duration_ms": 2109.9,
+  "model_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d",
+  "scenario_count": 3,
+  "trajectory_points": 684,
+  "recommendation": "do_not_plant",
+  "initial_moisture_semantics": "daily_average"
+}

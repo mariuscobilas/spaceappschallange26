@@ -1,0 +1,38 @@
+{
+  "assignment_unit": "date; all treatments share the same partition",
+  "input_sha256": {
+    "apps/api/app/ml/clovis_protocol.json": "39c656c85f36d5bb2debe4aae624621703bb60611ad2656c87994885e456b57c",
+    "data/figshare_yin_activity.xlsx": "448f37b58d01be1d58f7961199f678d9adf9ef0022b76bf5b5af8432fd5c9c10",
+    "data/figshare_yin_daily.csv": "50b4daa47ea01f7dde810fa65606f15ac1ec34934fbd789fde3bf30c6860eb09"
+  },
+  "pair_policy": "Both consecutive-day endpoints must be eligible and in the same non-gap partition.",
+  "partitions": [
+    {
+      "end": "2023-04-23",
+      "name": "train",
+      "start": "2022-07-16"
+    },
+    {
+      "end": "2023-04-24",
+      "name": "gap",
+      "start": "2023-04-24"
+    },
+    {
+      "end": "2023-05-08",
+      "name": "validation",
+      "start": "2023-04-25"
+    },
+    {
+      "end": "2023-05-09",
+      "name": "gap",
+      "start": "2023-05-09"
+    },
+    {
+      "end": "2024-06-23",
+      "name": "test",
+      "start": "2023-05-10"
+    }
+  ],
+  "protocol_version": "clovis-data-v1",
+  "test_policy": "Do not use validation/test targets to fit preprocessing or tune on final test results."
+}

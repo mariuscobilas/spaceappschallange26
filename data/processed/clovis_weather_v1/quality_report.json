@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "daily_coverage": "passed",
+    "location": "passed",
+    "parameter_units": "passed",
+    "partition_boundaries": "passed",
+    "source_hashes": "passed",
+    "target_day_join": "passed"
+  },
+  "eligible_weather_days": 9131,
+  "joined_rows": {
+    "test": 1548,
+    "train": 1048,
+    "validation": 52
+  },
+  "limitations": [
+    "Weather is gridded, not the study's on-site sensor readings.",
+    "Station civil-day versus NASA local-solar-day alignment remains an explicit assumption.",
+    "Current-day observed weather is a hindcast input; future runs must use scenario weather.",
+    "No model fitting, statistical feature selection, or held-out target analysis was performed."
+  ],
+  "rows_dropped": 0,
+  "split_manifest_unchanged": true,
+  "training_script_sha256": "5137f3f6594653f340bc4ad3710ef41471e384bd17af5585c60b7a6d27d6b4c2",
+  "weather_days": 9131,
+  "weather_flags": {},
+  "weather_version": "clovis-power-v1"
+}

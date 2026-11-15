@@ -1,0 +1,347 @@
+{
+  "api_version": "1.0",
+  "execution_mode": "computed",
+  "status": "experimental",
+  "request_id": "99f838d4-7e99-4585-bd91-339a963783a2",
+  "request": {
+    "scenario": {
+      "site_id": "clovis_nm",
+      "decision_date": "2027-02-23",
+      "initial_soil_moisture_m3_m3": 0.25,
+      "cover_crop": "pea",
+      "cover_planting_date": "2027-02-24",
+      "cover_termination_date": "2027-05-22",
+      "next_crop": "winter_wheat",
+      "next_crop_planting_date": "2027-10-09",
+      "irrigation_schedule": []
+    },
+    "area_ha": 1.0,
+    "economics": {
+      "currency": "USD",
+      "baseline_wheat_yield_t_ha": 3.0,
+      "wheat_price_usd_t": 250.0,
+      "moisture_to_yield_sensitivity": 1.0,
+      "max_relative_yield_change": 0.25,
+      "seed_cost_usd_ha": 50.0,
+      "establishment_cost_usd_ha": 10.0,
+      "termination_cost_usd_ha": 25.0,
+      "additional_cost_usd_ha": 0.0,
+      "net_cover_revenue_usd_ha": 100.0,
+      "incentive_usd_ha": 0.0
+    },
+    "risk_rules": {
+      "moderate_relative_moisture_loss": 0.05,
+      "high_relative_moisture_loss": 0.15
+    },
+    "include_daily_trajectory": false
+  },
+  "model": {
+    "name": "forest_depth_4",
+    "artifact_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d",
+    "source_run_id": "e60c4eb5b91d4a13b6bce45138efb0af",
+    "status": "experimental_not_selected",
+    "validation_mae_m3_m3": 0.002558808492745021,
+    "persistence_validation_mae_m3_m3": 0.0019242788653846153,
+    "seasonal_validation_status": "unvalidated"
+  },
+  "weather": {
+    "provider": "NASA_POWER",
+    "source_kind": "historical_scenarios",
+    "history_start_date": "2001-01-01",
+    "history_end_date": "2025-12-31",
+    "time_standard": "LST",
+    "calendar_alignment_assumed": true,
+    "probabilities_assigned": false
+  },
+  "initial_moisture": {
+    "value_m3_m3": 0.25,
+    "source": "user_supplied",
+    "source_dates": [],
+    "interpretation": "decision_date_daily_average"
+  },
+  "moisture_unit": "m3/m3",
+  "sensor_depth_cm": 5,
+  "moisture_temporal_resolution": "daily_average",
+  "scenarios": [
+    {
+      "scenario": "dry",
+      "historical_start_date": "2013-02-24",
+      "historical_end_date": "2013-10-09",
+      "requested_rainfall_percentile": 10.0,
+      "actual_rainfall_percentile": 11.11111111111111,
+      "eligible_historical_seasons": 19,
+      "simulation_days": 228,
+      "total_rain_mm": 285.8,
+      "total_irrigation_mm": 0.0,
+      "moisture": {
+        "cover_at_planting_m3_m3": 0.8595626594358025,
+        "fallow_at_planting_m3_m3": 0.8595626594358025,
+        "cover_final_7_day_average_m3_m3": 0.8627346315573888,
+        "fallow_final_7_day_average_m3_m3": 0.8627346315573888,
+        "final_7_day_difference_m3_m3": 0.0,
+        "relative_final_7_day_difference": 0.0,
+        "minimum_cover_m3_m3": 0.09360469834400165,
+        "minimum_fallow_m3_m3": 0.09360469834400165
+      },
+      "water_risk": {
+        "level": "low",
+        "relative_loss": 0.0,
+        "method": "editable_relative_moisture_loss_rule",
+        "validated": false
+      },
+      "quality": {
+        "reliability": "invalid",
+        "usable_for_recommendation": false,
+        "cover_clipped_days": 18,
+        "fallow_clipped_days": 18,
+        "cover_unseen_phase_days": 140,
+        "fallow_unseen_phase_days": 140,
+        "cover_out_of_training_range": {
+          "days_since_cover_planting": 169,
+          "days_since_cover_termination": 141,
+          "humidity_pct": 4,
+          "previous_moisture_m3_m3": 122,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 41
+        },
+        "fallow_out_of_training_range": {
+          "humidity_pct": 4,
+          "previous_moisture_m3_m3": 122,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 41
+        },
+        "flags": [
+          "experimental_seasonal_rollout",
+          "features_outside_training_range",
+          "model_failed_validation_adoption_checks",
+          "moisture_predictions_clipped",
+          "no_detectable_final_week_cover_response",
+          "seasonal_rollout_unvalidated",
+          "station_day_alignment_assumed",
+          "surface_moisture_only",
+          "unseen_management_phase"
+        ]
+      },
+      "finances": {
+        "status": "calculated",
+        "interpretation": "illustrative_assumption_based",
+        "usable_for_recommendation": false,
+        "raw_relative_yield_change": 0.0,
+        "relative_yield_change": 0.0,
+        "yield_change_was_capped": false,
+        "fallow_wheat_yield_t_ha": 3.0,
+        "cover_wheat_yield_t_ha": 3.0,
+        "fallow_wheat_gross_revenue_usd_ha": 750.0,
+        "cover_wheat_gross_revenue_usd_ha": 750.0,
+        "wheat_revenue_difference_usd_ha": 0.0,
+        "total_cover_cost_usd_ha": 85.0,
+        "net_cover_revenue_usd_ha": 100.0,
+        "incentive_usd_ha": 0.0,
+        "incremental_net_benefit_usd_ha": 15.0,
+        "incremental_net_benefit_usd_total": 15.0,
+        "additional_revenue_to_break_even_usd_ha": 0.0,
+        "financial_signal": "positive"
+      },
+      "daily_trajectory": null
+    },
+    {
+      "scenario": "typical",
+      "historical_start_date": "2018-02-24",
+      "historical_end_date": "2018-10-09",
+      "requested_rainfall_percentile": 50.0,
+      "actual_rainfall_percentile": 50.0,
+      "eligible_historical_seasons": 19,
+      "simulation_days": 228,
+      "total_rain_mm": 350.76,
+      "total_irrigation_mm": 0.0,
+      "moisture": {
+        "cover_at_planting_m3_m3": 1.0,
+        "fallow_at_planting_m3_m3": 1.0,
+        "cover_final_7_day_average_m3_m3": 0.9967712463705556,
+        "fallow_final_7_day_average_m3_m3": 0.9967712463705556,
+        "final_7_day_difference_m3_m3": 0.0,
+        "relative_final_7_day_difference": 0.0,
+        "minimum_cover_m3_m3": 0.15346579758706919,
+        "minimum_fallow_m3_m3": 0.15329582570447037
+      },
+      "water_risk": {
+        "level": "low",
+        "relative_loss": 0.0,
+        "method": "editable_relative_moisture_loss_rule",
+        "validated": false
+      },
+      "quality": {
+        "reliability": "invalid",
+        "usable_for_recommendation": false,
+        "cover_clipped_days": 16,
+        "fallow_clipped_days": 16,
+        "cover_unseen_phase_days": 140,
+        "fallow_unseen_phase_days": 140,
+        "cover_out_of_training_range": {
+          "days_since_cover_planting": 169,
+          "days_since_cover_termination": 141,
+          "humidity_pct": 1,
+          "previous_moisture_m3_m3": 116,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 36
+        },
+        "fallow_out_of_training_range": {
+          "humidity_pct": 1,
+          "previous_moisture_m3_m3": 116,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 36
+        },
+        "flags": [
+          "experimental_seasonal_rollout",
+          "features_outside_training_range",
+          "model_failed_validation_adoption_checks",
+          "moisture_predictions_clipped",
+          "no_detectable_final_week_cover_response",
+          "seasonal_rollout_unvalidated",
+          "station_day_alignment_assumed",
+          "surface_moisture_only",
+          "unseen_management_phase"
+        ]
+      },
+      "finances": {
+        "status": "calculated",
+        "interpretation": "illustrative_assumption_based",
+        "usable_for_recommendation": false,
+        "raw_relative_yield_change": 0.0,
+        "relative_yield_change": 0.0,
+        "yield_change_was_capped": false,
+        "fallow_wheat_yield_t_ha": 3.0,
+        "cover_wheat_yield_t_ha": 3.0,
+        "fallow_wheat_gross_revenue_usd_ha": 750.0,
+        "cover_wheat_gross_revenue_usd_ha": 750.0,
+        "wheat_revenue_difference_usd_ha": 0.0,
+        "total_cover_cost_usd_ha": 85.0,
+        "net_cover_revenue_usd_ha": 100.0,
+        "incentive_usd_ha": 0.0,
+        "incremental_net_benefit_usd_ha": 15.0,
+        "incremental_net_benefit_usd_total": 15.0,
+        "additional_revenue_to_break_even_usd_ha": 0.0,
+        "financial_signal": "positive"
+      },
+      "daily_trajectory": null
+    },
+    {
+      "scenario": "very_rainy",
+      "historical_start_date": "2025-02-24",
+      "historical_end_date": "2025-10-09",
+      "requested_rainfall_percentile": 90.0,
+      "actual_rainfall_percentile": 88.88888888888889,
+      "eligible_historical_seasons": 19,
+      "simulation_days": 228,
+      "total_rain_mm": 460.58,
+      "total_irrigation_mm": 0.0,
+      "moisture": {
+        "cover_at_planting_m3_m3": 0.9784871178777166,
+        "fallow_at_planting_m3_m3": 0.9784871178777166,
+        "cover_final_7_day_average_m3_m3": 0.9779982711526982,
+        "fallow_final_7_day_average_m3_m3": 0.9779982711526982,
+        "final_7_day_difference_m3_m3": 0.0,
+        "relative_final_7_day_difference": 0.0,
+        "minimum_cover_m3_m3": 0.21920809877832564,
+        "minimum_fallow_m3_m3": 0.21920809877832564
+      },
+      "water_risk": {
+        "level": "low",
+        "relative_loss": 0.0,
+        "method": "editable_relative_moisture_loss_rule",
+        "validated": false
+      },
+      "quality": {
+        "reliability": "invalid",
+        "usable_for_recommendation": false,
+        "cover_clipped_days": 39,
+        "fallow_clipped_days": 39,
+        "cover_unseen_phase_days": 140,
+        "fallow_unseen_phase_days": 140,
+        "cover_out_of_training_range": {
+          "days_since_cover_planting": 169,
+          "days_since_cover_termination": 141,
+          "previous_moisture_m3_m3": 149,
+          "rain_mm": 1,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 27,
+          "wind_speed_m_s": 2
+        },
+        "fallow_out_of_training_range": {
+          "previous_moisture_m3_m3": 149,
+          "rain_mm": 1,
+          "season_cos": 28,
+          "solar_radiation_mj_m2_day": 27,
+          "wind_speed_m_s": 2
+        },
+        "flags": [
+          "experimental_seasonal_rollout",
+          "features_outside_training_range",
+          "model_failed_validation_adoption_checks",
+          "moisture_predictions_clipped",
+          "no_detectable_final_week_cover_response",
+          "seasonal_rollout_unvalidated",
+          "station_day_alignment_assumed",
+          "surface_moisture_only",
+          "unseen_management_phase"
+        ]
+      },
+      "finances": {
+        "status": "calculated",
+        "interpretation": "illustrative_assumption_based",
+        "usable_for_recommendation": false,
+        "raw_relative_yield_change": 0.0,
+        "relative_yield_change": 0.0,
+        "yield_change_was_capped": false,
+        "fallow_wheat_yield_t_ha": 3.0,
+        "cover_wheat_yield_t_ha": 3.0,
+        "fallow_wheat_gross_revenue_usd_ha": 750.0,
+        "cover_wheat_gross_revenue_usd_ha": 750.0,
+        "wheat_revenue_difference_usd_ha": 0.0,
+        "total_cover_cost_usd_ha": 85.0,
+        "net_cover_revenue_usd_ha": 100.0,
+        "incentive_usd_ha": 0.0,
+        "incremental_net_benefit_usd_ha": 15.0,
+        "incremental_net_benefit_usd_total": 15.0,
+        "additional_revenue_to_break_even_usd_ha": 0.0,
+        "financial_signal": "positive"
+      },
+      "daily_trajectory": null
+    }
+  ],
+  "financial_summary": {
+    "minimum_incremental_net_benefit_usd_ha": 15.0,
+    "maximum_incremental_net_benefit_usd_ha": 15.0,
+    "cases_with_positive_incremental_benefit": 3,
+    "calculated_cases": 3,
+    "case_count": 3,
+    "interpretation": "unweighted_scenario_range_not_expected_return"
+  },
+  "recommendation": {
+    "status": "provisional",
+    "validated": false,
+    "method_version": "planting-rule-v1",
+    "decision": "plant",
+    "reason_codes": [
+      "financial_conversion_assumed",
+      "model_failed_validation_checks",
+      "moisture_predictions_clipped",
+      "no_detectable_final_week_cover_response",
+      "positive_incremental_return_in_all_cases",
+      "provisional_unvalidated_advice",
+      "seasonal_model_unvalidated",
+      "surface_moisture_only"
+    ],
+    "message": "Provisional demo advice: plant the selected cover crop; all three cases have positive incremental return and none has high relative moisture loss."
+  },
+  "assumptions": [
+    "Same initial daily-average water, weather, and irrigation are used for cover and fallow.",
+    "Moisture is a daily average at 5 cm, not root-zone water storage or an end-of-day sensor reading.",
+    "Historical rainfall cases are scenarios without forecast probabilities.",
+    "Station day alignment with NASA local solar time is assumed.",
+    "Yield change is an editable moisture sensitivity with a cap, not a learned or validated yield forecast.",
+    "Incremental net benefit includes cover costs and specified cover revenue/incentives; common wheat production costs are excluded.",
+    "Water-risk labels are separate illustrative rules and do not multiply yield or revenue again.",
+    "Clipping or identical final-week predictions do not establish a physically valid crop comparison."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "scenario": {
+    "site_id": "clovis_nm",
+    "decision_date": "2027-02-23",
+    "initial_soil_moisture_m3_m3": 0.25,
+    "cover_crop": "pea",
+    "cover_planting_date": "2027-02-24",
+    "cover_termination_date": "2027-05-22",
+    "next_crop": "winter_wheat",
+    "next_crop_planting_date": "2027-10-09",
+    "irrigation_schedule": []
+  },
+  "area_ha": 1.0,
+  "economics": {
+    "currency": "USD",
+    "baseline_wheat_yield_t_ha": 3.0,
+    "wheat_price_usd_t": 250.0,
+    "moisture_to_yield_sensitivity": 1.0,
+    "max_relative_yield_change": 0.25,
+    "seed_cost_usd_ha": 50.0,
+    "establishment_cost_usd_ha": 10.0,
+    "termination_cost_usd_ha": 25.0,
+    "additional_cost_usd_ha": 0.0,
+    "net_cover_revenue_usd_ha": 0.0,
+    "incentive_usd_ha": 0.0
+  },
+  "risk_rules": {
+    "moderate_relative_moisture_loss": 0.05,
+    "high_relative_moisture_loss": 0.15
+  },
+  "include_daily_trajectory": true
+}

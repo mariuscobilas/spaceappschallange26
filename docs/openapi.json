@@ -1,0 +1,3322 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Field Shift API",
+    "description": "Clovis MVP: historical moisture scenarios and illustrative financial/risk calculations. Model outputs remain experimental.",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/api/v1/land-cover": {
+      "get": {
+        "summary": "Get Land Cover",
+        "operationId": "get_land_cover_api_v1_land_cover_get",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Longitude"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 1997,
+              "title": "Year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LandCoverResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/field-conditions": {
+      "get": {
+        "summary": "Get Field Conditions",
+        "operationId": "get_field_conditions_api_v1_field_conditions_get",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Latitude"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Longitude"
+            }
+          },
+          {
+            "name": "as_of",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldConditionsResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Readiness",
+        "operationId": "readiness_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/options": {
+      "get": {
+        "tags": [
+          "Frontend"
+        ],
+        "summary": "Options",
+        "operationId": "options_api_v1_options_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptionsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analyze": {
+      "post": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Compare a cover crop with fallow under three historical weather cases",
+        "operationId": "analyze_api_v1_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest-Input"
+              },
+              "example": {
+                "scenario": {
+                  "site_id": "clovis_nm",
+                  "decision_date": "2027-02-23",
+                  "initial_soil_moisture_m3_m3": 0.25,
+                  "cover_crop": "pea",
+                  "cover_planting_date": "2027-02-24",
+                  "cover_termination_date": "2027-05-22",
+                  "next_crop": "winter_wheat",
+                  "next_crop_planting_date": "2027-10-09",
+                  "irrigation_schedule": []
+                },
+                "area_ha": 1.0,
+                "economics": {
+                  "currency": "USD",
+                  "baseline_wheat_yield_t_ha": 3.0,
+                  "wheat_price_usd_t": 250.0,
+                  "moisture_to_yield_sensitivity": 1.0,
+                  "max_relative_yield_change": 0.25,
+                  "seed_cost_usd_ha": 50.0,
+                  "establishment_cost_usd_ha": 10.0,
+                  "termination_cost_usd_ha": 25.0,
+                  "additional_cost_usd_ha": 0.0,
+                  "net_cover_revenue_usd_ha": 0.0,
+                  "incentive_usd_ha": 0.0
+                },
+                "risk_rules": {
+                  "moderate_relative_moisture_loss": 0.05,
+                  "high_relative_moisture_loss": 0.15
+                },
+                "include_daily_trajectory": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/examples/analysis": {
+      "get": {
+        "tags": [
+          "Frontend"
+        ],
+        "summary": "Explicit saved example; does not run the model",
+        "operationId": "analysis_example_api_v1_examples_analysis_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisExample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/mock": {
+      "post": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Mock",
+        "operationId": "mock_api_v1_mock_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MockRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MockResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/field-shift/analyze": {
+      "post": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Analyze Field",
+        "description": "Analyzes farm field resilience against NASA satellite environmental data.\nProvides climate risk metrics and recommended crop / management shifts.",
+        "operationId": "analyze_field_api_v1_field_shift_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldAnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldAnalysisResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/benchmark": {
+      "get": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Benchmark Results",
+        "description": "Return the most recent season-held-out five-model evaluation.",
+        "operationId": "benchmark_results_api_v1_benchmark_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Benchmark Results Api V1 Benchmark Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/benchmark/australia": {
+      "get": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Australia Benchmark Results",
+        "operationId": "australia_benchmark_results_api_v1_benchmark_australia_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Australia Benchmark Results Api V1 Benchmark Australia Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/benchmark/predictions": {
+      "get": {
+        "tags": [
+          "Existing Meridian routes"
+        ],
+        "summary": "Benchmark Predictions",
+        "description": "Return held-out observed/predicted pairs for plots and a confusion-matrix view.",
+        "operationId": "benchmark_predictions_api_v1_benchmark_predictions_get",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Treatment mean",
+              "title": "Model"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Benchmark Predictions Api V1 Benchmark Predictions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdaptationAction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "stepNumber": {
+            "type": "integer",
+            "title": "Stepnumber"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "immediate_season",
+              "next_year",
+              "long_term"
+            ],
+            "title": "Phase"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "timeframe": {
+            "type": "string",
+            "title": "Timeframe"
+          },
+          "estimatedCostEstimateUsd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimatedcostestimateusd"
+          },
+          "expectedBenefit": {
+            "type": "string",
+            "title": "Expectedbenefit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "stepNumber",
+          "phase",
+          "title",
+          "action",
+          "timeframe",
+          "expectedBenefit"
+        ],
+        "title": "AdaptationAction"
+      },
+      "AnalysisExample": {
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/AnalysisRequest-Output"
+          },
+          "response": {
+            "$ref": "#/components/schemas/AnalysisResponse"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request",
+          "response"
+        ],
+        "title": "AnalysisExample"
+      },
+      "AnalysisRequest-Input": {
+        "properties": {
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioInput-Input"
+          },
+          "area_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Area Ha",
+            "default": 1.0
+          },
+          "economics": {
+            "$ref": "#/components/schemas/EconomicAssumptions-Input"
+          },
+          "risk_rules": {
+            "$ref": "#/components/schemas/RiskRules-Input"
+          },
+          "include_daily_trajectory": {
+            "type": "boolean",
+            "title": "Include Daily Trajectory",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario"
+        ],
+        "title": "AnalysisRequest"
+      },
+      "AnalysisRequest-Output": {
+        "properties": {
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioInput-Output"
+          },
+          "area_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Area Ha",
+            "default": 1.0
+          },
+          "economics": {
+            "$ref": "#/components/schemas/EconomicAssumptions-Output"
+          },
+          "risk_rules": {
+            "$ref": "#/components/schemas/RiskRules-Output"
+          },
+          "include_daily_trajectory": {
+            "type": "boolean",
+            "title": "Include Daily Trajectory",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario",
+          "area_ha",
+          "economics",
+          "risk_rules",
+          "include_daily_trajectory"
+        ],
+        "title": "AnalysisRequest"
+      },
+      "AnalysisResponse": {
+        "properties": {
+          "api_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Api Version",
+            "default": "1.0"
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": [
+              "computed",
+              "example"
+            ],
+            "title": "Execution Mode"
+          },
+          "status": {
+            "type": "string",
+            "const": "experimental",
+            "title": "Status",
+            "default": "experimental"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "request": {
+            "$ref": "#/components/schemas/AnalysisRequest-Output"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ModelInfo"
+          },
+          "weather": {
+            "$ref": "#/components/schemas/WeatherInfo"
+          },
+          "initial_moisture": {
+            "$ref": "#/components/schemas/InitialMoisture"
+          },
+          "moisture_unit": {
+            "type": "string",
+            "const": "m3/m3",
+            "title": "Moisture Unit",
+            "default": "m3/m3"
+          },
+          "sensor_depth_cm": {
+            "type": "integer",
+            "const": 5,
+            "title": "Sensor Depth Cm",
+            "default": 5
+          },
+          "moisture_temporal_resolution": {
+            "type": "string",
+            "const": "daily_average",
+            "title": "Moisture Temporal Resolution",
+            "default": "daily_average"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioResult"
+            },
+            "type": "array",
+            "title": "Scenarios"
+          },
+          "financial_summary": {
+            "$ref": "#/components/schemas/FinancialSummary"
+          },
+          "recommendation": {
+            "$ref": "#/components/schemas/Recommendation"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "api_version",
+          "execution_mode",
+          "status",
+          "request_id",
+          "request",
+          "model",
+          "weather",
+          "initial_moisture",
+          "moisture_unit",
+          "sensor_depth_cm",
+          "moisture_temporal_resolution",
+          "scenarios",
+          "financial_summary",
+          "recommendation",
+          "assumptions"
+        ],
+        "title": "AnalysisResponse"
+      },
+      "CalendarLimits": {
+        "properties": {
+          "decision_year_min": {
+            "type": "integer",
+            "title": "Decision Year Min",
+            "default": 2001
+          },
+          "planting_year_max": {
+            "type": "integer",
+            "title": "Planting Year Max",
+            "default": 2100
+          },
+          "minimum_horizon_days": {
+            "type": "integer",
+            "title": "Minimum Horizon Days",
+            "default": 7
+          },
+          "maximum_horizon_days": {
+            "type": "integer",
+            "title": "Maximum Horizon Days",
+            "default": 365
+          },
+          "cover_planting_months": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Cover Planting Months"
+          },
+          "cover_termination_months": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Cover Termination Months"
+          },
+          "wheat_planting_months": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Wheat Planting Months"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision_year_min",
+          "planting_year_max",
+          "minimum_horizon_days",
+          "maximum_horizon_days",
+          "cover_planting_months",
+          "cover_termination_months",
+          "wheat_planting_months"
+        ],
+        "title": "CalendarLimits"
+      },
+      "Choice": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "Choice"
+      },
+      "ClimateRiskFactor": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "heat_stress",
+              "drought",
+              "waterlogging",
+              "frost_shift",
+              "pest_disease"
+            ],
+            "title": "Category"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "title": "Level"
+          },
+          "impactScore": {
+            "type": "number",
+            "title": "Impactscore"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "mitigationAdvice": {
+            "type": "string",
+            "title": "Mitigationadvice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "level",
+          "impactScore",
+          "description",
+          "mitigationAdvice"
+        ],
+        "title": "ClimateRiskFactor"
+      },
+      "ClimateTrend": {
+        "properties": {
+          "warmingRatePerDecadeCelsius": {
+            "type": "number",
+            "title": "Warmingrateperdecadecelsius"
+          },
+          "precipitationTrendPct": {
+            "type": "number",
+            "title": "Precipitationtrendpct"
+          },
+          "extremeHeatDaysProjected": {
+            "type": "integer",
+            "title": "Extremeheatdaysprojected"
+          },
+          "consecutiveDryDaysAverage": {
+            "type": "integer",
+            "title": "Consecutivedrydaysaverage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "warmingRatePerDecadeCelsius",
+          "precipitationTrendPct",
+          "extremeHeatDaysProjected",
+          "consecutiveDryDaysAverage"
+        ],
+        "title": "ClimateTrend"
+      },
+      "CropShiftOption": {
+        "properties": {
+          "crop": {
+            "type": "string",
+            "enum": [
+              "corn",
+              "wheat",
+              "soybeans",
+              "barley",
+              "cotton",
+              "rice",
+              "sorghum",
+              "sunflower",
+              "grapes",
+              "potatoes",
+              "other"
+            ],
+            "title": "Crop"
+          },
+          "cropName": {
+            "type": "string",
+            "title": "Cropname"
+          },
+          "suitabilityScore": {
+            "type": "number",
+            "title": "Suitabilityscore"
+          },
+          "expectedYieldDeltaPct": {
+            "type": "number",
+            "title": "Expectedyielddeltapct"
+          },
+          "waterDemandRating": {
+            "type": "string",
+            "enum": [
+              "very_low",
+              "low",
+              "moderate",
+              "high"
+            ],
+            "title": "Waterdemandrating"
+          },
+          "heatToleranceRating": {
+            "type": "string",
+            "enum": [
+              "poor",
+              "moderate",
+              "good",
+              "excellent"
+            ],
+            "title": "Heattolerancerating"
+          },
+          "estimatedTransitionCostUsdPerHa": {
+            "type": "number",
+            "title": "Estimatedtransitioncostusdperha"
+          },
+          "paybackPeriodYears": {
+            "type": "number",
+            "title": "Paybackperiodyears"
+          },
+          "recommendationReason": {
+            "type": "string",
+            "title": "Recommendationreason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "crop",
+          "cropName",
+          "suitabilityScore",
+          "expectedYieldDeltaPct",
+          "waterDemandRating",
+          "heatToleranceRating",
+          "estimatedTransitionCostUsdPerHa",
+          "paybackPeriodYears",
+          "recommendationReason"
+        ],
+        "title": "CropShiftOption"
+      },
+      "EconomicAssumptions-Input": {
+        "properties": {
+          "currency": {
+            "type": "string",
+            "const": "USD",
+            "title": "Currency",
+            "default": "USD"
+          },
+          "baseline_wheat_yield_t_ha": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Baseline Wheat Yield T Ha",
+            "default": 3.0
+          },
+          "wheat_price_usd_t": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Wheat Price Usd T",
+            "default": 250.0
+          },
+          "moisture_to_yield_sensitivity": {
+            "type": "number",
+            "maximum": 10.0,
+            "minimum": 0.0,
+            "title": "Moisture To Yield Sensitivity",
+            "description": "Illustrative multiplier: relative final-week moisture difference times this value gives uncapped relative yield change.",
+            "default": 1.0
+          },
+          "max_relative_yield_change": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Max Relative Yield Change",
+            "default": 0.25
+          },
+          "seed_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Seed Cost Usd Ha",
+            "default": 50.0
+          },
+          "establishment_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Establishment Cost Usd Ha",
+            "default": 10.0
+          },
+          "termination_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Termination Cost Usd Ha",
+            "default": 25.0
+          },
+          "additional_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Additional Cost Usd Ha",
+            "default": 0.0
+          },
+          "net_cover_revenue_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": -1000000.0,
+            "title": "Net Cover Revenue Usd Ha",
+            "default": 0.0
+          },
+          "incentive_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Incentive Usd Ha",
+            "default": 0.0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "EconomicAssumptions"
+      },
+      "EconomicAssumptions-Output": {
+        "properties": {
+          "currency": {
+            "type": "string",
+            "const": "USD",
+            "title": "Currency",
+            "default": "USD"
+          },
+          "baseline_wheat_yield_t_ha": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Baseline Wheat Yield T Ha",
+            "default": 3.0
+          },
+          "wheat_price_usd_t": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Wheat Price Usd T",
+            "default": 250.0
+          },
+          "moisture_to_yield_sensitivity": {
+            "type": "number",
+            "maximum": 10.0,
+            "minimum": 0.0,
+            "title": "Moisture To Yield Sensitivity",
+            "description": "Illustrative multiplier: relative final-week moisture difference times this value gives uncapped relative yield change.",
+            "default": 1.0
+          },
+          "max_relative_yield_change": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Max Relative Yield Change",
+            "default": 0.25
+          },
+          "seed_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Seed Cost Usd Ha",
+            "default": 50.0
+          },
+          "establishment_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Establishment Cost Usd Ha",
+            "default": 10.0
+          },
+          "termination_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Termination Cost Usd Ha",
+            "default": 25.0
+          },
+          "additional_cost_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Additional Cost Usd Ha",
+            "default": 0.0
+          },
+          "net_cover_revenue_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": -1000000.0,
+            "title": "Net Cover Revenue Usd Ha",
+            "default": 0.0
+          },
+          "incentive_usd_ha": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Incentive Usd Ha",
+            "default": 0.0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "currency",
+          "baseline_wheat_yield_t_ha",
+          "wheat_price_usd_t",
+          "moisture_to_yield_sensitivity",
+          "max_relative_yield_change",
+          "seed_cost_usd_ha",
+          "establishment_cost_usd_ha",
+          "termination_cost_usd_ha",
+          "additional_cost_usd_ha",
+          "net_cover_revenue_usd_ha",
+          "incentive_usd_ha"
+        ],
+        "title": "EconomicAssumptions"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            },
+            "type": "array",
+            "title": "Details"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "details"
+        ],
+        "title": "ErrorBody"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "error"
+        ],
+        "title": "ErrorResponse"
+      },
+      "FieldAnalysisRequest": {
+        "properties": {
+          "field": {
+            "$ref": "#/components/schemas/FieldProfile"
+          },
+          "nasaOverride": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nasaoverride"
+          },
+          "planningHorizonYears": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planninghorizonyears",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "field"
+        ],
+        "title": "FieldAnalysisRequest"
+      },
+      "FieldAnalysisResponse": {
+        "properties": {
+          "fieldId": {
+            "type": "string",
+            "title": "Fieldid"
+          },
+          "fieldName": {
+            "type": "string",
+            "title": "Fieldname"
+          },
+          "environmentSnapshot": {
+            "$ref": "#/components/schemas/NasaEnvironmentalSnapshot"
+          },
+          "prediction": {
+            "$ref": "#/components/schemas/FieldShiftPrediction"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fieldId",
+          "fieldName",
+          "environmentSnapshot",
+          "prediction"
+        ],
+        "title": "FieldAnalysisResponse"
+      },
+      "FieldConditionMeasure": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "mm",
+              "fraction"
+            ],
+            "title": "Unit"
+          },
+          "periodStart": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Periodstart"
+          },
+          "periodEnd": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Periodend"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "title": "Sourceurl"
+          },
+          "spatialResolution": {
+            "type": "string",
+            "title": "Spatialresolution"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "value",
+          "unit",
+          "periodStart",
+          "periodEnd",
+          "source",
+          "sourceUrl",
+          "spatialResolution",
+          "message"
+        ],
+        "title": "FieldConditionMeasure"
+      },
+      "FieldConditionsResult": {
+        "properties": {
+          "sample": {
+            "$ref": "#/components/schemas/GeoCoordinate"
+          },
+          "requestedDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Requesteddate"
+          },
+          "retrievedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrievedat"
+          },
+          "precipitation30d": {
+            "$ref": "#/components/schemas/FieldConditionMeasure"
+          },
+          "rootZoneWetness": {
+            "$ref": "#/components/schemas/FieldConditionMeasure"
+          },
+          "availableWaterStorage": {
+            "$ref": "#/components/schemas/FieldConditionMeasure"
+          },
+          "soilMapUnit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Soilmapunit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sample",
+          "requestedDate",
+          "retrievedAt",
+          "precipitation30d",
+          "rootZoneWetness",
+          "availableWaterStorage",
+          "soilMapUnit"
+        ],
+        "title": "FieldConditionsResult"
+      },
+      "FieldError": {
+        "properties": {
+          "location": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "location",
+          "message",
+          "type"
+        ],
+        "title": "FieldError"
+      },
+      "FieldProfile": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "location": {
+            "$ref": "#/components/schemas/GeoCoordinate"
+          },
+          "boundary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoPolygon"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "areaHectares": {
+            "type": "number",
+            "title": "Areahectares"
+          },
+          "currentCrop": {
+            "type": "string",
+            "enum": [
+              "corn",
+              "wheat",
+              "soybeans",
+              "barley",
+              "cotton",
+              "rice",
+              "sorghum",
+              "sunflower",
+              "grapes",
+              "potatoes",
+              "other"
+            ],
+            "title": "Currentcrop"
+          },
+          "plantingDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plantingdate"
+          },
+          "soilType": {
+            "type": "string",
+            "enum": [
+              "clay",
+              "sandy_clay",
+              "silty_clay",
+              "clay_loam",
+              "sandy_clay_loam",
+              "silty_clay_loam",
+              "loam",
+              "sandy_loam",
+              "loamy_sand",
+              "sand",
+              "silt_loam",
+              "silt"
+            ],
+            "title": "Soiltype"
+          },
+          "irrigation": {
+            "type": "string",
+            "enum": [
+              "rainfed",
+              "drip",
+              "sprinkler",
+              "center_pivot",
+              "furrow_flood",
+              "none"
+            ],
+            "title": "Irrigation"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "location",
+          "areaHectares",
+          "currentCrop",
+          "soilType",
+          "irrigation"
+        ],
+        "title": "FieldProfile"
+      },
+      "FieldShiftPrediction": {
+        "properties": {
+          "predictionId": {
+            "type": "string",
+            "title": "Predictionid"
+          },
+          "fieldId": {
+            "type": "string",
+            "title": "Fieldid"
+          },
+          "generatedAt": {
+            "type": "string",
+            "title": "Generatedat"
+          },
+          "modelVersion": {
+            "type": "string",
+            "title": "Modelversion"
+          },
+          "confidenceScore": {
+            "type": "number",
+            "title": "Confidencescore"
+          },
+          "vulnerabilityScore": {
+            "type": "number",
+            "title": "Vulnerabilityscore"
+          },
+          "primaryRiskSummary": {
+            "type": "string",
+            "title": "Primaryrisksummary"
+          },
+          "riskFactors": {
+            "items": {
+              "$ref": "#/components/schemas/ClimateRiskFactor"
+            },
+            "type": "array",
+            "title": "Riskfactors"
+          },
+          "recommendedCrops": {
+            "items": {
+              "$ref": "#/components/schemas/CropShiftOption"
+            },
+            "type": "array",
+            "title": "Recommendedcrops"
+          },
+          "suggestedPlantingWindowShiftDays": {
+            "type": "integer",
+            "title": "Suggestedplantingwindowshiftdays",
+            "default": 0
+          },
+          "recommendedIrrigationAdjustment": {
+            "type": "string",
+            "title": "Recommendedirrigationadjustment",
+            "default": ""
+          },
+          "actionPlan": {
+            "items": {
+              "$ref": "#/components/schemas/AdaptationAction"
+            },
+            "type": "array",
+            "title": "Actionplan"
+          }
+        },
+        "type": "object",
+        "required": [
+          "predictionId",
+          "fieldId",
+          "generatedAt",
+          "modelVersion",
+          "confidenceScore",
+          "vulnerabilityScore",
+          "primaryRiskSummary"
+        ],
+        "title": "FieldShiftPrediction"
+      },
+      "FinancialResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "calculated",
+              "insufficient_moisture_baseline"
+            ],
+            "title": "Status"
+          },
+          "interpretation": {
+            "type": "string",
+            "const": "illustrative_assumption_based",
+            "title": "Interpretation",
+            "default": "illustrative_assumption_based"
+          },
+          "usable_for_recommendation": {
+            "type": "boolean",
+            "const": false,
+            "title": "Usable For Recommendation",
+            "default": false
+          },
+          "raw_relative_yield_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raw Relative Yield Change"
+          },
+          "relative_yield_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relative Yield Change"
+          },
+          "yield_change_was_capped": {
+            "type": "boolean",
+            "title": "Yield Change Was Capped"
+          },
+          "fallow_wheat_yield_t_ha": {
+            "type": "number",
+            "title": "Fallow Wheat Yield T Ha"
+          },
+          "cover_wheat_yield_t_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Wheat Yield T Ha"
+          },
+          "fallow_wheat_gross_revenue_usd_ha": {
+            "type": "number",
+            "title": "Fallow Wheat Gross Revenue Usd Ha"
+          },
+          "cover_wheat_gross_revenue_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Wheat Gross Revenue Usd Ha"
+          },
+          "wheat_revenue_difference_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wheat Revenue Difference Usd Ha"
+          },
+          "total_cover_cost_usd_ha": {
+            "type": "number",
+            "title": "Total Cover Cost Usd Ha"
+          },
+          "net_cover_revenue_usd_ha": {
+            "type": "number",
+            "title": "Net Cover Revenue Usd Ha"
+          },
+          "incentive_usd_ha": {
+            "type": "number",
+            "title": "Incentive Usd Ha"
+          },
+          "incremental_net_benefit_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incremental Net Benefit Usd Ha"
+          },
+          "incremental_net_benefit_usd_total": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incremental Net Benefit Usd Total"
+          },
+          "additional_revenue_to_break_even_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additional Revenue To Break Even Usd Ha"
+          },
+          "financial_signal": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "negative",
+              "neutral",
+              "unknown"
+            ],
+            "title": "Financial Signal"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "interpretation",
+          "usable_for_recommendation",
+          "raw_relative_yield_change",
+          "relative_yield_change",
+          "yield_change_was_capped",
+          "fallow_wheat_yield_t_ha",
+          "cover_wheat_yield_t_ha",
+          "fallow_wheat_gross_revenue_usd_ha",
+          "cover_wheat_gross_revenue_usd_ha",
+          "wheat_revenue_difference_usd_ha",
+          "total_cover_cost_usd_ha",
+          "net_cover_revenue_usd_ha",
+          "incentive_usd_ha",
+          "incremental_net_benefit_usd_ha",
+          "incremental_net_benefit_usd_total",
+          "additional_revenue_to_break_even_usd_ha",
+          "financial_signal"
+        ],
+        "title": "FinancialResult"
+      },
+      "FinancialSummary": {
+        "properties": {
+          "minimum_incremental_net_benefit_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minimum Incremental Net Benefit Usd Ha"
+          },
+          "maximum_incremental_net_benefit_usd_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Incremental Net Benefit Usd Ha"
+          },
+          "cases_with_positive_incremental_benefit": {
+            "type": "integer",
+            "title": "Cases With Positive Incremental Benefit"
+          },
+          "calculated_cases": {
+            "type": "integer",
+            "title": "Calculated Cases"
+          },
+          "case_count": {
+            "type": "integer",
+            "title": "Case Count"
+          },
+          "interpretation": {
+            "type": "string",
+            "const": "unweighted_scenario_range_not_expected_return",
+            "title": "Interpretation",
+            "default": "unweighted_scenario_range_not_expected_return"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "minimum_incremental_net_benefit_usd_ha",
+          "maximum_incremental_net_benefit_usd_ha",
+          "cases_with_positive_incremental_benefit",
+          "calculated_cases",
+          "case_count",
+          "interpretation"
+        ],
+        "title": "FinancialSummary"
+      },
+      "GeoCoordinate": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "altitudeMeters": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Altitudemeters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "title": "GeoCoordinate"
+      },
+      "GeoPolygon": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "Polygon",
+            "title": "Type",
+            "default": "Polygon"
+          },
+          "coordinates": {
+            "items": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Coordinates"
+          }
+        },
+        "type": "object",
+        "required": [
+          "coordinates"
+        ],
+        "title": "GeoPolygon"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded",
+              "error"
+            ],
+            "title": "Status",
+            "default": "ok"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "default": "field-shift-api"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "0.1.0"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          },
+          "uptimeSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uptimeseconds"
+          },
+          "checks": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "boolean"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "timestamp"
+        ],
+        "title": "HealthResponse"
+      },
+      "InitialMoisture": {
+        "properties": {
+          "value_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value M3 M3"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "user_supplied",
+              "training_fallow_median"
+            ],
+            "title": "Source"
+          },
+          "source_dates": {
+            "items": {
+              "type": "string",
+              "format": "date"
+            },
+            "type": "array",
+            "title": "Source Dates"
+          },
+          "interpretation": {
+            "type": "string",
+            "const": "decision_date_daily_average",
+            "title": "Interpretation",
+            "default": "decision_date_daily_average"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value_m3_m3",
+          "source",
+          "source_dates",
+          "interpretation"
+        ],
+        "title": "InitialMoisture"
+      },
+      "IrrigationEvent": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "amount_mm": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Amount Mm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "date",
+          "amount_mm"
+        ],
+        "title": "IrrigationEvent"
+      },
+      "LandCoverResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "cropland",
+              "non_cropland",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "suggestedCrop": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "corn",
+                  "wheat",
+                  "soybeans",
+                  "barley",
+                  "cotton",
+                  "rice",
+                  "sorghum",
+                  "sunflower",
+                  "grapes",
+                  "potatoes",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggestedcrop"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "requestedYear": {
+            "type": "integer",
+            "title": "Requestedyear"
+          },
+          "sample": {
+            "$ref": "#/components/schemas/GeoCoordinate"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "requestedYear",
+          "sample",
+          "source",
+          "message"
+        ],
+        "title": "LandCoverResult"
+      },
+      "MockRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "MockRequest"
+      },
+      "MockResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "mock": {
+            "type": "boolean",
+            "title": "Mock",
+            "default": true
+          },
+          "timestamp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "MockResponse"
+      },
+      "ModelInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "artifact_sha256": {
+            "type": "string",
+            "title": "Artifact Sha256"
+          },
+          "source_run_id": {
+            "type": "string",
+            "title": "Source Run Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "experimental_not_selected",
+              "passed_validation_checks"
+            ],
+            "title": "Status"
+          },
+          "validation_mae_m3_m3": {
+            "type": "number",
+            "title": "Validation Mae M3 M3"
+          },
+          "persistence_validation_mae_m3_m3": {
+            "type": "number",
+            "title": "Persistence Validation Mae M3 M3"
+          },
+          "seasonal_validation_status": {
+            "type": "string",
+            "const": "unvalidated",
+            "title": "Seasonal Validation Status",
+            "default": "unvalidated"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "artifact_sha256",
+          "source_run_id",
+          "status",
+          "validation_mae_m3_m3",
+          "persistence_validation_mae_m3_m3",
+          "seasonal_validation_status"
+        ],
+        "title": "ModelInfo"
+      },
+      "MoistureComparison": {
+        "properties": {
+          "cover_at_planting_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Cover At Planting M3 M3"
+          },
+          "fallow_at_planting_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fallow At Planting M3 M3"
+          },
+          "cover_final_7_day_average_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Cover Final 7 Day Average M3 M3"
+          },
+          "fallow_final_7_day_average_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fallow Final 7 Day Average M3 M3"
+          },
+          "final_7_day_difference_m3_m3": {
+            "type": "number",
+            "title": "Final 7 Day Difference M3 M3"
+          },
+          "relative_final_7_day_difference": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relative Final 7 Day Difference"
+          },
+          "minimum_cover_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Minimum Cover M3 M3"
+          },
+          "minimum_fallow_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Minimum Fallow M3 M3"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cover_at_planting_m3_m3",
+          "fallow_at_planting_m3_m3",
+          "cover_final_7_day_average_m3_m3",
+          "fallow_final_7_day_average_m3_m3",
+          "final_7_day_difference_m3_m3",
+          "relative_final_7_day_difference",
+          "minimum_cover_m3_m3",
+          "minimum_fallow_m3_m3"
+        ],
+        "title": "MoistureComparison"
+      },
+      "NasaEnvironmentalSnapshot": {
+        "properties": {
+          "coordinate": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Coordinate"
+          },
+          "observationDate": {
+            "type": "string",
+            "title": "Observationdate"
+          },
+          "currentNdvi": {
+            "type": "number",
+            "title": "Currentndvi"
+          },
+          "historicalAverageNdvi": {
+            "type": "number",
+            "title": "Historicalaveragendvi"
+          },
+          "ndviAnomaly": {
+            "type": "number",
+            "title": "Ndvianomaly"
+          },
+          "soilMoistureCurrent": {
+            "type": "number",
+            "title": "Soilmoisturecurrent"
+          },
+          "soilMoistureDeficitPct": {
+            "type": "number",
+            "title": "Soilmoisturedeficitpct"
+          },
+          "temperatureAnomalyCelsius": {
+            "type": "number",
+            "title": "Temperatureanomalycelsius"
+          },
+          "recentPrecipitation7dMm": {
+            "type": "number",
+            "title": "Recentprecipitation7Dmm"
+          },
+          "projectedPrecipitation30dMm": {
+            "type": "number",
+            "title": "Projectedprecipitation30Dmm"
+          },
+          "droughtSeverityIndex": {
+            "type": "number",
+            "title": "Droughtseverityindex"
+          },
+          "climateTrends": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClimateTrend"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "coordinate",
+          "observationDate",
+          "currentNdvi",
+          "historicalAverageNdvi",
+          "ndviAnomaly",
+          "soilMoistureCurrent",
+          "soilMoistureDeficitPct",
+          "temperatureAnomalyCelsius",
+          "recentPrecipitation7dMm",
+          "projectedPrecipitation30dMm",
+          "droughtSeverityIndex"
+        ],
+        "title": "NasaEnvironmentalSnapshot"
+      },
+      "OptionsResponse": {
+        "properties": {
+          "api_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Api Version",
+            "default": "1.0"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteOption"
+            },
+            "type": "array",
+            "title": "Sites"
+          },
+          "cover_crops": {
+            "items": {
+              "$ref": "#/components/schemas/Choice"
+            },
+            "type": "array",
+            "title": "Cover Crops"
+          },
+          "next_crops": {
+            "items": {
+              "$ref": "#/components/schemas/Choice"
+            },
+            "type": "array",
+            "title": "Next Crops"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/Choice"
+            },
+            "type": "array",
+            "title": "Scenarios"
+          },
+          "calendar": {
+            "$ref": "#/components/schemas/CalendarLimits"
+          },
+          "default_economics": {
+            "$ref": "#/components/schemas/EconomicAssumptions-Output"
+          },
+          "default_risk_rules": {
+            "$ref": "#/components/schemas/RiskRules-Output"
+          },
+          "example_request": {
+            "$ref": "#/components/schemas/AnalysisRequest-Output"
+          },
+          "defaults_source": {
+            "type": "string",
+            "const": "illustrative_not_market_or_agronomic_calibration",
+            "title": "Defaults Source",
+            "default": "illustrative_not_market_or_agronomic_calibration"
+          },
+          "served_model_source": {
+            "type": "string",
+            "const": "task5_frozen_model",
+            "title": "Served Model Source",
+            "default": "task5_frozen_model"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "api_version",
+          "sites",
+          "cover_crops",
+          "next_crops",
+          "scenarios",
+          "calendar",
+          "default_economics",
+          "default_risk_rules",
+          "example_request",
+          "defaults_source",
+          "served_model_source",
+          "notes"
+        ],
+        "title": "OptionsResponse"
+      },
+      "QualityInfo": {
+        "properties": {
+          "reliability": {
+            "type": "string",
+            "enum": [
+              "invalid",
+              "limited"
+            ],
+            "title": "Reliability"
+          },
+          "usable_for_recommendation": {
+            "type": "boolean",
+            "const": false,
+            "title": "Usable For Recommendation",
+            "default": false
+          },
+          "cover_clipped_days": {
+            "type": "integer",
+            "title": "Cover Clipped Days"
+          },
+          "fallow_clipped_days": {
+            "type": "integer",
+            "title": "Fallow Clipped Days"
+          },
+          "cover_unseen_phase_days": {
+            "type": "integer",
+            "title": "Cover Unseen Phase Days"
+          },
+          "fallow_unseen_phase_days": {
+            "type": "integer",
+            "title": "Fallow Unseen Phase Days"
+          },
+          "cover_out_of_training_range": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Cover Out Of Training Range"
+          },
+          "fallow_out_of_training_range": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Fallow Out Of Training Range"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Flags"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reliability",
+          "usable_for_recommendation",
+          "cover_clipped_days",
+          "fallow_clipped_days",
+          "cover_unseen_phase_days",
+          "fallow_unseen_phase_days",
+          "cover_out_of_training_range",
+          "fallow_out_of_training_range",
+          "flags"
+        ],
+        "title": "QualityInfo"
+      },
+      "ReadinessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "inference_available": {
+            "type": "boolean",
+            "title": "Inference Available"
+          },
+          "recommendation_ready": {
+            "type": "boolean",
+            "const": false,
+            "title": "Recommendation Ready",
+            "default": false
+          },
+          "model_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Name"
+          },
+          "model_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "inference_available",
+          "recommendation_ready",
+          "model_name",
+          "model_status",
+          "reason"
+        ],
+        "title": "ReadinessResponse"
+      },
+      "Recommendation": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "provisional",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "validated": {
+            "type": "boolean",
+            "const": false,
+            "title": "Validated",
+            "default": false
+          },
+          "method_version": {
+            "type": "string",
+            "const": "planting-rule-v1",
+            "title": "Method Version",
+            "default": "planting-rule-v1"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "plant",
+              "do_not_plant",
+              "review",
+              "insufficient_evidence"
+            ],
+            "title": "Decision"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reason Codes"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "validated",
+          "method_version",
+          "decision",
+          "reason_codes",
+          "message"
+        ],
+        "title": "Recommendation"
+      },
+      "RiskRules-Input": {
+        "properties": {
+          "moderate_relative_moisture_loss": {
+            "type": "number",
+            "exclusiveMaximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Moderate Relative Moisture Loss",
+            "default": 0.05
+          },
+          "high_relative_moisture_loss": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "High Relative Moisture Loss",
+            "default": 0.15
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RiskRules"
+      },
+      "RiskRules-Output": {
+        "properties": {
+          "moderate_relative_moisture_loss": {
+            "type": "number",
+            "exclusiveMaximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Moderate Relative Moisture Loss",
+            "default": 0.05
+          },
+          "high_relative_moisture_loss": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "High Relative Moisture Loss",
+            "default": 0.15
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "moderate_relative_moisture_loss",
+          "high_relative_moisture_loss"
+        ],
+        "title": "RiskRules"
+      },
+      "ScenarioInput-Input": {
+        "properties": {
+          "site_id": {
+            "type": "string",
+            "const": "clovis_nm",
+            "title": "Site Id",
+            "default": "clovis_nm"
+          },
+          "decision_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Decision Date"
+          },
+          "initial_soil_moisture_m3_m3": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initial Soil Moisture M3 M3",
+            "description": "Daily-average 5 cm moisture on decision_date; 0.25 means 25%. Null uses a historical training default."
+          },
+          "cover_crop": {
+            "type": "string",
+            "enum": [
+              "pea",
+              "oat",
+              "six_species_mix"
+            ],
+            "title": "Cover Crop"
+          },
+          "cover_planting_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Cover Planting Date"
+          },
+          "cover_termination_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Cover Termination Date"
+          },
+          "next_crop": {
+            "type": "string",
+            "const": "winter_wheat",
+            "title": "Next Crop",
+            "default": "winter_wheat"
+          },
+          "next_crop_planting_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Next Crop Planting Date"
+          },
+          "irrigation_schedule": {
+            "items": {
+              "$ref": "#/components/schemas/IrrigationEvent"
+            },
+            "type": "array",
+            "title": "Irrigation Schedule"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision_date",
+          "cover_crop",
+          "cover_planting_date",
+          "cover_termination_date",
+          "next_crop_planting_date"
+        ],
+        "title": "ScenarioInput"
+      },
+      "ScenarioInput-Output": {
+        "properties": {
+          "site_id": {
+            "type": "string",
+            "const": "clovis_nm",
+            "title": "Site Id",
+            "default": "clovis_nm"
+          },
+          "decision_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Decision Date"
+          },
+          "initial_soil_moisture_m3_m3": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Initial Soil Moisture M3 M3",
+            "description": "Daily-average 5 cm moisture on decision_date; 0.25 means 25%. Null uses a historical training default."
+          },
+          "cover_crop": {
+            "type": "string",
+            "enum": [
+              "pea",
+              "oat",
+              "six_species_mix"
+            ],
+            "title": "Cover Crop"
+          },
+          "cover_planting_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Cover Planting Date"
+          },
+          "cover_termination_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Cover Termination Date"
+          },
+          "next_crop": {
+            "type": "string",
+            "const": "winter_wheat",
+            "title": "Next Crop",
+            "default": "winter_wheat"
+          },
+          "next_crop_planting_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Next Crop Planting Date"
+          },
+          "irrigation_schedule": {
+            "items": {
+              "$ref": "#/components/schemas/IrrigationEvent"
+            },
+            "type": "array",
+            "title": "Irrigation Schedule"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "site_id",
+          "decision_date",
+          "initial_soil_moisture_m3_m3",
+          "cover_crop",
+          "cover_planting_date",
+          "cover_termination_date",
+          "next_crop",
+          "next_crop_planting_date",
+          "irrigation_schedule"
+        ],
+        "title": "ScenarioInput"
+      },
+      "ScenarioResult": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "enum": [
+              "dry",
+              "typical",
+              "very_rainy"
+            ],
+            "title": "Scenario"
+          },
+          "historical_start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Historical Start Date"
+          },
+          "historical_end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Historical End Date"
+          },
+          "requested_rainfall_percentile": {
+            "type": "number",
+            "title": "Requested Rainfall Percentile"
+          },
+          "actual_rainfall_percentile": {
+            "type": "number",
+            "title": "Actual Rainfall Percentile"
+          },
+          "eligible_historical_seasons": {
+            "type": "integer",
+            "title": "Eligible Historical Seasons"
+          },
+          "simulation_days": {
+            "type": "integer",
+            "title": "Simulation Days"
+          },
+          "total_rain_mm": {
+            "type": "number",
+            "title": "Total Rain Mm"
+          },
+          "total_irrigation_mm": {
+            "type": "number",
+            "title": "Total Irrigation Mm"
+          },
+          "moisture": {
+            "$ref": "#/components/schemas/MoistureComparison"
+          },
+          "water_risk": {
+            "$ref": "#/components/schemas/WaterRisk"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/QualityInfo"
+          },
+          "finances": {
+            "$ref": "#/components/schemas/FinancialResult"
+          },
+          "daily_trajectory": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TrajectoryPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Daily Trajectory"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario",
+          "historical_start_date",
+          "historical_end_date",
+          "requested_rainfall_percentile",
+          "actual_rainfall_percentile",
+          "eligible_historical_seasons",
+          "simulation_days",
+          "total_rain_mm",
+          "total_irrigation_mm",
+          "moisture",
+          "water_risk",
+          "quality",
+          "finances",
+          "daily_trajectory"
+        ],
+        "title": "ScenarioResult"
+      },
+      "SiteOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "latitude",
+          "longitude"
+        ],
+        "title": "SiteOption"
+      },
+      "TrajectoryPoint": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "historical_weather_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Historical Weather Date"
+          },
+          "rain_mm": {
+            "type": "number",
+            "title": "Rain Mm"
+          },
+          "temperature_max_c": {
+            "type": "number",
+            "title": "Temperature Max C"
+          },
+          "temperature_min_c": {
+            "type": "number",
+            "title": "Temperature Min C"
+          },
+          "humidity_pct": {
+            "type": "number",
+            "title": "Humidity Pct"
+          },
+          "wind_speed_m_s": {
+            "type": "number",
+            "title": "Wind Speed M S"
+          },
+          "solar_radiation_mj_m2_day": {
+            "type": "number",
+            "title": "Solar Radiation Mj M2 Day"
+          },
+          "irrigation_mm": {
+            "type": "number",
+            "title": "Irrigation Mm"
+          },
+          "management_phase": {
+            "type": "string",
+            "title": "Management Phase"
+          },
+          "cover_active": {
+            "type": "integer",
+            "title": "Cover Active"
+          },
+          "cover_moisture_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Cover Moisture M3 M3"
+          },
+          "fallow_moisture_m3_m3": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fallow Moisture M3 M3"
+          },
+          "cover_prediction_clipped": {
+            "type": "boolean",
+            "title": "Cover Prediction Clipped"
+          },
+          "fallow_prediction_clipped": {
+            "type": "boolean",
+            "title": "Fallow Prediction Clipped"
+          },
+          "cover_unseen_phase": {
+            "type": "boolean",
+            "title": "Cover Unseen Phase"
+          },
+          "fallow_unseen_phase": {
+            "type": "boolean",
+            "title": "Fallow Unseen Phase"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "date",
+          "historical_weather_date",
+          "rain_mm",
+          "temperature_max_c",
+          "temperature_min_c",
+          "humidity_pct",
+          "wind_speed_m_s",
+          "solar_radiation_mj_m2_day",
+          "irrigation_mm",
+          "management_phase",
+          "cover_active",
+          "cover_moisture_m3_m3",
+          "fallow_moisture_m3_m3",
+          "cover_prediction_clipped",
+          "fallow_prediction_clipped",
+          "cover_unseen_phase",
+          "fallow_unseen_phase"
+        ],
+        "title": "TrajectoryPoint"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WaterRisk": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "moderate",
+              "high",
+              "unknown"
+            ],
+            "title": "Level"
+          },
+          "relative_loss": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relative Loss"
+          },
+          "method": {
+            "type": "string",
+            "const": "editable_relative_moisture_loss_rule",
+            "title": "Method",
+            "default": "editable_relative_moisture_loss_rule"
+          },
+          "validated": {
+            "type": "boolean",
+            "const": false,
+            "title": "Validated",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "level",
+          "relative_loss",
+          "method",
+          "validated"
+        ],
+        "title": "WaterRisk"
+      },
+      "WeatherInfo": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "NASA_POWER",
+            "title": "Provider",
+            "default": "NASA_POWER"
+          },
+          "source_kind": {
+            "type": "string",
+            "const": "historical_scenarios",
+            "title": "Source Kind",
+            "default": "historical_scenarios"
+          },
+          "history_start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "History Start Date"
+          },
+          "history_end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "History End Date"
+          },
+          "time_standard": {
+            "type": "string",
+            "const": "LST",
+            "title": "Time Standard",
+            "default": "LST"
+          },
+          "calendar_alignment_assumed": {
+            "type": "boolean",
+            "title": "Calendar Alignment Assumed",
+            "default": true
+          },
+          "probabilities_assigned": {
+            "type": "boolean",
+            "const": false,
+            "title": "Probabilities Assigned",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "source_kind",
+          "history_start_date",
+          "history_end_date",
+          "time_standard",
+          "calendar_alignment_assumed",
+          "probabilities_assigned"
+        ],
+        "title": "WeatherInfo"
+      }
+    }
+  }
+}

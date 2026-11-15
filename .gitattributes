@@ -1,0 +1,5 @@
+# Preserve the exact bytes used by frozen ML provenance and artifact hashes.
+apps/api/app/ml/** -text
+data/** -text
+examples/** -text
+*.csv -text

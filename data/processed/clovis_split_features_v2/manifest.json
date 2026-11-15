@@ -1,0 +1,278 @@
+{
+  "artifact_sha256": {
+    "global_chronological_70_15_15/date_assignments.csv": "2c680dfa6dabdecae1dd5a8422199393b8dda4109d9724fdff014fd47d5bcde7",
+    "global_chronological_70_15_15/eligible_target_membership.csv": "9fe0b18c40124d750b86a520155b18067612bf91707d2bbfe5ed662178b67547",
+    "global_chronological_70_15_15/test_features.csv": "e36c5ba126b5d2e57e1754d8c1fec9c11c4d971dd8f0f07ae1e77d11971621be",
+    "global_chronological_70_15_15/train_features.csv": "6d3d9dcbc7b870120c81a57437e3668f33df549d277492125dad47cbf5e4ddfc",
+    "global_chronological_70_15_15/validation_features.csv": "f3b545d99c90e73d2fefebb6ba6225cb4dd07a42bb80a0ad18d48a463cb7d199",
+    "phase_balanced_70_15_15/date_assignments.csv": "dc206ff03d430548b24b6d8d3d90262a579b34bb469bddb7226a7b4df1f7a7cf",
+    "phase_balanced_70_15_15/eligible_target_membership.csv": "55626b5cb42922bdb90f37db43f329b1b31495bb33b8517361923c23733b02d5",
+    "phase_balanced_70_15_15/test_features.csv": "99e6b948babc3802cadd43b6333ecb62a6cad2bc476d280b33a558f89f33fe29",
+    "phase_balanced_70_15_15/train_features.csv": "e62d5e5b301c9f33104f207e5330a7f4c03a98a2c9253fbefb6995d3f76f58e1",
+    "phase_balanced_70_15_15/validation_features.csv": "f8329c18646239fda3c0146b83a54dedb65b738ea64c6989e8d52dc521f6ce81"
+  },
+  "dataset_version": "clovis-split-features-v2",
+  "feature_columns": [
+    "treatment",
+    "management_phase",
+    "previous_moisture_m3_m3",
+    "irrigation_mm",
+    "cover_active",
+    "days_since_cover_planting",
+    "days_since_cover_termination",
+    "rain_mm",
+    "temperature_max_c",
+    "temperature_min_c",
+    "humidity_pct",
+    "wind_speed_m_s",
+    "solar_radiation_mj_m2_day",
+    "season_sin",
+    "season_cos"
+  ],
+  "fresh_independent_test": false,
+  "source_sha256": {
+    "apps/api/app/ml/clovis_protocol.json": "39c656c85f36d5bb2debe4aae624621703bb60611ad2656c87994885e456b57c",
+    "apps/api/app/ml/clovis_split_audit_protocol.json": "b649514007a375a522f89c5340a17ac96a60e4654732fded9e298af88bcc743d",
+    "apps/api/app/ml/clovis_split_evaluation_protocol.json": "197da4479d27154239ef20adddee1859808c184ee1f3c2ecb5d2f861bbdca5cb",
+    "apps/api/app/ml/evaluate_clovis_split_variants.py": "903ff1d52d3bf88dced9a6ffca8a5631330a8cbab36f47700eb4638ce2093fb6",
+    "data/analysis/clovis_split_audit_v1/global_chronological_70_15_15/date_assignments.csv": "2c680dfa6dabdecae1dd5a8422199393b8dda4109d9724fdff014fd47d5bcde7",
+    "data/analysis/clovis_split_audit_v1/global_chronological_70_15_15/eligible_target_membership.csv": "9fe0b18c40124d750b86a520155b18067612bf91707d2bbfe5ed662178b67547",
+    "data/analysis/clovis_split_audit_v1/phase_balanced_70_15_15/date_assignments.csv": "dc206ff03d430548b24b6d8d3d90262a579b34bb469bddb7226a7b4df1f7a7cf",
+    "data/analysis/clovis_split_audit_v1/phase_balanced_70_15_15/eligible_target_membership.csv": "55626b5cb42922bdb90f37db43f329b1b31495bb33b8517361923c23733b02d5",
+    "data/analysis/clovis_split_audit_v1/provenance.json": "7c0107eec263cd6364e1a480984ed315d97b83c09f82688bfe8bf099328e87c0",
+    "data/analysis/clovis_split_audit_v1/results.json": "2d5157dae908d10d606e5bb2eff4dc4197317667fae5544a38145071b80f41f5",
+    "data/figshare_yin_daily.csv": "50b4daa47ea01f7dde810fa65606f15ac1ec34934fbd789fde3bf30c6860eb09",
+    "data/processed/clovis_weather_v1/weather_manifest.json": "70ca6942291d78c5814773520f25546dc35325f99260967d6c6fa6f33fb5e010"
+  },
+  "target_semantics": "moisture_change_m3_m3 = target-date daily-average 5 cm moisture minus previous-date daily-average 5 cm moisture. Initial recursive state is the previous daily average, not an instantaneous/end-of-day reading.",
+  "variants": {
+    "global_chronological_70_15_15": {
+      "coverage": {
+        "accepted_dates": 660,
+        "accepted_rows": 2640,
+        "all_moisture_date_footprints_disjoint": true,
+        "buffer_context_allowed": true,
+        "chronology": {
+          "test_target_rows_on_or_before_latest_train_target": 0,
+          "test_target_rows_on_or_before_latest_validation_target": 0,
+          "validation_target_rows_on_or_before_latest_train_target": 0
+        },
+        "coverage": {
+          "test": {
+            "by_phase_dates": {
+              "winter_wheat": 98
+            },
+            "by_phase_rows": {
+              "winter_wheat": 392
+            },
+            "by_treatment_rows": {
+              "fallow": 98,
+              "oat": 98,
+              "pea": 98,
+              "six_species_mix": 98
+            },
+            "dates": 98,
+            "first_target_date": "2024-03-14",
+            "fraction_accepted_rows": 0.1484848484848485,
+            "last_target_date": "2024-06-23",
+            "rows": 392,
+            "uses_buffer_context_rows": 4
+          },
+          "train": {
+            "by_phase_dates": {
+              "cover_period": 73,
+              "fallow_after_cover": 139,
+              "fallow_before_cover": 108,
+              "sorghum": 110,
+              "winter_wheat": 36
+            },
+            "by_phase_rows": {
+              "cover_period": 292,
+              "fallow_after_cover": 556,
+              "fallow_before_cover": 432,
+              "sorghum": 440,
+              "winter_wheat": 144
+            },
+            "by_treatment_rows": {
+              "fallow": 466,
+              "oat": 466,
+              "pea": 466,
+              "six_species_mix": 466
+            },
+            "dates": 466,
+            "first_target_date": "2022-07-17",
+            "fraction_accepted_rows": 0.706060606060606,
+            "last_target_date": "2023-12-02",
+            "rows": 1864,
+            "uses_buffer_context_rows": 0
+          },
+          "validation": {
+            "by_phase_dates": {
+              "winter_wheat": 96
+            },
+            "by_phase_rows": {
+              "winter_wheat": 384
+            },
+            "by_treatment_rows": {
+              "fallow": 96,
+              "oat": 96,
+              "pea": 96,
+              "six_species_mix": 96
+            },
+            "dates": 96,
+            "first_target_date": "2023-12-06",
+            "fraction_accepted_rows": 0.14545454545454545,
+            "last_target_date": "2024-03-10",
+            "rows": 384,
+            "uses_buffer_context_rows": 4
+          }
+        },
+        "every_phase_in_every_partition": false,
+        "exclusions": {
+          "missing_or_ineligible_target_or_history": 172,
+          "unscored_buffer_target": 24
+        },
+        "globally_chronological": true,
+        "lookback_days": 1,
+        "same_date_treatment_partition_conflicts": 0,
+        "shared_moisture_date_footprints": {
+          "train_vs_test": [],
+          "train_vs_validation": [],
+          "validation_vs_test": []
+        }
+      },
+      "partition_rows": {
+        "test": 392,
+        "train": 1864,
+        "validation": 384
+      }
+    },
+    "phase_balanced_70_15_15": {
+      "coverage": {
+        "accepted_dates": 635,
+        "accepted_rows": 2540,
+        "all_moisture_date_footprints_disjoint": true,
+        "buffer_context_allowed": true,
+        "chronology": {
+          "test_target_rows_on_or_before_latest_train_target": 224,
+          "test_target_rows_on_or_before_latest_validation_target": 224,
+          "validation_target_rows_on_or_before_latest_train_target": 200
+        },
+        "coverage": {
+          "test": {
+            "by_phase_dates": {
+              "cover_period": 9,
+              "fallow_after_cover": 19,
+              "fallow_before_cover": 14,
+              "sorghum": 14,
+              "winter_wheat": 33
+            },
+            "by_phase_rows": {
+              "cover_period": 36,
+              "fallow_after_cover": 76,
+              "fallow_before_cover": 56,
+              "sorghum": 56,
+              "winter_wheat": 132
+            },
+            "by_treatment_rows": {
+              "fallow": 89,
+              "oat": 89,
+              "pea": 89,
+              "six_species_mix": 89
+            },
+            "dates": 89,
+            "first_target_date": "2022-10-21",
+            "fraction_accepted_rows": 0.14015748031496064,
+            "last_target_date": "2024-06-23",
+            "rows": 356,
+            "uses_buffer_context_rows": 20
+          },
+          "train": {
+            "by_phase_dates": {
+              "cover_period": 51,
+              "fallow_after_cover": 96,
+              "fallow_before_cover": 75,
+              "sorghum": 77,
+              "winter_wheat": 165
+            },
+            "by_phase_rows": {
+              "cover_period": 204,
+              "fallow_after_cover": 384,
+              "fallow_before_cover": 300,
+              "sorghum": 308,
+              "winter_wheat": 660
+            },
+            "by_treatment_rows": {
+              "fallow": 464,
+              "oat": 464,
+              "pea": 464,
+              "six_species_mix": 464
+            },
+            "dates": 464,
+            "first_target_date": "2022-07-17",
+            "fraction_accepted_rows": 0.7307086614173228,
+            "last_target_date": "2024-04-13",
+            "rows": 1856,
+            "uses_buffer_context_rows": 0
+          },
+          "validation": {
+            "by_phase_dates": {
+              "cover_period": 7,
+              "fallow_after_cover": 17,
+              "fallow_before_cover": 13,
+              "sorghum": 13,
+              "winter_wheat": 32
+            },
+            "by_phase_rows": {
+              "cover_period": 28,
+              "fallow_after_cover": 68,
+              "fallow_before_cover": 52,
+              "sorghum": 52,
+              "winter_wheat": 128
+            },
+            "by_treatment_rows": {
+              "fallow": 82,
+              "oat": 82,
+              "pea": 82,
+              "six_species_mix": 82
+            },
+            "dates": 82,
+            "first_target_date": "2022-10-05",
+            "fraction_accepted_rows": 0.12913385826771653,
+            "last_target_date": "2024-05-18",
+            "rows": 328,
+            "uses_buffer_context_rows": 20
+          }
+        },
+        "every_phase_in_every_partition": true,
+        "exclusions": {
+          "history_in_other_partition": 4,
+          "missing_or_ineligible_target_or_history": 172,
+          "unscored_buffer_target": 120
+        },
+        "globally_chronological": false,
+        "lookback_days": 1,
+        "same_date_treatment_partition_conflicts": 0,
+        "shared_moisture_date_footprints": {
+          "train_vs_test": [],
+          "train_vs_validation": [],
+          "validation_vs_test": []
+        }
+      },
+      "partition_rows": {
+        "test": 356,
+        "train": 1856,
+        "validation": 328
+      }
+    }
+  },
+  "weather": {
+    "calendar_alignment": "Same source date joined to NASA LST date without shifting. Station time zone is undocumented; alignment is an MVP assumption, not independently verified.",
+    "end_date": "2025-12-31",
+    "start_date": "2001-01-01",
+    "time_standard": "LST",
+    "weather_daily_sha256": "2da8db90bdb1f4f7247e337ac601187f4fa4d877f133412194a6607d768e5573",
+    "weather_manifest_sha256": "70ca6942291d78c5814773520f25546dc35325f99260967d6c6fa6f33fb5e010",
+    "weather_version": "clovis-power-v1"
+  }
+}

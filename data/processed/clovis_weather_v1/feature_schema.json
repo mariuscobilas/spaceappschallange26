@@ -1,0 +1,46 @@
+{
+  "categorical_inputs": [
+    "treatment",
+    "management_phase"
+  ],
+  "evaluation_only_columns": [
+    "soil_moisture_m3_m3"
+  ],
+  "metadata_only_columns": [
+    "site_id",
+    "date",
+    "previous_date",
+    "partition",
+    "sensor_depth_cm",
+    "source_id",
+    "weather_source",
+    "weather_time_standard"
+  ],
+  "missing_value_policy": "No weather imputation; nullable management ages mean not-yet-applicable and need explicit handling in the later training/serving pipeline.",
+  "numeric_inputs": [
+    "previous_moisture_m3_m3",
+    "irrigation_mm",
+    "cover_active",
+    "days_since_cover_planting",
+    "days_since_cover_termination",
+    "rain_mm",
+    "temperature_max_c",
+    "temperature_min_c",
+    "humidity_pct",
+    "wind_speed_m_s",
+    "solar_radiation_mj_m2_day"
+  ],
+  "seasonal_features": "Derive from date with shared training/serving code in the model task; not fitted here.",
+  "target": "moisture_change_m3_m3",
+  "units": {
+    "humidity_pct": "%",
+    "irrigation_mm": "mm/day",
+    "moisture_change_m3_m3": "m3/m3 per one-day step",
+    "previous_moisture_m3_m3": "m3/m3",
+    "rain_mm": "mm/day",
+    "solar_radiation_mj_m2_day": "MJ/m^2/day",
+    "temperature_max_c": "C",
+    "temperature_min_c": "C",
+    "wind_speed_m_s": "m/s"
+  }
+}

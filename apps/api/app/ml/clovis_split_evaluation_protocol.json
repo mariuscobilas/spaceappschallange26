@@ -1,0 +1,17 @@
+{
+  "version": "clovis-split-evaluation-v2",
+  "dataset_version": "clovis-split-features-v2",
+  "variants": ["phase_balanced_70_15_15", "global_chronological_70_15_15"],
+  "model": "forest_depth_4",
+  "reference": "persistence",
+  "seed": 42,
+  "features": "Unchanged Task 4 feature allowlist and shared fitted pipeline. One previous daily-mean moisture observation; no new lag features or hyperparameter search.",
+  "target_semantics": "moisture_change_m3_m3 = target-date daily-average 5 cm moisture minus previous-date daily-average 5 cm moisture. Initial recursive state is the previous daily average, not an instantaneous/end-of-day reading.",
+  "rollout_horizons_days": [3, 7, 30],
+  "evaluation": "Train each variant on its training partition only. Report train/validation/exposed-test MAE, RMSE, bias, moisture/change R2, per-phase/treatment/water-event errors, macro phase MAE, clipping and unseen phases. Rollouts use actual historical weather and no observed state resets after initialization.",
+  "split_source": "Use the frozen split audit memberships and explicit three-day buffer/context rules. Reject changed audit inputs and verify the membership reconstruction.",
+  "uncertainty": {"block_days": 7, "replicates": 1000, "seed": 42, "limits": "Paired within-sequence moving date-block bootstrap on already exposed data, not independent-season or recommendation uncertainty."},
+  "checks": "Report existing Task 4 validation adoption thresholds as diagnostics only. Do not choose a replacement based on exposed-test scores.",
+  "promotion": "None. Keep the original saved model and all previous datasets/pointers unchanged. New artifacts are exploratory and recommendation_ready remains false.",
+  "test_status": "Previously exposed observations, not a fresh independent final test. Phase-balanced evaluation mixes global chronology; chronological evaluation here tests winter wheat only."
+}

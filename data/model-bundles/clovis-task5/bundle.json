@@ -1,0 +1,40 @@
+{
+  "artifact": "model.joblib",
+  "artifact_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d",
+  "feature_columns": [
+    "treatment",
+    "management_phase",
+    "previous_moisture_m3_m3",
+    "irrigation_mm",
+    "cover_active",
+    "days_since_cover_planting",
+    "days_since_cover_termination",
+    "rain_mm",
+    "temperature_max_c",
+    "temperature_min_c",
+    "humidity_pct",
+    "wind_speed_m_s",
+    "solar_radiation_mj_m2_day",
+    "season_sin",
+    "season_cos"
+  ],
+  "format_version": "field-shift-model-bundle-v1",
+  "model_info": {
+    "adoption_checks": {
+      "mae_improves_at_least_5_percent": false,
+      "no_one_day_clipping": true,
+      "no_seven_day_clipping": true,
+      "no_treatment_mae_above_limit": false,
+      "seven_day_endpoint_not_worse": false
+    },
+    "artifact_sha256": "0ddf72d619dbf73079ec2e19dc4bd96f5cbb2700355eede7b002b74d8dabd62d",
+    "final_test_evaluated": false,
+    "name": "forest_depth_4",
+    "persistence_validation_mae_m3_m3": 0.0019242788653846153,
+    "refit_on_all_data": false,
+    "regression_run_id": "e60c4eb5b91d4a13b6bce45138efb0af",
+    "status": "experimental_not_selected",
+    "validation_mae_m3_m3": 0.002558808492745021
+  },
+  "sklearn_version": "1.9.1"
+}

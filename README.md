@@ -2,11 +2,39 @@
 
 Meridian (original project name: Field Shift) is a NASA Earth observation workspace for field exploration, cover-crop planning and transparent manual economics. It uses Next.js, FastAPI and Turborepo. The client baseline and first numeric environmental context are implemented locally; validated agronomic analysis remains pending.
 
+**Task 6 and provisional planting advice are ready for frontend integration.** [Start with the API handoff](docs/API_HANDOFF.md): FastAPI endpoints, editable financial/risk assumptions, [OpenAPI](docs/openapi.json), checked [JSON payloads](examples/api/analyze.request.json), and a [typed frontend client](apps/web/lib/field-shift-api.ts). Shared fixtures cover plant, do not plant, review, and insufficient evidence. The saved example endpoint supports web development without local model artifacts. Advice remains unvalidated; compatible model bundles can be replaced without changing frontend payloads.
+
+The one-day MVP now starts with the Clovis, New Mexico cover-crop observations. [Data preparation](docs/CLOVIS_DATA_PREPARATION.md) implements the first task: source audit, frozen evaluation splits, cleaned moisture labels, and verification. The Kansas-first documents below describe the earlier research scope.
+
+[NASA weather preparation](docs/CLOVIS_WEATHER_PREPARATION.md) caches Clovis daily weather for 2001â€“2025 and joins it to the unchanged train/validation/test labels, ready for baseline evaluation.
+
+[Baseline feasibility](docs/CLOVIS_BASELINE_EVALUATION.md) compares persistence with a training-only daily-change rule using validation data and local MLflow tracking. Persistence was the reference to beat; this stage used validation only.
+
+[Weather-aware regression evaluation](docs/CLOVIS_REGRESSION_EVALUATION.md) adds shared training/inference features and four tracked Ridge/Random Forest candidates. None beat the adoption gates; the best experimental model is retained without replacing persistence.
+
+[Historical scenario simulation](docs/CLOVIS_SCENARIO_SIMULATION.md) implements Task 5: complete dry/typical/very-rainy weather sequences, paired cover/fallow moisture trajectories, a validated request payload, and diagnostics. The current experimental model drifts and clips during seasonal rollouts; these outputs are not ready for planting advice.
+
+[Held-out test evaluation](docs/CLOVIS_FINAL_TEST_EVALUATION.md) scores the frozen shallow Random Forest against persistence on 1,548 observations. Its next-day MAE is 44% higher, and 7/30/90-day recursive errors are worse. The test set is now evaluated; no model was retrained or promoted.
+
+[Model diagnosis and repair plan](docs/CLOVIS_MODEL_DIAGNOSIS.md) identifies missing management-phase coverage, negligible learned crop response, recursive drift, and a daily-mean versus end-of-day target mismatch. The saved model remains unchanged; the next proposed task is a versioned moisture/history contract.
+
+[Split audit](docs/CLOVIS_SPLIT_AUDIT.md) compares the original 39.6/2.0/58.5 allocation with global chronological and phase-balanced 70/15/15 candidates. The phase-balanced candidate includes every management phase in each partition, with 1,856 training examples, but is an exploratory historical evaluation. The audit prepared the memberships used in the following experiment.
+
+[Evaluation of the new allocations](docs/CLOVIS_SPLIT_MODEL_EVALUATION.md) subsequently fits the same fixed forest independently on both versioned datasets. Validation gains are modest and exposed-test next-day errors are approximately tied with persistence. The report examines recharge events, phase coverage, feature use, and short recursive forecasts; no artifact was promoted.
+
+The first research and product scope is western Kansas dryland winter wheat. See [KANSAS_FIRST.md](KANSAS_FIRST.md) for the decision, evidence, data sources, model approach, and validation limits.
+See [KANSAS_FEATURES_AND_READING.md](KANSAS_FEATURES_AND_READING.md) for the initial feature contract and dissertation reading order.
+See [WATER_DEBT_FACTOR_REVIEW.md](WATER_DEBT_FACTOR_REVIEW.md) for the location-independent evidence on which factors affect water carryover and the next crop.
+See [DATA_AUDIT.md](DATA_AUDIT.md) for the verified public trial files, missing fields, and external NASA/USDA inputs.
+See [BENCHMARK_FINDINGS.md](BENCHMARK_FINDINGS.md) for the first five-model benchmark and its held-out results.
+See [AUSTRALIA_BENCHMARK_FINDINGS.md](AUSTRALIA_BENCHMARK_FINDINGS.md) for the separate two-year Australian phase-level experiment.
+See [COVER_CROP_DECISION_RESEARCH.md](COVER_CROP_DECISION_RESEARCH.md) for crop water-use evidence, U.S. trial locations, and the proposed decision API payload.
+
 ## Project areas
 
-- `apps/web` — Next.js frontend
-- `apps/api` — FastAPI endpoints and API documentation
-- `apps/api/app/ml` — Python ML work area; see its README before adding model code
+- `apps/web` â€” Next.js frontend
+- `apps/api` â€” FastAPI endpoints and API documentation
+- `apps/api/app/ml` â€” Python ML work area; see its README before adding model code
 
 ## Requirements
 
@@ -72,7 +100,7 @@ leads with planting date and shows your planned termination date; unfinished dra
 survive navigation and reload separately from confirmed plans. Economics and Planner
 offer U.S./metric units while storing metric assumptions. Economics can show per-area
 change before acreage is entered; parcel totals require a valid managed area.
-Confirmed plans are available under **Field Planner → Saved plans** at
+Confirmed plans are available under **Field Planner â†’ Saved plans** at
 `/planner/saved`. Open restores the field and crop; differing working drafts have
 an explicit restore choice. Deleting a plan preserves its field and economic inputs.
 Atlas selections open a docked regional overview on desktop and a Sheet on phones:

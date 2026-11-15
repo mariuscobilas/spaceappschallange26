@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import sys
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 # Ensure shared schemas are importable across different execution contexts
@@ -33,37 +33,22 @@ except ImportError:
 from app.routers.land_cover import router as land_cover_router
 from app.routers.field_conditions import router as field_conditions_router
 
-app = FastAPI(
-    title="Field Shift API",
-    version="0.1.0",
-    description="Backend API for NASA Space Apps Challenge 2026: Field Shift",
-)
-
-# Enable CORS for Next.js frontend development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-app.include_router(land_cover_router)
-app.include_router(field_conditions_router)
+legacy_router = APIRouter(tags=["Existing Meridian routes"])
 
 
-@app.get("/health", response_model=HealthResponse)
-def health() -> HealthResponse:
+@legacy_router.get("/health", response_model=HealthResponse)
+def health(request: Request) -> HealthResponse:
     return HealthResponse(
         status="ok",
         service="field-shift-api",
         version="0.1.0",
         timestamp=datetime.now(timezone.utc).isoformat(),
         uptimeSeconds=0.0,
-        checks={"api": True, "mlModelLoaded": False, "nasaDataService": True},
+        checks={"api": True, "mlModelLoaded": getattr(request.app.state, "engine", None) is not None, "nasaDataService": True},
     )
 
 
-@app.post("/api/v1/mock", response_model=MockResponse)
+@legacy_router.post("/api/v1/mock", response_model=MockResponse)
 def mock(payload: MockRequest) -> MockResponse:
     return MockResponse(
         message=payload.message,
@@ -72,7 +57,7 @@ def mock(payload: MockRequest) -> MockResponse:
     )
 
 
-@app.post("/api/v1/field-shift/analyze", response_model=FieldAnalysisResponse)
+@legacy_router.post("/api/v1/field-shift/analyze", response_model=FieldAnalysisResponse)
 def analyze_field(payload: FieldAnalysisRequest) -> FieldAnalysisResponse:
     """
     Analyzes farm field resilience against NASA satellite environmental data.
@@ -148,3 +133,61 @@ def analyze_field(payload: FieldAnalysisRequest) -> FieldAnalysisResponse:
         environmentSnapshot=env_snapshot,
         prediction=prediction,
     )
+
+import json
+import sqlite3
+import os
+from .api import configure_errors, lifecycle, router
+
+BENCHMARK_RESULTS = Path(__file__).resolve().parents[3] / "data/benchmark_results.json"
+AUSTRALIA_RESULTS = Path(__file__).resolve().parents[3] / "data/australia_benchmark_results.json"
+BENCHMARK_DB = Path(__file__).resolve().parents[3] / "data/water_debt.sqlite3"
+
+
+@legacy_router.get("/api/v1/benchmark")
+def benchmark_results() -> dict:
+    """Return the most recent season-held-out five-model evaluation."""
+    if not BENCHMARK_RESULTS.is_file():
+        return {"status": "not_run", "message": "Run python -m app.ml.benchmark --fetch-weather first."}
+    return json.loads(BENCHMARK_RESULTS.read_text(encoding="utf-8"))
+
+
+@legacy_router.get("/api/v1/benchmark/australia")
+def australia_benchmark_results() -> dict:
+    if not AUSTRALIA_RESULTS.is_file():
+        return {"status": "not_run", "message": "Run apps/api/app/ml/australia_benchmark.py first."}
+    return json.loads(AUSTRALIA_RESULTS.read_text(encoding="utf-8"))
+
+
+@legacy_router.get("/api/v1/benchmark/predictions")
+def benchmark_predictions(model: str = "Treatment mean") -> dict:
+    """Return held-out observed/predicted pairs for plots and a confusion-matrix view."""
+    if not BENCHMARK_DB.is_file():
+        return {"status": "not_run", "predictions": []}
+    with sqlite3.connect(BENCHMARK_DB) as connection:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute(
+            """SELECT trial, plot, cycle, wheat_planting_year, planting_window,
+                      actual_delta_mm, predicted_delta_mm
+               FROM benchmark_prediction WHERE model = ?
+               ORDER BY wheat_planting_year, trial, plot, cycle""", (model,)
+        ).fetchall()
+    return {"model": model, "predictions": [dict(row) for row in rows]}
+
+
+def create_app(engine_factory=None) -> FastAPI:
+    app = FastAPI(title="Field Shift API", version="0.2.0", lifespan=lifecycle(engine_factory),
+        description="Clovis MVP: historical moisture scenarios and illustrative financial/risk calculations. Model outputs remain experimental.")
+    configure_errors(app)
+    origins = [value.strip() for value in os.environ.get("FIELD_SHIFT_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if value.strip()]
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"],
+        expose_headers=["X-Request-ID", "X-Process-Time-Ms", "Retry-After"])
+    app.include_router(land_cover_router)
+    app.include_router(field_conditions_router)
+    app.include_router(router)
+    app.include_router(legacy_router)
+    return app
+
+
+app = create_app()
