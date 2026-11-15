@@ -17,6 +17,8 @@ test("calculates revenue, costs, per hectare net, total, and break-even independ
     baselineRevenue: 1000,
     assumedRevenue: 1100,
     revenueChange: 100,
+    returnAfterCoverCropCostsPerHa: 1060,
+    totalReturnAfterCoverCropCosts: 4240,
     coverCropCost: 50,
     netChangePerHa: 60,
     totalNetChange: 240,
@@ -72,4 +74,14 @@ test("returns null when finite inputs overflow a required calculation", () => {
       baselineYield: 2,
     }),
   ).toBeNull();
+});
+
+
+test("a yield reduction can retain positive returns while its change from baseline is negative", () => {
+  const result = calculateEconomics({ ...base, yieldChange: -10, seedCost: 30, terminationCost: 10, subsidy: 0, areaHa: 40 });
+  expect(result?.assumedRevenue).toBe(900);
+  expect(result?.returnAfterCoverCropCostsPerHa).toBe(860);
+  expect(result?.totalReturnAfterCoverCropCosts).toBe(34400);
+  expect(result?.netChangePerHa).toBe(-140);
+  expect(result?.totalNetChange).toBe(-5600);
 });

@@ -1,3 +1,4 @@
+import { calculateEconomics, type EconomicsInputs } from "@/lib/economics";
 import { analyzeBoundary } from "@/lib/fields/geometry";
 import { isValidCell } from "h3-js";
 import farms from "@/data/benchmark_farms.json";
@@ -26,6 +27,10 @@ export interface FieldPlan {
   notes: string;
 }
 export interface SavedPlan extends FieldPlan {
+  snapshotVersion?: 1;
+  id?: string;
+  name?: string;
+  budget?: EconomicsDraft;
   location: Selection;
   crop: PreviewCrop;
   savedAt: string;
@@ -100,6 +105,24 @@ export function contextKey(settings: MapSettings) {
 export function locationLabel(selection: Selection) {
   return `${selection.name}${selection.benchmarkId ? ", Kansas" : ""}`;
 }
+/** Saved alternatives use stable keys; legacy field/crop plans remain compatible. */
+export function planContextKey(plan: SavedPlan) {
+  const s = plan.location;
+  return `${s.fieldId ?? s.benchmarkId ?? s.hexId ?? `${s.latitude.toFixed(4)},${s.longitude.toFixed(4)}`}|${plan.crop}`;
+}
+export function planStorageKey(plan: SavedPlan) {
+  return `${planContextKey(plan)}${plan.id ? `|${plan.id}` : ""}`;
+}
+export function validBudget(value: unknown): value is EconomicsDraft {
+  if (!value || typeof value !== "object") return false;
+  const budget = value as EconomicsDraft;
+  if (!Object.keys(emptyEconomics).every(key => {
+    const text = budget[key as keyof EconomicsDraft];
+    return typeof text === "string" && text.trim() !== "" && text.length <= 40 && Number.isFinite(Number(text));
+  })) return false;
+  return Number(budget.areaHa) > 0 && Number(budget.areaHa) <= 5000 &&
+    calculateEconomics(Object.fromEntries(Object.entries(budget).map(([key, text]) => [key, Number(text)])) as unknown as EconomicsInputs) !== null;
+}
 export function validPlan(value: unknown): value is SavedPlan {
   if (!value || typeof value !== "object") return false;
   const p = value as SavedPlan;
@@ -118,6 +141,10 @@ export function validPlan(value: unknown): value is SavedPlan {
         Number(p.areaHa) <= 5000)) &&
     typeof p.notes === "string" &&
     p.notes.length <= 4000 &&
+    (p.snapshotVersion === undefined || p.snapshotVersion === 1) &&
+    (p.id === undefined || (typeof p.id === "string" && /^[0-9a-f-]{36}$/i.test(p.id))) &&
+    (p.name === undefined || (typeof p.name === "string" && p.name.trim().length > 0 && p.name.length <= 100)) &&
+    (p.budget === undefined || (validBudget(p.budget) && p.budget.areaHa === p.areaHa)) &&
     typeof p.savedAt === "string" &&
     validMapSettings({
       ...initialSettings,

@@ -67,9 +67,11 @@ export function FieldDetails({
     saveField,
     cancelField,
     deleteField,
+    getFieldDeletionImpact,
     storageAvailable,
   } = useMeridian();
   const [deleting, setDeleting] = useState(false);
+  const [deleteFailure, setDeleteFailure] = useState(false);
   const atlasState=useAtlasState();
   const field = fieldDraft ?? activeField;
   const info = field?.boundary ? analyzeBoundary(field.boundary) : null;
@@ -95,6 +97,7 @@ export function FieldDetails({
     result?.suggestedCrop && crops.some((c) => c.value === result.suggestedCrop)
       ? (result.suggestedCrop as PreviewCrop)
       : undefined;
+  const deletionImpact = activeField ? getFieldDeletionImpact(activeField.id) : null;
   const county = atlasState?.regional?.regions.find(r => r.fips === atlasState.selectedFips);
   const name = settings.mode === "atlas" && atlasState?.layerMode === "yield"
     ? county ? `${county.name}, ${county.state}` : "Regional study area"
@@ -364,8 +367,8 @@ export function FieldDetails({
                 <Button onClick={onInspectField} disabled={!settings.selection.hexId}>Inspect field here</Button>
               </>
             )}
-            {activeField && (
-              <Button variant="destructive" onClick={() => setDeleting(true)}>
+            {activeField && settings.mode === "field" && !fieldDraft && (
+              <Button variant="destructive" onClick={() => { setDeleteFailure(false); setDeleting(true); }}>
                 Delete field
               </Button>
             )}
@@ -392,23 +395,29 @@ export function FieldDetails({
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <AlertDialog open={deleting} onOpenChange={setDeleting}>
+      <AlertDialog open={deleting} onOpenChange={(value) => { setDeleting(value); if (!value) setDeleteFailure(false); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this field?</AlertDialogTitle>
+            <AlertDialogTitle>Delete {activeField?.name ?? "this field"}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This removes the field and its saved plans and economic inputs
-              from this browser.
+              {!activeField
+                ? "This field is no longer available. Nothing has been deleted."
+                : `This removes the field${deletionImpact?.savedPlans ? `, ${deletionImpact.savedPlans} saved ${deletionImpact.savedPlans === 1 ? "plan" : "plans"}` : ""}${deletionImpact?.planDrafts ? `, ${deletionImpact.planDrafts} plan ${deletionImpact.planDrafts === 1 ? "draft" : "drafts"}` : ""}${deletionImpact?.economicsInputs ? `, and ${deletionImpact.economicsInputs} saved economics ${deletionImpact.economicsInputs === 1 ? "input" : "inputs"}` : ""} from this browser. Other saved fields will remain.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {deleteFailure && <p role="alert" className="text-sm text-destructive">This field could not be deleted because it is no longer available. Nothing else was removed.</p>}
           <AlertDialogFooter>
             <Button variant="outline" onClick={() => setDeleting(false)}>
               Keep field
             </Button>
             <Button
               variant="destructive"
+              disabled={!activeField}
               onClick={() => {
-                if (activeField) deleteField(activeField.id);
+                if (!activeField || !deleteField(activeField.id)) {
+                  setDeleteFailure(true);
+                  return;
+                }
                 setDeleting(false);
                 onOpenChange(false);
               }}

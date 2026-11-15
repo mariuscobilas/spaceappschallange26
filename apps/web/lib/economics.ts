@@ -12,6 +12,8 @@ export interface EconomicsResult {
   baselineRevenue: number;
   assumedRevenue: number;
   revenueChange: number;
+  returnAfterCoverCropCostsPerHa: number;
+  totalReturnAfterCoverCropCosts: number;
   coverCropCost: number;
   netChangePerHa: number;
   totalNetChange: number;
@@ -56,6 +58,9 @@ export function calculateEconomics(
     input.terminationCost +
     input.subsidy;
   const totalNetChange = netChangePerHa * input.areaHa;
+  // A partial subtotal: other crop production expenses are not provided here.
+  const returnAfterCoverCropCostsPerHa = assumedRevenue - coverCropCost + input.subsidy;
+  const totalReturnAfterCoverCropCosts = returnAfterCoverCropCostsPerHa * input.areaHa;
   const breakEvenDenominator = input.baselineYield * input.grainPrice;
   const breakEvenNumerator = coverCropCost - input.subsidy;
   const breakEvenYieldChange =
@@ -72,6 +77,8 @@ export function calculateEconomics(
       coverCropCost,
       netChangePerHa,
       totalNetChange,
+      returnAfterCoverCropCostsPerHa,
+      totalReturnAfterCoverCropCosts,
     ].every(Number.isFinite)
   ) {
     return null;
@@ -84,6 +91,8 @@ export function calculateEconomics(
     coverCropCost,
     netChangePerHa,
     totalNetChange,
+    returnAfterCoverCropCostsPerHa,
+    totalReturnAfterCoverCropCosts,
     breakEvenYieldChange:
       breakEvenYieldChange !== null && Number.isFinite(breakEvenYieldChange)
         ? breakEvenYieldChange

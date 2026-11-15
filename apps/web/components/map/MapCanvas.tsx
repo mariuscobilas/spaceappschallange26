@@ -417,7 +417,7 @@ export default function MapCanvas(props: MapCanvasProps) {
     const polygonSource = map.getSource("field-selection") as GeoJSONSource;
     const pointSource = map.getSource("field-point") as GeoJSONSource;
     const countyMode = propsRef.current.mode === "atlas" && (propsRef.current.regionalYieldActive??!!propsRef.current.regionalYield);
-    const region = !countyMode && propsRef.current.mode === "atlas" && selected.hexId && isValidCell(selected.hexId)
+    const region = !countyMode && (propsRef.current.mode === "atlas" || propsRef.current.hexBrowse) && selected.hexId && isValidCell(selected.hexId)
       ? selected.hexId : undefined;
     const features: Feature<Polygon>[] = region
       ? [h3CellFeature(region, getResolution(region))]
@@ -425,7 +425,7 @@ export default function MapCanvas(props: MapCanvasProps) {
         ? [{ type: "Feature", properties: {}, geometry: selected.boundary }] : [];
     const marker = region ? hexCenter(region) : selected;
     polygonSource.setData({ type: "FeatureCollection", features });
-    pointSource.setData(countyMode?{type:"FeatureCollection",features:[]}:{
+    pointSource.setData(countyMode || propsRef.current.hexBrowse?{type:"FeatureCollection",features:[]}:{
       type: "FeatureCollection",
       features: [{
         type: "Feature",
@@ -629,7 +629,7 @@ export default function MapCanvas(props: MapCanvasProps) {
     if (!map) return;
     const drawingMode = propsRef.current.drawing?.mode;
     if (drawingMode === "polygon" || drawingMode === "edit") return;
-    if (propsRef.current.mode === "field") {
+    if (propsRef.current.mode === "field" && !propsRef.current.hexBrowse) {
       const { lng, lat } = e.lngLat;
       const withinConus = conusBoundary.current?.features.some((feature) =>
         feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"
@@ -674,7 +674,14 @@ export default function MapCanvas(props: MapCanvasProps) {
     const hit = map.queryRenderedFeatures(e.point, {
       layers: ["field-h3-fill"],
     })[0];
-    const hexId = hit?.properties?.hexId as string | undefined;
+    let hexId = hit?.properties?.hexId as string | undefined;
+    // GeoJSON source updates and basemap fallbacks can precede rendered picking.
+    // Resolve only cells in the displayed grid so the first click still selects
+    // the same geographic cell, without creating a point or inventing coverage.
+    if (!hexId && propsRef.current.hexBrowse) {
+      const candidate = hexAt(e.lngLat.lat, e.lngLat.lng, resolution.current);
+      if (getGrid()?.features.some(feature => feature.properties?.hexId === candidate)) hexId = candidate;
+    }
     if (!hexId) return;
     const farm = BENCHMARKS.find(
       (f) => hexAt(f.latitude, f.longitude, resolution.current) === hexId,
@@ -956,7 +963,7 @@ export default function MapCanvas(props: MapCanvasProps) {
     syncSelectionLayers();
     void syncDrawing();
     void syncAtlasOverlay();
-  }, [props.mode, props.selection, props.drawing]);
+  }, [props.mode, props.hexBrowse, props.selection, props.drawing]);
   useEffect(() => {
     const map = mapRef.current;
     const next = props.basemap ?? DEFAULT_BASEMAP;

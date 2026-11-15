@@ -17,14 +17,30 @@ function responseFor(url: string) {
   return response;
 }
 
+async function seedField(page: import("@playwright/test").Page) {
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, activeFieldId: "north", fields: [
+      { id: "north", name: "North field", location: { latitude: 39, longitude: -99 }, currentCrop: "wheat", cropSource: "manual", createdAt: now, updatedAt: now },
+    ] }));
+  });
+}
+
+async function openCalendar(page: import("@playwright/test").Page) {
+  await page.getByRole("region", { name: "Saved fields", exact: true }).getByRole("button", { name: "Create plan", exact: true }).click();
+  await expect(page).toHaveURL(/\/planner\/calendar$/);
+}
+
 test("reuses field conditions across Planner and Intel and shared retry makes one fresh request", async ({ page }) => {
   let requests = 0;
   await page.route("**/api/v1/field-conditions?**", (route) => {
     requests++;
     return route.fulfill({ json: responseFor(route.request().url()) });
   });
+  await seedField(page);
   await page.goto("/planner");
-  await page.getByText("Field conditions and sources", { exact: true }).click();
+  await openCalendar(page);
+  await page.getByText("Conditions and sources", { exact: true }).click();
   const conditions = page.getByRole("region", { name: "Field conditions", exact: true });
   await expect(conditions.getByLabel("30-day precipitation: 24.8 mm")).toBeVisible();
   expect(requests).toBe(1);
@@ -35,7 +51,8 @@ test("reuses field conditions across Planner and Intel and shared retry makes on
   expect(requests).toBe(1);
 
   await page.getByRole("link", { name: "Field Planner", exact: true }).click();
-  await page.getByText("Field conditions and sources", { exact: true }).click();
+  await openCalendar(page);
+  await page.getByText("Conditions and sources", { exact: true }).click();
   const refreshed = page.waitForRequest("**/api/v1/field-conditions?**");
   await page.getByRole("region", { name: "Field conditions", exact: true }).getByRole("button", { name: "Refresh field conditions" }).click();
   await refreshed;

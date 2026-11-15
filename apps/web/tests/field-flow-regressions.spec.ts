@@ -23,8 +23,10 @@ test("a clean field edit does not leak into Atlas details", async ({ page }) => 
   const editor = page.getByRole("dialog", { name: "Field details", exact: true });
   await expect(editor).toBeVisible();
   await editor.getByRole("button", { name: "Close", exact: true }).click();
-  await page.getByRole("link", { name: "Regional Atlas", exact: true }).click();
-  await expect(page).toHaveURL(/\/atlas$/);
+  await page.getByRole("link", { name: "Explore", exact: true }).click();
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await page.getByLabel("Data view", { exact: true }).selectOption("research");
+  await page.getByRole("dialog", { name: "Map options", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Selected location details", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "Region overview", exact: true })).toBeVisible();
   await expect(page.getByRole("dialog", { name: "Field details", exact: true })).toHaveCount(0);

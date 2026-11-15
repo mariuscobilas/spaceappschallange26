@@ -1,20 +1,68 @@
 "use client";
-import { RefreshCw } from "lucide-react";
+
 import { useAtlasState } from "./AtlasContext";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 
-export function RegionalYieldControls(){
- const s=useAtlasState(); if(!s)return null; const d=s.regional;
- const matched=d?.status==="available"?d.regions.filter(r=>r.estimates.some(e=>e.crop===s.countyCrop&&e.period===s.countyPeriod)).length:0;
- return <section aria-label="Published county yield controls" className="flex shrink-0 flex-col gap-2 border-b bg-background px-4 py-3">
-  <div className="flex flex-wrap items-end gap-3">
-   <Field className="w-40"><FieldLabel htmlFor="atlas-layer">Atlas layer</FieldLabel><NativeSelect id="atlas-layer" value={s.layerMode} onChange={e=>s.setLayerMode(e.target.value as "yield"|"returns")}><NativeSelectOption value="yield">Published yield effects</NativeSelectOption><NativeSelectOption value="returns">Net return scenarios</NativeSelectOption></NativeSelect></Field>
-   {s.layerMode==="yield"&&<><Field className="w-36"><FieldLabel htmlFor="yield-crop">Published crop</FieldLabel><NativeSelect id="yield-crop" value={s.countyCrop} onChange={e=>s.setCountyCrop(e.target.value as "corn"|"soybeans")}><NativeSelectOption value="corn">Corn</NativeSelectOption><NativeSelectOption value="soybeans">Soybeans</NativeSelectOption></NativeSelect></Field><Field className="w-36"><FieldLabel htmlFor="yield-period">Study period</FieldLabel><NativeSelect id="yield-period" value={s.countyPeriod} onChange={e=>s.setCountyPeriod(e.target.value as "2019-2020"|"2019"|"2020")}><NativeSelectOption value="2019-2020">2019–2020</NativeSelectOption><NativeSelectOption value="2019">2019</NativeSelectOption><NativeSelectOption value="2020">2020</NativeSelectOption></NativeSelect></Field><Button variant="outline" disabled={d?.status!=="available"} onClick={s.fitCounties}>Fit study area</Button><Button variant="outline" className="min-w-11 sm:min-w-0" aria-label="Refresh published data" title="Refresh published data" disabled={s.regionalLoading} onClick={s.retryRegional}><RefreshCw className="sm:hidden"/><span className="hidden sm:inline">Refresh published data</span></Button></>}
-   <p role="status" className="w-full min-w-0 basis-full text-sm text-muted-foreground sm:w-auto sm:basis-auto sm:flex-1">{s.layerMode==="returns"?"Scenario net returns in USD/ha.":s.regionalLoading?"Loading published county estimates…":!d||d.status!=="available"?d?.message??"Published county estimates unavailable.":`${matched} counties with ${s.countyCrop} ${s.countyPeriod} estimates · ${d.regions.length} study counties${s.regionalFallback?" · local published copy":""}`}</p>
-  </div>
-  {s.layerMode==="yield"&&<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground" aria-label="Yield effect legend"><span className="font-medium">Mean yield effect (%)</span><span className="flex items-center gap-1"><i className="size-3 rounded-sm bg-red-700"/>≤ −10%</span><span className="flex items-center gap-1"><i className="size-3 rounded-sm bg-[#f4f0dc] border"/>0%</span><span className="flex items-center gap-1"><i className="size-3 rounded-sm" style={{backgroundColor:"#16804a"}}/>≥ +10%</span><span className="flex items-center gap-1"><i className="size-3 rounded-sm bg-[#a8aaa4]"/>No data</span></div>}
-  {s.layerMode==="yield"&&<details className="max-h-[25vh] overflow-y-auto text-xs text-muted-foreground"><summary className="min-h-9 cursor-pointer py-2 font-medium">Study source and interpretation</summary><p className="mt-2">{d?.method?.summary??"Published model estimates aggregated as historical county means."} {d?.method?.interpretation} This is not a current field forecast, recommendation, or net return. Counties without a matching estimate show no data; missing values are never zero.</p><p className="mt-2">Coverage: {d?.regions.length??0} counties across Iowa, Illinois, Indiana, Michigan, Missouri, and Ohio. Complete case county means; minimum {d?.method?.minimumSampleRecords??10} sample records per estimate. The 2019–2020 period is pooled and may contain records from one year only; see county detail counts. These study years are independent of NASA observation dates.</p>{d?.method?.limitations.map((limitation,i)=><p className="mt-2" key={i}>{limitation}</p>)}{d?.source&&<p className="mt-2">Source: <a className="underline" href={d.source.url} target="_blank" rel="noreferrer">{d.source.title}</a> · DOI {d.source.doi} · archive SHA-256 {d.source.archiveSha256}</p>}<p className="mt-2">Map scale: mean yield effect (%) clipped at ±10%. County selection identifies geographic study coverage, not farm level precision.</p></details>}
- </section>
+const periods = [
+  { value: "2019-2020", label: "2019–2020" },
+  { value: "2019", label: "2019" },
+  { value: "2020", label: "2020" },
+] as const;
+
+export function RegionalYieldControls({ onInspect }: { onInspect?: () => void } = {}) {
+  const s = useAtlasState();
+  if (!s) return null;
+  const data = s.regional?.status === "available" ? s.regional : undefined;
+  const selectedCounty = data?.regions.find((region) => region.fips === s.selectedFips);
+
+  return (
+    <section aria-label="Historical research controls" className="flex min-w-0 flex-col gap-3">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+        <Field>
+          <FieldLabel htmlFor="research-crop">Research crop</FieldLabel>
+          <NativeSelect id="research-crop" value={s.countyCrop} onChange={(event) => s.setCountyCrop(event.target.value as "corn" | "soybeans")}>
+            <NativeSelectOption value="corn">Corn</NativeSelectOption>
+            <NativeSelectOption value="soybeans">Soybeans</NativeSelectOption>
+          </NativeSelect>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="research-period">Study period</FieldLabel>
+          <NativeSelect id="research-period" value={s.countyPeriod} onChange={(event) => s.setCountyPeriod(event.target.value as "2019-2020" | "2019" | "2020")}>
+            {periods.map((period) => <NativeSelectOption key={period.value} value={period.value}>{period.label}</NativeSelectOption>)}
+          </NativeSelect>
+        </Field>
+        <Field className="sm:col-span-2">
+          <FieldLabel htmlFor="research-county">County</FieldLabel>
+          <NativeSelect id="research-county" value={s.selectedFips ?? ""} disabled={!data} onChange={(event) => s.setSelectedFips(event.target.value || undefined)}>
+            <NativeSelectOption value="">Choose a county</NativeSelectOption>
+            {data?.regions.map((region) => <NativeSelectOption key={region.fips} value={region.fips}>{region.name}, {region.state}</NativeSelectOption>)}
+          </NativeSelect>
+          {!data && <p className="text-xs text-muted-foreground">County selection is available when the study data loads.</p>}
+        </Field>
+      </div>
+
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Historical model sample estimates for corn and soybeans in Iowa, Illinois, Indiana, Michigan, Missouri, and Ohio. This county research does not cover Kansas wheat and is not a field forecast.
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" variant="outline" className="min-h-11" disabled={!data} onClick={s.fitCounties}>Reset study view</Button>
+        {selectedCounty && onInspect && <Button type="button" className="min-h-11" onClick={onInspect}>Inspect selected county</Button>}
+        {s.regional?.status === "unavailable" && <Button type="button" variant="outline" className="min-h-11" onClick={s.retryRegional}>Retry study data</Button>}
+      </div>
+
+      <details className="text-xs text-muted-foreground">
+        <summary className="min-h-11 cursor-pointer py-3 font-medium text-foreground">Study source and method</summary>
+        <div className="space-y-2 pb-2 leading-relaxed">
+          <p>{s.regional?.method?.summary ?? "Published model estimates are summarized as historical county means."} {s.regional?.method?.interpretation ?? "These study records do not establish a current field forecast or recommendation."}</p>
+          <p>Coverage: six Corn Belt states. Study records are model sample records, not independent farms or a confidence score. The pooled period can contain records from one year only; county details show annual counts. Study years are separate from NASA observation dates.</p>
+          {s.regional?.method?.limitations.map((limitation, index) => <p key={index}>{limitation}</p>)}
+          {s.regional?.source && <p>Source: <a className="underline underline-offset-2" href={s.regional.source.url} target="_blank" rel="noreferrer">{s.regional.source.title}</a> · DOI {s.regional.source.doi} · archive SHA-256 {s.regional.source.archiveSha256}</p>}
+          {s.regionalFallback && <p>This is the bundled published study copy because the service could not be reached.</p>}
+        </div>
+      </details>
+    </section>
+  );
 }

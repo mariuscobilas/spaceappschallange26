@@ -1,6 +1,10 @@
+import { choosePlannerField } from "./helpers/planner";
+import { readFileSync } from "node:fs";
+
+const countyStudy = JSON.parse(readFileSync("../../shared/payloads/regional-yield-available.json", "utf8"));
 import { expect, test } from "@playwright/test";
 
-test("working termination drafts follow each field through navigation, reload and unit changes", async ({ page }) => {
+test("working calendar drafts follow each field through navigation, reload and unit changes", async ({ page }) => {
   await page.addInitScript(() => {
     if (localStorage.getItem("meridian.fields.v1")) return;
     const now = new Date().toISOString();
@@ -10,26 +14,34 @@ test("working termination drafts follow each field through navigation, reload an
     ] }));
   });
   await page.goto("/planner");
-  await expect(page.getByLabel("Field or location")).toHaveValue("field:north");
+  await page.getByRole("button", { name: "Create plan", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/planner\/calendar$/);
+  await expect(page.getByLabel("Plan context")).toContainText("North field");
   await page.getByLabel("Cash crop planting date").fill("2027-04-20");
+  await page.getByText("Field area and notes", { exact: true }).click();
   await page.getByLabel("Notes").fill("Check field moisture before confirming timing.");
   await page.getByLabel("Field area (ha)").fill("100");
-  await expect(page.getByLabel("Termination calendar")).toContainText("March 21, 2027");
+  await expect(page.getByText("March 21, 2027", { exact: true }).last()).toBeVisible();
   await page.getByRole("button", { name: "Use acres", exact: true }).click();
   await expect(page.getByLabel("Field area (ac)")).toHaveValue(/247\.105/);
-  await page.getByRole("link", { name: "Economics", exact: true }).click();
-  await expect(page.getByLabel("Field or location")).toHaveValue("field:north");
-  await page.getByRole("link", { name: "Field Planner", exact: true }).click();
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Budget", exact: true }).click();
+  await expect(page.getByLabel("Plan context")).toContainText("North field");
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Calendar", exact: true }).click();
+  await page.getByText("Field area and notes", { exact: true }).click();
   await expect(page.getByLabel("Notes")).toHaveValue("Check field moisture before confirming timing.");
   await page.reload();
   await expect(page.getByLabel("Cash crop planting date")).toHaveValue("2027-04-20");
-  await page.getByLabel("Field or location").selectOption("field:south");
-  await expect(page.getByLabel("Cash crop", { exact: true })).toHaveValue("corn");
+  await page.getByText("Field area and notes", { exact: true }).click();
+  await choosePlannerField(page, "South field");
+  await expect(page.getByLabel("Next cash crop", { exact: true })).toHaveValue("corn");
+  await page.getByText("Field area and notes", { exact: true }).click();
   await expect(page.getByLabel("Notes")).toHaveValue("");
   await page.getByLabel("Notes").fill("South plan");
-  await page.getByLabel("Field or location").selectOption("field:north");
+  await choosePlannerField(page, "North field");
+  await page.getByText("Field area and notes", { exact: true }).click();
   await expect(page.getByLabel("Notes")).toHaveValue("Check field moisture before confirming timing.");
-  await page.getByRole("button", { name: "Save field plan", exact: true }).click();
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Review", exact: true }).click();
+  await page.getByRole("button", { name: "Save plan", exact: true }).click();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.field-plans.v2") ?? "{}")["north|wheat"]);
   expect(saved.areaHa).toBe("100");
 });
@@ -57,28 +69,36 @@ test("Ask Meridian exports the prepared question with explicit unavailable evide
   expect(text).toContain("Field conditions requested for");
 });
 
-test("Atlas drilldown starts an editable point at the regional centroid without treating the hex as a parcel", async ({ page }) => {
+test("research county navigation does not create a field until Select point is used", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.route("https://tiles.openfreemap.org/**", (route) => route.abort());
-  await page.goto("/atlas");
-  await page.getByLabel("Atlas layer").selectOption("returns");
-  await page.getByLabel("Cash crop", { exact: true }).selectOption("corn");
-  await expect(page.locator(".map-canvas")).toHaveAttribute("data-hex-resolution", "2", { timeout: 30000 });
-  const region = page.getByRole("complementary", { name: "Region overview", exact: true });
-  await expect(async () => {
-    await page.mouse.click(800, 400);
-    await expect(region).toBeVisible();
-  }).toPass({ timeout: 20000 });
-  const before = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"));
-  await region.getByRole("button", { name: "Inspect field here", exact: true }).click();
+  await page.route("https://tiles.openfreemap.org/**", route => route.abort());
+  await page.route("**/api/v1/atlas/regional-yield", route => route.fulfill({ json: countyStudy }));
+  await page.goto("/?view=research");
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await expect(page.getByLabel("County", { exact: true })).toBeEnabled();
+  await page.getByLabel("County", { exact: true }).selectOption("17001");
+  await page.getByRole("button", { name: "Inspect selected county", exact: true }).click();
+  const researchDetails = page.getByRole("complementary", { name: "Region overview", exact: true });
+  await expect(researchDetails).toContainText("Adams, IL");
+  await expect(researchDetails.getByRole("button", { name: "Choose a field in this area", exact: true })).toBeEnabled();
+  await researchDetails.getByRole("button", { name: "Choose a field in this area", exact: true }).click();
   await expect(page).toHaveURL(/\/fields$/);
+
+  const fieldsBefore = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}").fields ?? []);
+  expect(fieldsBefore).toHaveLength(0);
+  await expect(page.getByText("No fields saved yet")).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Field details", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Select point", exact: true }).click();
+  await expect(page.getByText("Click the map to place a field point.")).toBeVisible();
+  await expect(page.getByText("No fields saved yet")).toBeVisible();
+
+  const map = page.locator(".map-canvas");
+  const bounds = await map.boundingBox();
+  if (!bounds) throw new Error("Map bounds unavailable");
+  await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   const editor = page.getByRole("dialog", { name: "Field details", exact: true });
   await expect(editor).toBeVisible();
-  await expect(editor.getByLabel("Cash crop", { exact: true })).toHaveValue("corn");
   await expect(editor.getByLabel("Field area (ha)")).toHaveValue("");
-  const after = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"));
-  expect(after.mode).toBe("field");
-  expect(after.selection.latitude).toBe(before.selection.latitude);
-  expect(after.selection.longitude).toBe(before.selection.longitude);
-  expect(after.selection.boundary).toBeUndefined();
+  const fieldsAfterPoint = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}").fields ?? []);
+  expect(fieldsAfterPoint).toHaveLength(0);
 });

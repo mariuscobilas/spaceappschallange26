@@ -10,34 +10,35 @@ No decorative scores, marketing hero, fake telemetry, or simulated model respons
 
 ## Navigation and layout
 
-A full-height application navigation sidebar contains six stacked destinations:
-Explore `/`, My fields `/fields`, Regional Atlas `/atlas`, Field Planner `/planner`,
-Economics `/economics`, Ask Meridian `/intel`.
-Use shadcn Sidebar components; collapse to icons on desktop, Sheet navigation on
-phones. The sidebar contains navigation only, not map filters or field details.
+Primary navigation contains Explore `/`, Field Planner `/planner`, and Ask Meridian
+`/intel`. My fields `/fields`, Calendar `/planner/calendar`, Budget `/economics`,
+Review `/planner/review`, and Saved plans `/planner/saved` belong to the planning
+journey. Editor headers show read-only field/crop context; next cash crop is edited
+in the calendar form. Existing field management and saved-record actions are explicit.
 
-Explore is for map browsing and filters. Its compact map bar has navigation,
-location/crop context, Map options and on-demand details; it does not create or
-edit fields. My fields owns point selection, drawing, saved-field selection and
-management. Regional Atlas `/atlas` owns H3 region browsing and inspection. These
-are native sidebar routes over the same mounted map and shared location/crop/date
-state; direct links and browser history must restore the route's field/atlas mode.
+Explore is one persistent map workspace with Conditions and Historical research
+inside Map options. The map surface has a navigation toggle and Map options, with
+source/date/legend feedback in one normal-flow footer outside the map viewport.
+No extra research toolbar or selectors on the map. `/atlas` is a compatibility
+redirect to `/?view=research`; research URL filters support deep links and history.
 
-Map options opens a scrollable right Sheet containing NASA layer selection,
-opacity, source legend and Latest/Past dates. Field tools belong to My fields and
-are absent from Explore and Regional Atlas. The My fields panel closes before a
-map selection or drawing starts; Finish/Cancel stay visible while drawing/editing.
-Phones use compact context controls and the existing navigation drawer. Keep
-source dates and missing states in map feedback.
+Conditions retains geographic H3 selection and centre conditions/soil inspection.
+Historical research renders county polygons at the data's supported scale, with
+Research crop, Study period and keyboard County selection inside Map options.
+County details dock beside desktop maps and use one Sheet on phones. Filters and
+details must not open competing sheets. Keep the signed percent legend visible.
+Use muted purple/neutral/teal for research, numeric labels and gray No estimate.
 
-Saved plans belongs to local Plan termination / Saved plans navigation within
-Field Planner. Comparison is opt-in and selects existing plan cards. Preserve
-explicit draft restoration and plan-only deletion confirmation.
-Field mode selects exact points and supports named polygon fields; Atlas selects
-regional hexagons. Keep drawing instructions and Finish/Cancel actions visible.
-Atlas selections open a docked right overview beside the desktop map; phones use
-a Sheet. Show full hex area, centre, resolution, crop/date and sampled conditions,
-distinguishing sample readings from regional aggregates.
+Planning context, H3 inspection and research county/filter state are independent.
+Map clicks and research filters do not change the selected planning field/crop,
+drafts or saved budget. Explicit Choose a field in this area navigates to My fields;
+it does not create a draft or substitute county/hexagon area for field acreage.
+
+My fields owns point selection and drawing. One compact toolbar and one operation
+row own instructions and Finish/Cancel. The field panel focuses on the active
+operation, clears stale feedback and preserves saved records until explicit save.
+Net-return research controls stay absent while validated financial coverage is
+unavailable; keep the implementation for future configured data.
 
 ## Map and observations
 
@@ -58,8 +59,8 @@ calendar termination date alongside the form, explicitly chosen by the user.
 Keep working drafts per field/crop through navigation and reload independently
 from confirmed saved plans.
 
-Field Planner saves cover-crop species, 0–60 day termination lead time, optional
-planting date, entered field area and notes per selected location/crop. Calendar
+Field Planner saves cover-crop species, 0–60 day termination lead time, required
+planting date for confirmation, entered field area and notes per selected location/crop. Calendar
 termination dates are simple date arithmetic, not a model result. Regional hex
 area is never substituted for managed field area. Saved polygon hectares are
 authoritative; point-based fields use manual hectares. Predictions remain unavailable.
@@ -76,8 +77,9 @@ show their area, the 5,000 ha limit and an Atlas action. USDA CDL suggestions di
 their source year and require explicit acceptance; keep manual crop choice available.
 
 Economics starts with blank, explicitly entered assumptions: USD/tonne, tonnes/ha,
-assumed yield change %, costs/payment USD/ha, and managed hectares. Calculate net
-change and break-even arithmetically; no live price or yield forecast is implied.
+assumed yield change %, costs/payment USD/ha, and managed hectares. Show estimated
+return after entered cover-crop costs and subsidy, with other production expenses
+excluded. Calculation details are collapsed; no baseline-change block is displayed.
 Blank values are not zero. Preserve inputs per location/crop across navigation.
 Offer metric/U.S. inputs and results, using metric canonical storage. Unit switches
 must not alter assumptions or calculation results. Grain bushels use crop-specific

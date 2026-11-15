@@ -1,7 +1,7 @@
 import type { SavedField } from "@spaceapps/shared";
 import type { MapSettings } from "@/lib/map/types";
 import type { EconomicsDraft, FieldPlan, SavedPlan } from "@/lib/workspace";
-import { emptyEconomics, validMapSettings, validPlan, validPlanDraft } from "@/lib/workspace";
+import { emptyEconomics, planStorageKey, validMapSettings, validPlan, validPlanDraft } from "@/lib/workspace";
 import { validSavedField } from "@/lib/fields/storage";
 
 export const BACKUP_VERSION = 1;
@@ -31,10 +31,6 @@ const record = <T>(value: unknown, validate: (item: unknown) => item is T): valu
   !!value && typeof value === "object" && !Array.isArray(value) && Object.entries(value).every(([key, item]) => safeKey(key) && validate(item));
 const validEconomics = (value: unknown): value is EconomicsDraft => !!value && typeof value === "object" &&
   Object.keys(emptyEconomics).every((key) => typeof (value as Record<string, unknown>)[key] === "string" && (value as Record<string, string>)[key].length <= 40);
-const planContextKey = (plan: SavedPlan) => {
-  const location = plan.location;
-  return `${location.fieldId ?? location.benchmarkId ?? location.hexId ?? `${location.latitude.toFixed(4)},${location.longitude.toFixed(4)}`}|${plan.crop}`;
-};
 export function parseWorkspaceBackup(input: string): WorkspaceBackup {
   if (new TextEncoder().encode(input).byteLength > MAX_BACKUP_BYTES) throw new Error("Backup exceeds the 5 MB limit.");
   let value: unknown;
@@ -53,7 +49,7 @@ export function parseWorkspaceBackup(input: string): WorkspaceBackup {
     throw new Error("Backup contains too many workspace items.");
   const fieldIds = new Set(fieldsEnvelope.map((field) => field.id));
   if (fieldIds.size !== fieldsEnvelope.length) throw new Error("Backup contains duplicate field IDs.");
-  if (Object.entries(v.plans).some(([key, plan]) => key !== planContextKey(plan as SavedPlan)))
+  if (Object.entries(v.plans).some(([key, plan]) => key !== planStorageKey(plan as SavedPlan)))
     throw new Error("A saved plan key does not match its field and crop context.");
   const uuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   for (const key of [...Object.keys(v.drafts), ...Object.keys(v.economics)]) {

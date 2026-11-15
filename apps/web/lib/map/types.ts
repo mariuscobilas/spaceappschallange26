@@ -54,6 +54,8 @@ export interface BasemapStatus {
   state: "loading" | "ready" | "fallback";
 }
 export interface MapCanvasProps extends MapSettings {
+  /** Explore selects geographic cells instead of placing field points. */
+  hexBrowse?: boolean;
   onSelect: (selection: Selection) => void;
   onStatus: (status: MapStatus) => void;
   basemapRetry?: number;

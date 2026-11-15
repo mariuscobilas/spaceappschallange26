@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
-import farms from "@/data/benchmark_farms.json";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@/components/ui/native-select";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
@@ -22,7 +21,7 @@ export function FieldContext({ compact = false, includeSavedFields = true, inclu
     }
   }, [change, includeSavedFields, settings.selection.fieldId]);
   const value = includeSavedFields && activeField ? `field:${activeField.id}`
-    : settings.selection.benchmarkId ? `benchmark:${settings.selection.benchmarkId}` : "selection";
+    : "selection";
   return (
     <FieldGroup className={compact ? "!w-full !flex-row !flex-nowrap items-center !gap-2 [container-type:normal]" : "!w-auto !flex-row !flex-wrap items-center !gap-2 [container-type:normal]"} aria-label="Field context" data-compact={compact || undefined}>
       <Field className={compact ? "min-w-0 flex-1" : "w-48 min-w-0"}>
@@ -31,21 +30,11 @@ export function FieldContext({ compact = false, includeSavedFields = true, inclu
           onChange={(event) => {
             const next = event.target.value;
             if (next.startsWith("field:")) chooseField(next.slice(6));
-            else if (next.startsWith("benchmark:")) requestTransition(() => {
-              const farm = farms.find((f) => f.id === next.slice(10));
-              if (!farm) return;
-              if (fieldDraft) cancelField();
-              selectLocation({ name: farm.name, latitude: farm.latitude,
-                longitude: farm.longitude, benchmarkId: farm.id }, true);
-            });
           }}>
           {value === "selection" && <NativeSelectOption value="selection">{includeSavedFields ? fieldDraft?.name ?? locationLabel(settings.selection) : locationLabel(settings.selection)}</NativeSelectOption>}
           {includeSavedFields && fields.length > 0 && <NativeSelectOptGroup label="Your saved fields">
             {fields.map((f) => <NativeSelectOption key={f.id} value={`field:${f.id}`}>{f.name}</NativeSelectOption>)}
           </NativeSelectOptGroup>}
-          <NativeSelectOptGroup label="Kansas reference locations">
-            {farms.map((f) => <NativeSelectOption key={f.id} value={`benchmark:${f.id}`}>{f.name}, Kansas</NativeSelectOption>)}
-          </NativeSelectOptGroup>
         </NativeSelect>
       </Field>
       {includeCrop && <Field className={compact ? "w-28 shrink-0 crop-control" : "w-28 crop-control"}>

@@ -8,17 +8,19 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { FieldConditions } from "@/components/fields/FieldConditions";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
+import type { Selection } from "@/lib/map/types";
 import { crops, today } from "@/lib/workspace";
 
-export function AtlasRegionOverview({ enabled }: { enabled: boolean }) {
+export function AtlasRegionOverview({ enabled, geographyOnly = false, selection }: { enabled: boolean; geographyOnly?: boolean; selection?: Selection }) {
   const { settings } = useMeridian();
+  const inspected = selection ?? settings.selection;
   const atlas = useAtlasState();
   const [showSoil, setShowSoil] = useState(false);
-  const record = atlas?.cells.find(c => c.h3Index === settings.selection.hexId);
+  const record = atlas?.cells.find(c => c.h3Index === inspected.hexId);
   const noAcreage = record?.activeAreaHa === 0;
   const number = (v: number | null | undefined, unit: string) => v === null || v === undefined ? "Unavailable" : `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(v)} ${unit}`;
 
-  const hexId = settings.selection.hexId;
+  const hexId = inspected.hexId;
   const validHex = !!hexId && isValidCell(hexId);
   const asOf = settings.timeMode === "past" ? settings.observationDate : today();
   const crop = crops.find((item) => item.value === settings.crop)?.label;
@@ -57,7 +59,7 @@ export function AtlasRegionOverview({ enabled }: { enabled: boolean }) {
       </div>
       <FieldConditions compact point={{ latitude, longitude }} asOf={asOf} enabled={enabled} />
     </section>
-    <Card size="sm">
+    {!geographyOnly && <Card size="sm">
       <CardHeader>
         <CardTitle>Regional assessment</CardTitle>
         <CardDescription>{atlas?.loading ? "Loading regional assessment…" : noAcreage ? "No active acreage for the selected crop in this region." : !record ? "No validated assessment for this region and filter combination." : `${atlas?.scenario?.label} · ${atlas?.scenario?.periodStart} to ${atlas?.scenario?.periodEnd}`}</CardDescription>
@@ -72,7 +74,7 @@ export function AtlasRegionOverview({ enabled }: { enabled: boolean }) {
         </dl>
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Missing crop coverage is not zero acreage. Negative yield penalty means a yield gain relative to the declared baseline. Regional values come only from the supplied dataset; point observations below do not replace missing aggregates.</p>
       </CardContent>
-    </Card>
+    </Card>}
     <details onToggle={e => setShowSoil(e.currentTarget.open)} className="rounded-lg border p-4"><summary className="cursor-pointer text-sm font-medium">Soil texture and horizon characteristics at centre</summary>{showSoil && <div className="mt-3"><SoilProfile key={hexId} latitude={latitude} longitude={longitude} /></div>}</details>
   </div>;
 }

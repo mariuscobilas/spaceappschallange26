@@ -27,8 +27,8 @@ test("lists confirmed plans, opens their saved field and crop, persists, and del
   await expect(page.getByText("Cereal rye")).toBeVisible();
   await expect(page.getByText("Winter pea")).toBeVisible();
   await page.locator('[data-slot="card"]').filter({ has: page.locator('[data-slot="card-title"]', { hasText: "South field" }) }).getByRole("button", { name: "Open in Planner" }).click();
-  await expect(page).toHaveURL(/\/planner$/);
-  await expect(page.getByRole("heading", { name: "Plan termination" })).toBeVisible();
+  await expect(page).toHaveURL(/\/planner\/calendar$/);
+  await expect(page.getByRole("heading", { name: "Calendar" })).toBeVisible();
   await expect(page.getByText("South field · Corn")).toBeVisible();
   await expect(page.getByLabel("Cover crop", { exact: true })).toHaveValue("pea");
   const activeBeforeReload = await page.evaluate(() => ({ settings: JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"), fields: JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}") }));
@@ -90,17 +90,24 @@ test("clears a deleted comparison selection and lets the user choose a replaceme
 
 test("saves plans for two different field and crop contexts", async ({ page }) => {
   await seed(page);
-  await page.goto("/planner");
-  await page.getByRole("button", { name: "Save field plan" }).click();
-  await expect(page.getByText("Saved on this device.")).toBeVisible();
-  await page.getByLabel("Field or location").selectOption("field:field-b");
-  await page.getByLabel("Cash crop", { exact: true }).selectOption("corn");
-  await page.getByRole("button", { name: "Save field plan" }).click();
-  await expect(page.getByText("Saved on this device.")).toBeVisible();
+  await page.addInitScript(() => { if (localStorage.getItem("saved-plans-flow-cleared")) return; localStorage.removeItem("meridian.field-plans.v2"); localStorage.setItem("saved-plans-flow-cleared", "1"); });
+  const saveCalendar = async (fieldName: string, crop: string, date: string) => {
+    await page.goto("/planner");
+    await page.locator('[data-slot="card"]').filter({ hasText: fieldName }).getByRole("button", { name: "Create plan" }).click();
+    await expect(page).toHaveURL(/\/planner\/calendar$/);
+    await page.getByLabel("Next cash crop", { exact: true }).selectOption(crop);
+    await page.getByLabel("Cash crop planting date").fill(date);
+    await page.getByRole("button", { name: "Review calendar only" }).click();
+    await expect(page).toHaveURL(/\/planner\/review\?budget=skip$/);
+    await page.getByRole("button", { name: "Save plan", exact: true }).click();
+    await expect(page.getByRole("status")).toContainText("Plan saved on this device.");
+  };
+  await saveCalendar("North field", "wheat", "2027-04-20");
+  await saveCalendar("South field", "corn", "2027-05-10");
   const plans = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.field-plans.v2") ?? "{}"));
   expect(plans["field-a|wheat"]).toBeTruthy();
   expect(plans["field-b|corn"]).toBeTruthy();
-  await page.getByRole("link", { name: "Saved plans", exact: true }).click();
+  await page.goto("/planner/saved");
   await expect(page.getByTestId("saved-plan-card")).toHaveCount(2);
 });
 
@@ -114,7 +121,7 @@ test("opening a plan with a newer working draft explains the choice and restores
   await page.getByRole("button", { name: "Restore saved version" }).click();
   const confirm = page.getByRole("alertdialog", { name: "Restore saved version?" });
   await confirm.getByRole("button", { name: "Restore saved version" }).click();
-  await expect(page).toHaveURL(/\/planner$/);
+  await expect(page).toHaveURL(/\/planner\/calendar$/);
   await expect(page.getByLabel("Cover crop", { exact: true })).toHaveValue("rye");
   const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.plan-drafts.v1") ?? "{}")["field-a|wheat"]);
   expect(draft.coverCrop).toBe("rye");

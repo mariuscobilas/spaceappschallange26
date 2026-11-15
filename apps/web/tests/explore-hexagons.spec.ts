@@ -1,0 +1,32 @@
+import { expect, test } from "@playwright/test";
+import { cellToLatLng, isValidCell } from "h3-js";
+
+test("Explore selects a hexagon and shows its information without creating field points", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.route("https://tiles.openfreemap.org/**", route => route.abort());
+  await page.goto("/");
+  const canvas = page.locator(".map-canvas");
+  await expect(canvas).toHaveAttribute("data-hex-count", /[1-9]\d*/, { timeout: 30000 });
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("Map is not visible");
+  await page.mouse.click(box.x + box.width * .5, box.y + box.height * .5);
+  const info = page.getByRole("dialog", { name: "Hexagon information", exact: true });
+  await expect(info).toBeVisible();
+  const hexId = await info.locator("dd.font-mono").innerText();
+  expect(isValidCell(hexId)).toBe(true);
+  const [lat, lng] = cellToLatLng(hexId);
+  await expect(info).toContainText(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+  await expect(info).toContainText("Full hexagon area");
+  await expect(info).toContainText("Conditions at the centre");
+  await expect(info).toContainText("Soil texture and horizon characteristics");
+  await expect(info.getByRole("button", { name: /Save field|Delete field/ })).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.fields.v1") ?? "{}").fields ?? [])).toEqual([]);
+  await info.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(info).toBeHidden();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileBox = await canvas.boundingBox();
+  if (!mobileBox) throw new Error("Mobile map is not visible");
+  await page.mouse.click(mobileBox.x + mobileBox.width * .5, mobileBox.y + mobileBox.height * .5);
+  await expect(info).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

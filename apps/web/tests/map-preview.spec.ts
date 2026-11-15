@@ -67,9 +67,8 @@ test("Explore settings persist across workspace routes, browser history, and rel
     node.setAttribute("data-test-map-instance", "stable"),
   );
 
-  await page.getByLabel("Field or location").selectOption("benchmark:hays");
-  await page.getByLabel("Cash crop").selectOption("corn");
   await openMapOptions(page);
+  await expect(page.locator('optgroup[label="Kansas reference locations"]')).toHaveCount(0);
   await page.getByLabel("Observation period").selectOption("past");
   await page.getByLabel("Observation date", { exact: true }).fill("2026-11-01");
   await page
@@ -81,21 +80,14 @@ test("Explore settings persist across workspace routes, browser history, and rel
   });
   await closeMapOptions(page);
 
-  const selected = page.getByLabel("Cash crop");
-  await expect(selected).toBeVisible();
-  expect(
-    await selected.evaluate((el) => {
-      const rect = el.getBoundingClientRect();
-      return [rect.left + 4, rect.right - 4].every(
-        (x) => document.elementFromPoint(x, rect.top + rect.height / 2) === el,
-      );
-    }),
-  ).toBe(true);
+  await openMapOptions(page);
+  await expect(page.getByLabel("Data view", { exact: true })).toHaveValue("conditions");
+  await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
 
+  await closeMapOptions(page);
   await page.getByRole("link", { name: "Field Planner" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Plan termination" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/planner$/);
+  await expect(page.getByRole("heading", { name: "Add your first field" })).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Field Planner" }),
   ).toHaveAttribute("aria-current", "page");
@@ -107,9 +99,10 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(map).toBeVisible();
   await expect(map).toHaveAttribute("data-test-map-instance", "stable");
   await expect(canvas).toHaveAttribute("data-hex-resolution", resolution!);
-  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
-  await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
   await openMapOptions(page);
+  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
+  await expect(page.getByLabel("Data view", { exact: true })).toHaveValue("conditions");
+  await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
   await expect(page.getByLabel("Observation date", { exact: true })).toHaveValue("2026-11-01");
   await closeMapOptions(page);
@@ -119,12 +112,14 @@ test("Explore settings persist across workspace routes, browser history, and rel
   await expect(
     page.getByRole("link", { name: "Field Planner" }),
   ).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { name: "Add your first field" })).toBeVisible();
   await page.goForward();
   await expect(page).toHaveURL(/\/$/);
   await page.reload();
-  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
-  await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
   await openMapOptions(page);
+  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
+  await expect(page.getByLabel("Data view", { exact: true })).toHaveValue("conditions");
+  await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Observation period")).toHaveValue("past");
   await expect(
     page.getByLabel("Observation date", { exact: true }),
@@ -159,25 +154,25 @@ test("mobile navigation opens, routes, and closes", async ({ page }) => {
   ).toBe(true);
 });
 
-test("fallback hex selection opens a detail sheet that can close before zooming", async ({
+test("Explore H3 details can close before zooming", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.route("https://tiles.openfreemap.org/**", (route) =>
     route.abort(),
   );
-  await page.goto("/atlas");
-  await page.getByLabel("Atlas layer").selectOption("returns");
+  await page.goto("/");
   const canvas = page.locator(".map-canvas");
   await expect(canvas).toHaveAttribute("data-hex-resolution", "2", {
     timeout: 30000,
   });
-  const details = page.getByRole("complementary", { name: "Region overview" });
+  const details = page.getByRole("dialog", { name: "Hexagon information" });
   await expect(async () => {
     await page.mouse.click(800, 400);
-    await expect(details).toContainText("Selected region");
+    await expect(details).toBeVisible();
   }).toPass({ timeout: 20000 });
-  await details.getByRole("button", { name: "Close region overview" }).click();
+  await expect(details).toContainText("Selected region");
+  await details.getByRole("button", { name: "Close" }).click();
   await expect(details).toBeHidden();
 
   await page.getByRole("button", { name: "Zoom in", exact: true }).click();
@@ -196,15 +191,23 @@ test("field plan inputs save for the selected field and survive reload", async (
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/planner");
+  await page.addInitScript(() => localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, activeFieldId: "field-test", fields: [{ id: "field-test", name: "Test field", location: { latitude: 38.99, longitude: -99.01 }, currentCrop: "wheat", cropSource: "manual", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }] })));
+  await page.goto("/planner/calendar");
   await page.getByLabel("Cover crop", { exact: true }).selectOption("pea");
   await page.getByLabel("Cash crop planting date").fill("2027-04-15");
+  const extras = page.locator("details").filter({ has: page.locator("summary", { hasText: "Field area and notes" }) });
+  await expect(extras.locator("#planner-area")).toBeHidden();
+  await extras.locator("summary").click();
   await page.getByLabel("Field area (ha)").fill("12.5");
   await page.getByLabel("Notes").fill("Keep the stand through spring.");
-  await page.getByRole("button", { name: "Save field plan" }).click();
-  await expect(page.getByText("Saved on this device.")).toBeVisible();
+  await page.getByRole("button", { name: "Review calendar only" }).click();
+  await expect(page).toHaveURL(/\/planner\/review\?budget=skip$/);
+  await page.getByRole("button", { name: "Save plan", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Plan saved on this device.");
 
   await page.reload();
+  await expect(page).toHaveURL(/\/planner\/review\?budget=skip$/);
+  await page.getByRole("button", { name: "Edit calendar" }).click();
   await expect(page.getByLabel("Cover crop", { exact: true })).toHaveValue(
     "pea",
   );
@@ -215,11 +218,9 @@ test("field plan inputs save for the selected field and survive reload", async (
   await expect(page.getByLabel("Notes")).toHaveValue(
     "Keep the stand through spring.",
   );
-  await expect(
-    page.getByText("A saved plan exists for this location and crop."),
-  ).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("Saved calendar.");
 
-  await page.getByRole("link", { name: "Economics", exact: true }).click();
+  await page.getByRole("link", { name: "Budget", exact: true }).click();
   await expect(page.getByText(/saved plan area 12\.5 ha/i)).toBeVisible();
   await page.getByRole("link", { name: "Ask Meridian", exact: true }).click();
   await expect(
@@ -240,6 +241,7 @@ test("economics inputs produce and persist a transparent scenario", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, activeFieldId: "field-test", fields: [{ id: "field-test", name: "Test field", location: { latitude: 38.99, longitude: -99.01 }, currentCrop: "wheat", cropSource: "manual", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" }] })));
   await page.goto("/economics");
   const values: Record<string, string> = {
     "Grain price": "200",
@@ -253,14 +255,13 @@ test("economics inputs produce and persist a transparent scenario", async ({
   for (const [label, value] of Object.entries(values))
     await page.getByLabel(new RegExp(label)).fill(value);
 
-  await expect(page.getByText("$60.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("$240.00", { exact: true })).toBeVisible();
-  await expect(page.getByText(/Break-even yield change: 4\.00%/)).toBeVisible();
+  await expect(page.getByText("$1,060.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("$4,240.00", { exact: true })).toBeVisible();
   await page.reload();
   for (const [label, value] of Object.entries(values))
     await expect(page.getByLabel(new RegExp(label))).toHaveValue(value);
-  await expect(page.getByText("$60.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("$240.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("$1,060.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("$4,240.00", { exact: true })).toBeVisible();
 });
 
 test("legacy map settings migrate without old scenarios or external imagery", async ({
@@ -289,9 +290,11 @@ test("legacy map settings migrate without old scenarios or external imagery", as
     ),
   );
   await page.goto("/");
-  await expect(page.getByLabel("Cash crop")).toHaveValue("corn");
-  await expect(page.getByLabel("Field or location")).toHaveValue("benchmark:hays");
   await openMapOptions(page);
+  const migrated = await page.evaluate(() => JSON.parse(localStorage.getItem("meridian.map-settings.v3") ?? "{}"));
+  expect(migrated.crop).toBe("corn");
+  await expect(page.getByLabel("Cash crop", { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Field or location")).toHaveValue("selection");
   await expect(page.getByLabel("Observation period")).toHaveValue("latest");
   await expect(page.getByRole("button", { name: "No overlay", exact: true })).toHaveAttribute("aria-pressed", "true");
   await closeMapOptions(page);

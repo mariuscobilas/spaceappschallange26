@@ -44,6 +44,26 @@ async function seedFields(page: Page, fields: ReturnType<typeof field>[]) {
   );
 }
 
+async function openPlannerField(page: Page, index = 0) {
+  if (!new URL(page.url()).pathname.startsWith("/planner")) {
+    await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Field Planner", exact: true }).click();
+  }
+  const library = page.getByRole("region", { name: "Saved fields", exact: true });
+  await library.getByRole("button", { name: /Create plan|Continue plan|Continue draft/ }).nth(index).click();
+  await expect(page).toHaveURL(/\/planner\/calendar$/);
+}
+
+async function openFieldMap(page: Page) {
+  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Field Planner", exact: true }).click();
+  await page.getByRole("link", { name: "Manage or add fields", exact: true }).click();
+  await expect(page).toHaveURL(/\/fields$/);
+}
+
+async function reviewCalendarOnly(page: Page) {
+  await page.getByRole("complementary", { name: "Calendar summary", exact: true }).getByRole("button", { name: "Review calendar only", exact: true }).click();
+  await expect(page).toHaveURL(/\/planner\/review\?budget=skip$/);
+}
+
 test("restores a saved boundary and propagates its area through plan and economics", async ({
   page,
 }) => {
@@ -65,7 +85,8 @@ test("restores a saved boundary and propagates its area through plan and economi
   await editor.getByRole("button", { name: "Save field" }).click();
   await expect(fieldsPanel).toContainText("Corn · Boundary");
 
-  await page.getByRole("link", { name: "Field Planner" }).click();
+  await openPlannerField(page);
+  await page.getByText("Field area and notes", { exact: true }).click();
   const planArea = page.getByLabel("Field area (ha)");
   await expect(planArea).toHaveAttribute("readonly", "");
   await expect(planArea).toHaveValue(/\d+(\.\d+)?/);
@@ -73,10 +94,12 @@ test("restores a saved boundary and propagates its area through plan and economi
   const expectedArea = await planArea.inputValue();
   await page.getByLabel("Cover crop", { exact: true }).selectOption("pea");
   await page.getByLabel("Notes").fill("Boundary area is authoritative.");
-  await page.getByRole("button", { name: "Save field plan" }).click();
-  await expect(page.getByText("Saved on this device.")).toBeVisible();
+  await page.getByLabel("Cash crop planting date", { exact: true }).fill(`${new Date().getFullYear() + 1}-05-15`);
+  await reviewCalendarOnly(page);
+  await page.getByRole("button", { name: "Save plan", exact: true }).click();
+  await expect(page.getByText("Plan saved on this device.", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "Economics", exact: true }).click();
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Budget", exact: true }).click();
   const economicsArea = page.getByLabel(/Field area/);
   await expect(economicsArea).toHaveAttribute("readonly", "");
   await expect(economicsArea).toHaveValue(expectedArea);
@@ -100,17 +123,20 @@ test("keeps economics drafts separate for saved field contexts and restores the 
     field("field-a", "North field", -99.01, -99, "wheat"),
     field("field-b", "South field", -99.02, -99, "soybeans"),
   ]);
-  await page.goto("/economics");
+  await page.goto("/planner");
+  await openPlannerField(page);
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Budget", exact: true }).click();
   const firstArea = await page.getByLabel(/Field area/).inputValue();
   await page.getByLabel("Grain price").fill("215");
 
-  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await openFieldMap(page);
   await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "South field", exact: true }).click();
   const selectedDetails = page.getByRole("dialog", { name: "South field", exact: true });
   await expect(selectedDetails).toBeVisible();
   await selectedDetails.getByRole("button", { name: "Close", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "My fields", exact: true })).toContainText("Soybeans · Boundary");
-  await page.getByRole("link", { name: "Economics", exact: true }).click();
+  await openPlannerField(page, 1);
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Budget", exact: true }).click();
   const secondArea = await page.getByLabel(/Field area/).inputValue();
   expect(secondArea).not.toBe(firstArea);
   await expect(page.getByLabel("Grain price")).toHaveValue("");
@@ -119,7 +145,7 @@ test("keeps economics drafts separate for saved field contexts and restores the 
   await page.reload();
   await expect(page.getByLabel(/Field area/)).toHaveValue(secondArea);
   await expect(page.getByLabel("Grain price")).toHaveValue("180");
-  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await openFieldMap(page);
   await expect(page.getByRole("complementary", { name: "My fields", exact: true })).toContainText("South field");
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("meridian.economics.v2") ?? "{}"),
@@ -132,7 +158,15 @@ test("manual economics area stays within the 5,000 hectare cap", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/economics");
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem("meridian.fields.v1", JSON.stringify({ version: 1, activeFieldId: "manual", fields: [
+      { id: "manual", name: "Manual area field", location: { latitude: 39, longitude: -99 }, currentCrop: "wheat", cropSource: "manual", createdAt: now, updatedAt: now },
+    ] }));
+  });
+  await page.goto("/planner");
+  await openPlannerField(page);
+  await page.getByRole("navigation", { name: "Plan editor", exact: true }).getByRole("link", { name: "Budget", exact: true }).click();
   const area = page.getByLabel(/Field area/);
   await expect(area).not.toHaveAttribute("readonly", "");
   await area.fill("5001");
@@ -197,7 +231,7 @@ test("unsaved field edits can stay, discard, or save before navigation", async (
   details = page.getByRole("dialog", { name: "Field details" });
   await details.getByLabel("Field name").fill("Unsaved name");
   await details.getByRole("button", { name: "Close" }).click();
-  await page.getByRole("link", { name: "Field Planner" }).click();
+  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Field Planner", exact: true }).click();
   const guard = page.getByRole("alertdialog", { name: "Save field changes?" });
   await expect(guard).toBeVisible();
   await guard.getByRole("button", { name: "Stay here" }).click();
@@ -207,11 +241,11 @@ test("unsaved field edits can stay, discard, or save before navigation", async (
   await expect(details.getByLabel("Field name")).toHaveValue("Unsaved name");
   await details.getByRole("button", { name: "Close" }).click();
 
-  await page.getByRole("link", { name: "Field Planner" }).click();
+  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Field Planner", exact: true }).click();
   await expect(guard).toBeVisible();
   await guard.getByRole("button", { name: "Discard changes" }).click();
-  await expect(page.getByRole("heading", { name: "Plan termination" })).toBeVisible();
-  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a field to plan" })).toBeVisible();
+  await openFieldMap(page);
   await expect(page.getByRole("complementary", { name: "My fields", exact: true })).toContainText("North field");
   await page.getByRole("button", { name: "Selected location details" }).click();
   details = page.getByRole("dialog", { name: "North field" });
@@ -219,11 +253,11 @@ test("unsaved field edits can stay, discard, or save before navigation", async (
   details = page.getByRole("dialog", { name: "Field details" });
   await details.getByLabel("Field name").fill("Saved name");
   await details.getByRole("button", { name: "Close" }).click();
-  await page.getByRole("link", { name: "Field Planner" }).click();
+  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Field Planner", exact: true }).click();
   await expect(guard).toBeVisible();
   await guard.getByRole("button", { name: "Save changes" }).click();
-  await expect(page.getByRole("heading", { name: "Plan termination" })).toBeVisible();
-  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Choose a field to plan" })).toBeVisible();
+  await openFieldMap(page);
   await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "Saved name", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Saved name" })).toBeVisible();
 });
@@ -231,7 +265,7 @@ test("unsaved field edits can stay, discard, or save before navigation", async (
 test("browser back protects an unsaved My fields edit", async ({ page }) => {
   await seedFields(page, [field("field-a", "North field", -99.01, -99, "wheat")]);
   await page.goto("/planner");
-  await page.getByRole("link", { name: "My fields", exact: true }).click();
+  await page.getByRole("link", { name: "Manage or add fields", exact: true }).click();
   await page.getByRole("complementary", { name: "My fields", exact: true }).getByRole("button", { name: "North field", exact: true }).click();
   await page.getByRole("dialog", { name: "North field", exact: true }).getByRole("button", { name: "Edit field details", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Field details", exact: true });

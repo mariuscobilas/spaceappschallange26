@@ -46,9 +46,13 @@ test("drought loads on demand, retries failures, survives map changes and stays 
   await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await page.reload();
   await expect(canvas).toHaveAttribute("data-drought-status", "ready");
-  await page.getByRole("link", { name: "Regional Atlas", exact: true }).click();
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await dialog.getByLabel("Data view", { exact: true }).selectOption("research");
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await expect(canvas).toHaveAttribute("data-drought-status", "off");
-  await page.getByRole("link", { name: "Explore", exact: true }).click();
+  await page.getByRole("button", { name: "Map options", exact: true }).click();
+  await dialog.getByLabel("Data view", { exact: true }).selectOption("conditions");
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await expect(canvas).toHaveAttribute("data-drought-status", "ready");
   await page.getByRole("button", { name: "Map options", exact: true }).click();
   await dialog.getByRole("checkbox", { name: "U.S. Drought Monitor", exact: true }).uncheck();

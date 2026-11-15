@@ -1,9 +1,13 @@
 # Regional Atlas — published county yield effects
 
-Updated 15 November 2026. `/atlas` now defaults to **Published yield effects**.
+Updated 15 November 2026. The historical county study is now an optional Explore
+view under Map options → Historical research. `/atlas` redirects to this view and
+preserves valid research filters. The standalone Atlas sidebar/toolbar are removed.
+Planning field/crop context remains independent from geographic inspection.
+
 The API serves the reviewed bundle by default; no local dataset environment variable
-is required. **Net return scenarios** remains a separate layer with its existing
-validated-economic-dataset requirement.
+is required. The financial H3 renderer/API remain available in code, but net-return
+controls are not exposed without usable validated regional economic coverage.
 
 ## Source, meaning and coverage
 
@@ -47,8 +51,8 @@ percent, clipped visually at ±10%; full values remain inspectable. Crop and per
 filters, sample counts, no-data coverage, source details and fit-to-study controls
 are available. NASA imagery dates remain independent of the study period.
 
-The original H3/deck.gl economics renderer remains available under **Net return
-scenarios**. Neither the historical trial bundle nor these regional yield effects
+The original H3/deck.gl economics renderer is retained for future configured
+financial coverage, without an ordinary UI entry. Neither the historical trial bundle nor these regional yield effects
 are used to fabricate USD/ha returns, crop area, soil texture or root-zone wetness.
 Those require appropriate independent sources.
 

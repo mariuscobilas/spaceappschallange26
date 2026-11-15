@@ -7,11 +7,29 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
-import { coverCrops, type FieldPlan, type SavedPlan } from "@/lib/workspace";
+import { coverCrops, validBudget, type FieldPlan, type SavedPlan } from "@/lib/workspace";
 import { useUnitSystem } from "@/hooks/use-unit-system";
 import { formatArea } from "@/lib/units";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { planComparisonText, planTerminationDate, plansHaveDifferentContexts } from "@/lib/plan-comparison";
+import { calculateEconomics } from "@/lib/economics";
+
+function savedBudgetResult(plan: SavedPlan) {
+  if (!plan.budget || !validBudget(plan.budget)) return null;
+  return calculateEconomics({
+    grainPrice: Number(plan.budget.grainPrice),
+    baselineYield: Number(plan.budget.baselineYield),
+    yieldChange: Number(plan.budget.yieldChange),
+    seedCost: Number(plan.budget.seedCost),
+    terminationCost: Number(plan.budget.terminationCost),
+    subsidy: Number(plan.budget.subsidy),
+    areaHa: Number(plan.budget.areaHa),
+  });
+}
+
+const money = (value: number) => new Intl.NumberFormat(undefined, {
+  style: "currency", currency: "USD", maximumFractionDigits: 2,
+}).format(value);
 
 function samePlanDraft(plan: SavedPlan, draft: FieldPlan | undefined) {
   return !!draft && ["coverCrop", "terminationDays", "plantingDate", "areaHa", "notes"].every((key) =>
@@ -19,7 +37,7 @@ function samePlanDraft(plan: SavedPlan, draft: FieldPlan | undefined) {
 }
 
 export default function SavedPlansWorkspace() {
-  const { ready, savedPlans, fields, getPlanDraft, openSavedPlan, deleteSavedPlan } = useMeridian();
+  const { ready, savedPlans, fields, getPlanDraft, hasPlanChanges, openSavedPlan, deleteSavedPlan } = useMeridian();
   const router = useRouter();
   const [unitSystem] = useUnitSystem();
   const [pending, setPending] = useState<{ key: string; restore: boolean } | null>(null);
@@ -30,7 +48,7 @@ export default function SavedPlansWorkspace() {
   if (!ready) return <section className="mx-auto max-w-5xl p-6" aria-label="Saved plans workspace" aria-busy="true">Loading saved plans…</section>;
 
   const open = (key: string, restore: boolean) => {
-    if (openSavedPlan(key, restore)) router.push("/planner");
+    if (openSavedPlan(key, restore)) router.push("/planner/calendar");
     setPending(null);
   };
   const selected = selectedKeys.map((key) => savedPlans.find((item) => item.key === key)).filter((item): item is (typeof savedPlans)[number] => !!item);
@@ -68,17 +86,19 @@ export default function SavedPlansWorkspace() {
         const field = plan.location.fieldId ? fields.find((item) => item.id === plan.location.fieldId) : undefined;
         const name = field?.name ?? plan.location.name;
         const currentDraft = getPlanDraft(plan);
-        const differs = !!currentDraft && !samePlanDraft(plan, currentDraft);
+        const differs = hasPlanChanges(plan) || (!!currentDraft && !samePlanDraft(plan, currentDraft));
+        const budgetResult = savedBudgetResult(plan);
         const coverCrop = coverCrops.find((item) => item.value === plan.coverCrop)?.label ?? plan.coverCrop;
         return <Card key={key} data-testid="saved-plan-card">
-          <CardHeader><CardTitle className="break-words">{name}</CardTitle><CardDescription>{plan.crop[0].toUpperCase() + plan.crop.slice(1)} · Saved {new Date(plan.savedAt).toLocaleDateString()}</CardDescription></CardHeader>
+          <CardHeader><CardTitle className="break-words">{plan.name || name}</CardTitle><CardDescription>{plan.name ? `${name} · ` : ""}{plan.crop[0].toUpperCase() + plan.crop.slice(1)} · Saved {new Date(plan.savedAt).toLocaleDateString()}</CardDescription></CardHeader>
           <CardContent><dl className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-x-3 gap-y-3 text-sm sm:gap-x-4">
             <dt className="text-muted-foreground">Cover crop</dt><dd>{coverCrop}</dd>
             <dt className="text-muted-foreground">Lead time</dt><dd>{plan.terminationDays} days</dd>
             <dt className="text-muted-foreground">Cash crop planting</dt><dd>{plan.plantingDate || "Not set"}</dd>
             <dt className="text-muted-foreground">Calculated termination</dt><dd>{planTerminationDate(plan)}</dd>
             <dt className="text-muted-foreground">Field area</dt><dd className="min-w-0 break-words">{plan.areaHa ? formatArea(Number(plan.areaHa), unitSystem) : "Not set"}</dd>
-          </dl>{differs && <p role="status" className="mt-4 rounded-md bg-muted p-3 text-sm">A newer working draft exists for this field and crop. You can open it or explicitly restore this saved version.</p>}</CardContent>
+            <dt className="text-muted-foreground">Budget</dt><dd className="min-w-0 break-words">{!plan.budget ? "Not added" : budgetResult ? `Estimated return ${money(budgetResult.totalReturnAfterCoverCropCosts)} for field` : "Incomplete assumptions"}</dd>
+          </dl>{differs && <p role="status" className="mt-4 rounded-md bg-muted p-3 text-sm">A newer working draft exists for this field and crop. You can open it or explicitly restore this saved version, including its saved budget.</p>}</CardContent>
           <CardFooter className="flex flex-wrap gap-2">
             <Button onClick={() => differs ? setPending({ key, restore: false }) : open(key, false)}>Open in Planner</Button>
             {differs && <Button variant="outline" onClick={() => setPending({ key, restore: true })}>Restore saved version</Button>}
@@ -93,11 +113,11 @@ export default function SavedPlansWorkspace() {
         <CardContent className="flex flex-col gap-4" aria-live="polite">
           {plansHaveDifferentContexts(selected[0].plan, selected[1].plan) && <Alert role="alert"><AlertTitle>Different field or crop contexts</AlertTitle><AlertDescription>These plans describe different field or cash crop contexts.</AlertDescription></Alert>}
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            {selected.map(({ key, plan }) => { const name = plan.location.fieldId ? fields.find((field) => field.id === plan.location.fieldId)?.name ?? plan.location.name : plan.location.name; return <article key={key} className="min-w-0 rounded-md border p-4"><h3 className="break-words font-semibold">{name} · {plan.crop}</h3><dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-x-3 gap-y-2 text-sm">
+            {selected.map(({ key, plan }) => { const fieldName = plan.location.fieldId ? fields.find((field) => field.id === plan.location.fieldId)?.name ?? plan.location.name : plan.location.name; const result = savedBudgetResult(plan); return <article key={key} className="min-w-0 rounded-md border p-4"><h3 className="break-words font-semibold">{plan.name || fieldName} · {plan.crop}</h3><p className="mt-1 text-xs text-muted-foreground">{plan.name ? fieldName + " · " : ""}Saved {new Date(plan.savedAt).toLocaleDateString()}</p><dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-x-3 gap-y-2 text-sm">
                 <dt className="text-muted-foreground">Cover crop</dt><dd className="min-w-0 break-words">{coverCrops.find((item) => item.value === plan.coverCrop)?.label ?? plan.coverCrop}</dd>
                 <dt className="text-muted-foreground">Cash crop</dt><dd className="min-w-0 break-words">{plan.crop}</dd><dt className="text-muted-foreground">Planting</dt><dd className="min-w-0 break-words">{plan.plantingDate || "Not set"}</dd><dt className="text-muted-foreground">Termination</dt><dd className="min-w-0 break-words">{planTerminationDate(plan)}</dd>
                 <dt className="text-muted-foreground">Lead time</dt><dd className="min-w-0 break-words">{plan.terminationDays} days</dd><dt className="text-muted-foreground">Area</dt><dd className="min-w-0 break-words">{plan.areaHa ? formatArea(Number(plan.areaHa), unitSystem) : plan.location.areaHectares ? formatArea(plan.location.areaHectares, unitSystem) : "Not set"}</dd>
-                <dt className="col-span-2 text-muted-foreground">Notes</dt><dd className="col-span-2 min-w-0 whitespace-pre-wrap break-words">{plan.notes.trim() || "None"}</dd>
+                <dt className="text-muted-foreground">Budget</dt><dd className="min-w-0 break-words">{!plan.budget ? "Not added" : result ? `Estimated return ${money(result.totalReturnAfterCoverCropCosts)} for field` : "Incomplete assumptions"}</dd><dt className="col-span-2 text-muted-foreground">Notes</dt><dd className="col-span-2 min-w-0 whitespace-pre-wrap break-words">{plan.notes.trim() || "None"}</dd>
               </dl></article>; })}
           </div>
           <p className="text-sm text-muted-foreground">Termination dates are calculated from saved planting dates and lead times; no model prediction is included.</p>
@@ -108,7 +128,7 @@ export default function SavedPlansWorkspace() {
     {deleteSaveFailed && <Alert variant="destructive"><AlertTitle>Plan deletion could not be saved</AlertTitle><AlertDescription>The plan is hidden for this session, but local storage could not persist its removal. It may return after reload.</AlertDescription></Alert>}
     <AlertDialog open={!!pending} onOpenChange={(openState) => !openState && setPending(null)}>
       <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{pending?.restore ? "Restore saved version?" : "Open the working draft?"}</AlertDialogTitle>
-        <AlertDialogDescription>{pending?.restore ? "This replaces the newer working draft for this field and crop with the confirmed saved version." : "A newer working draft exists. It will remain in place when you open the Planner."}</AlertDialogDescription></AlertDialogHeader>
+        <AlertDialogDescription>{pending?.restore ? "This replaces the newer calendar and budget drafts for this field and crop with the confirmed saved version. A calendar-only saved plan clears the working budget when explicitly restored." : "A newer calendar or budget working draft exists. It will remain in place when you open the Planner."}</AlertDialogDescription></AlertDialogHeader>
         <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel>
           {pending && <AlertDialogAction onClick={() => open(pending.key, pending.restore)}>{pending.restore ? "Restore saved version" : "Open working draft"}</AlertDialogAction>}
         </AlertDialogFooter></AlertDialogContent>

@@ -20,10 +20,14 @@ import {
   contextKey,
   crops,
   emptyEconomics,
+  emptyPlan,
   initialSettings,
   validMapSettings,
   validPlan,
   validPlanDraft,
+  validBudget,
+  planStorageKey,
+  planContextKey,
 } from "@/lib/workspace";
 import type { EconomicsDraft, FieldPlan, SavedPlan } from "@/lib/workspace";
 import { analyzeBoundary } from "@/lib/fields/geometry";
@@ -53,7 +57,9 @@ interface MeridianContextValue {
   savedPlan?: SavedPlan;
   planDraft?: FieldPlan;
   updatePlanDraft: (draft: FieldPlan) => void;
-  savePlan: (plan: FieldPlan) => boolean;
+  savePlan: (plan: FieldPlan, options?: { includeBudget?: boolean; asAlternative?: boolean; name?: string }) => boolean;
+  hasPlanChanges: (plan: SavedPlan) => boolean;
+  hasWorkingPlan: (fieldId: string, crop: PreviewCrop) => boolean;
   savedPlans: { key: string; plan: SavedPlan }[];
   getPlanDraft: (plan: SavedPlan) => FieldPlan | undefined;
   openSavedPlan: (key: string, restoreDraft?: boolean) => boolean;
@@ -61,6 +67,9 @@ interface MeridianContextValue {
   economicsDraft: EconomicsDraft;
   updateEconomics: (draft: EconomicsDraft) => void;
   storageAvailable: boolean;
+  fieldActionNotice: string | null;
+  dismissFieldNotice: () => void;
+  getFieldDeletionImpact: (id: string) => { savedPlans: number; planDrafts: number; economicsInputs: number };
   question: string;
   setQuestion: (question: string) => void;
   fields: SavedField[];
@@ -78,7 +87,7 @@ interface MeridianContextValue {
   saveField: () => boolean;
   cancelField: () => void;
   chooseField: (id: string) => void;
-  deleteField: (id: string) => void;
+  deleteField: (id: string) => boolean;
   requestTransition: (action: () => void) => void;
   pendingAction: (() => void) | null;
   resolveTransition: (choice: "save" | "discard" | "stay") => void;
@@ -104,6 +113,8 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     [settings, setSettings] = useState(initialSettings);
   const [plans, setPlans] = useState<Record<string, SavedPlan>>({}),
     [economics, setEconomics] = useState<Record<string, EconomicsDraft>>({});
+  const [openedPlanKey, setOpenedPlanKey] = useState("");
+  const [openedPlans, setOpenedPlans] = useState<Record<string, string>>({});
   const [planDrafts, setPlanDrafts] = useState<Record<string, FieldPlan>>({});
   const [fields, setFields] = useState<SavedField[]>([]),
     [fieldDraft, setFieldDraft] = useState<SavedField | null>(null),
@@ -122,6 +133,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     legacyOrigin = useRef("");
   const [storageAvailable, setStorageAvailable] = useState(true),
     [question, setQuestion] = useState("");
+  const [fieldActionNotice, setFieldActionNotice] = useState<string | null>(null);
   const [navigation, setNavigation] = useState<MapCanvasProps["navigation"]>({
     action: "reset",
     nonce: 0,
@@ -194,6 +206,11 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         restored = { ...restored, selection: initialSettings.selection };
     }
     setSettings(restored);
+    try {
+      setOpenedPlanKey(localStorage.getItem("meridian.open-plan.v1") ?? "");
+      const refs = JSON.parse(localStorage.getItem("meridian.open-plans.v1") ?? "{}");
+      if (refs && typeof refs === "object" && !Array.isArray(refs)) setOpenedPlans(Object.fromEntries(Object.entries(refs).filter(([, v]) => typeof v === "string")) as Record<string, string>);
+    } catch {}
     const readRecords = (
       old: string,
       current: string,
@@ -301,6 +318,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     [navigateMap],
   );
   const beginField = (selection = settings.selection, draw = false) => {
+    setFieldActionNotice(null);
     previousSelection.current = fieldDraft
       ? previousSelection.current
       : settings.selection;
@@ -383,6 +401,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
   const cancelField = () => {
     setFieldDraft(null);
     markDirty(false);
+    setFieldActionNotice("Unsaved field changes were discarded.");
     setSettings((s) => ({ ...s, selection: previousSelection.current }));
     resetDrawing();
   };
@@ -420,12 +439,12 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         };
       // Keep the migration origin as an alias of the stable field ID. Its v2
       // record overrides v1 on restore, so renaming/re-saving cannot duplicate it.
-      if (plans[old]) nextPlans[old] = { ...plans[old], location: fieldSelection(normalized) };
+      if (plans[old] && plans[old].snapshotVersion !== 1) nextPlans[old] = { ...plans[old], location: fieldSelection(normalized) };
       if (!nextEconomics[key] && economics[old])
         nextEconomics[key] = { ...economics[old] };
       if (!nextDrafts[key] && planDrafts[old])
         nextDrafts[key] = { ...planDrafts[old] };
-      if (nextPlans[key])
+      if (nextPlans[key] && nextPlans[key].snapshotVersion !== 1)
         nextPlans[key] = {
           ...nextPlans[key],
           location: fieldSelection(normalized),
@@ -442,14 +461,19 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     setPlans(nextPlans);
     setEconomics(nextEconomics);
     setPlanDrafts(nextDrafts);
-    store(PLANS_KEY, nextPlans);
-    store(ECONOMICS_KEY, nextEconomics);
-    store(PLAN_DRAFTS_KEY, nextDrafts);
-    store(FIELDS_KEY, {
-      version: 1,
-      activeFieldId: normalized.id,
-      fields: next,
-    });
+    const persisted = [
+      store(PLANS_KEY, nextPlans),
+      store(ECONOMICS_KEY, nextEconomics),
+      store(PLAN_DRAFTS_KEY, nextDrafts),
+      store(FIELDS_KEY, {
+        version: 1,
+        activeFieldId: normalized.id,
+        fields: next,
+      }),
+    ].every(Boolean);
+    setFieldActionNotice(persisted
+      ? `${normalized.name} saved on this device.`
+      : `${normalized.name} saved for this session only; browser storage is unavailable.`);
     previousSelection.current = fieldSelection(normalized);
     setFieldDraft(null);
     markDirty(false);
@@ -467,6 +491,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     requestTransition(() => {
       const field = fields.find((f) => f.id === id);
       if (!field) return;
+      setFieldActionNotice(null);
       setFieldDraft(null);
       resetDrawing();
       setSettings((s) => ({
@@ -476,7 +501,15 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
       }));
       navigateMap("selection");
     });
+  const getFieldDeletionImpact = (id: string) => ({
+    savedPlans: Object.keys(plans).filter((key) => key.startsWith(`${id}|`)).length,
+    planDrafts: Object.keys(planDrafts).filter((key) => key.startsWith(`${id}|`)).length,
+    economicsInputs: Object.keys(economics).filter((key) => key.startsWith(`${id}|`)).length,
+  });
   const deleteField = (id: string) => {
+    const field = fields.find((item) => item.id === id);
+    if (!field || (draftDirty && fieldDraft?.id === id)) return false;
+    const deletingActive = settings.selection.fieldId === id;
     const next = fields.filter((f) => f.id !== id);
     setFields(next);
     const nextPlans = Object.fromEntries(
@@ -487,23 +520,36 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
       );
     setPlans(nextPlans);
     setEconomics(nextEconomics);
-    store(PLANS_KEY, nextPlans);
-    store(ECONOMICS_KEY, nextEconomics);
-    store(FIELDS_KEY, { version: 1, fields: next });
     const nextDrafts = Object.fromEntries(Object.entries(planDrafts).filter(([key]) => !key.startsWith(`${id}|`)));
     setPlanDrafts(nextDrafts);
-    store(PLAN_DRAFTS_KEY, nextDrafts);
-    setFieldDraft(null);
-    markDirty(false);
-    resetDrawing();
-    setSettings((s) => ({ ...s, selection: initialSettings.selection }));
+    const persisted = [
+      store(PLANS_KEY, nextPlans),
+      store(ECONOMICS_KEY, nextEconomics),
+      store(PLAN_DRAFTS_KEY, nextDrafts),
+      store(FIELDS_KEY, {
+        version: 1,
+        activeFieldId: deletingActive || !next.some((item) => item.id === settings.selection.fieldId)
+          ? undefined
+          : settings.selection.fieldId,
+        fields: next,
+      }),
+    ].every(Boolean);
+    setFieldActionNotice(persisted
+      ? `${field.name} and its saved field data were deleted from this device.`
+      : `${field.name} and its saved field data were deleted for this session only; browser storage is unavailable.`);
+    if (deletingActive) {
+      setFieldDraft(null);
+      markDirty(false);
+      resetDrawing();
+      previousSelection.current = initialSettings.selection;
+      setSettings((s) => ({ ...s, selection: initialSettings.selection }));
+    }
+    return true;
   };
   const key = contextKey(settings);
-  const storedPlan = plans[key];
-  const savedPlan =
-    storedPlan && boundaryArea !== undefined
-      ? { ...storedPlan, areaHa: String(boundaryArea) }
-      : storedPlan;
+  const openedKey = openedPlans[key] ?? openedPlanKey;
+  const selectedPlanKey = plans[openedKey] && planContextKey(plans[openedKey]) === key ? openedKey : key;
+  const savedPlan = plans[selectedPlanKey];
   const storedDraft = planDrafts[key];
   const planDraft = storedDraft && boundaryArea !== undefined
     ? { ...storedDraft, areaHa: String(boundaryArea) } : storedDraft;
@@ -514,28 +560,37 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     setPlanDrafts(next);
     store(PLAN_DRAFTS_KEY, next);
   };
-  const savePlan = (draft: FieldPlan) => {
+  const savePlan = (draft: FieldPlan, options: { includeBudget?: boolean; asAlternative?: boolean; name?: string } = {}) => {
+    const areaHa = boundaryArea !== undefined ? String(boundaryArea) : draft.areaHa;
+    const budget = options.includeBudget ? { ...(economics[key] ?? savedPlan?.budget ?? emptyEconomics), areaHa } : undefined;
+    if (budget && !validBudget(budget)) return false;
     const saved: SavedPlan = {
-      ...draft,
-      areaHa: boundaryArea !== undefined ? String(boundaryArea) : draft.areaHa,
-      location: settings.selection,
-      crop: settings.crop,
-      savedAt: new Date().toISOString(),
+      coverCrop: draft.coverCrop, terminationDays: draft.terminationDays, plantingDate: draft.plantingDate, notes: draft.notes, areaHa, location: { ...settings.selection }, crop: settings.crop,
+      savedAt: new Date().toISOString(), snapshotVersion: 1,
+      ...(options.asAlternative ? { id: crypto.randomUUID() } : savedPlan?.id ? { id: savedPlan.id } : {}),
+      ...(options.name?.trim() ? { name: options.name.trim() } : {}),
+      ...(budget ? { budget: { ...budget } } : {}),
     };
     if (!validPlan(saved)) return false;
-    const next = { ...plans, [key]: saved };
+    const targetKey = planStorageKey(saved);
+    const next = { ...plans, [targetKey]: saved };
     const nextDrafts = { ...planDrafts };
     delete nextDrafts[key];
     setPlans(next);
     setPlanDrafts(nextDrafts);
+    setOpenedPlanKey(targetKey);
+    const refs = { ...openedPlans, [key]: targetKey };
+    setOpenedPlans(refs);
+    store("meridian.open-plans.v1", refs);
     const planStored = store(PLANS_KEY, next);
-    store(PLAN_DRAFTS_KEY, nextDrafts);
-    return planStored;
+    const draftStored = store(PLAN_DRAFTS_KEY, nextDrafts);
+    return planStored && draftStored;
   };
   const savedPlanGroups = new Map<string, { key: string; plan: SavedPlan }>();
   for (const [planKey, plan] of Object.entries(plans)) {
     const logicalKey = `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`;
-    const alias = [...savedPlanGroups.entries()].find(([, existing]) => isMigratedPlanAlias(existing.plan, plan, fields));
+    if (plan.id) { savedPlanGroups.set(planStorageKey(plan), { key: planKey, plan }); continue; }
+    const alias = [...savedPlanGroups.entries()].find(([, existing]) => !existing.plan.id && isMigratedPlanAlias(existing.plan, plan, fields));
     if (alias) {
       if (plan.location.fieldId) savedPlanGroups.set(alias[0], { key: planKey, plan });
       continue;
@@ -562,12 +617,21 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
       : fields;
     if (field) setFields(nextFields);
     const targetKey = `${selection.fieldId ?? selection.benchmarkId ?? selection.hexId ?? `${selection.latitude.toFixed(4)},${selection.longitude.toFixed(4)}`}|${crop}`;
-    if (restoreDraft) {
-      const { location: _location, crop: _crop, savedAt: _savedAt, ...draft } = plan;
-      const nextDrafts = { ...planDrafts, [targetKey]: draft };
+    const calendar = { coverCrop: plan.coverCrop, terminationDays: plan.terminationDays, plantingDate: plan.plantingDate, areaHa: plan.areaHa, notes: plan.notes };
+    if (restoreDraft || !planDrafts[targetKey]) {
+      const nextDrafts = { ...planDrafts, [targetKey]: calendar };
       setPlanDrafts(nextDrafts);
       store(PLAN_DRAFTS_KEY, nextDrafts);
     }
+    if (restoreDraft || !economics[targetKey]) {
+      const nextEconomics = { ...economics, [targetKey]: { ...(plan.budget ?? emptyEconomics), areaHa: plan.areaHa } };
+      setEconomics(nextEconomics);
+      store(ECONOMICS_KEY, nextEconomics);
+    }
+    setOpenedPlanKey(planKey);
+    const refs = { ...openedPlans, [targetKey]: planKey };
+    setOpenedPlans(refs);
+    store("meridian.open-plans.v1", refs);
     setFieldDraft(null);
     markDirty(false);
     resetDrawing();
@@ -587,7 +651,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     const deleted = new Set<string>();
     for (const [candidateKey, plan] of Object.entries(next)) {
       const candidateLogicalKey = `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`;
-      if (candidateLogicalKey === logicalKey || isMigratedPlanAlias(selected, plan, fields)) {
+      if (candidateKey === planKey || (!selected.id && !plan.id && (candidateLogicalKey === logicalKey || isMigratedPlanAlias(selected, plan, fields)))) {
         delete next[candidateKey];
         deleted.add(candidateKey);
       }
@@ -607,16 +671,34 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     }
     return canonicalStored && legacyStored;
   };
-  const economicsDraft = {
-    ...(economics[key] ?? {
-      ...emptyEconomics,
-      areaHa:
-        savedPlan?.areaHa ??
-        (activeField?.areaHectares ? String(activeField.areaHectares) : ""),
-    }),
-    ...(boundaryArea !== undefined ? { areaHa: String(boundaryArea) } : {}),
+  const economicsDraft: EconomicsDraft = {
+    ...(economics[key] ?? savedPlan?.budget ?? emptyEconomics),
+    areaHa: boundaryArea !== undefined ? String(boundaryArea)
+      : storedDraft?.areaHa ?? savedPlan?.areaHa ?? economics[key]?.areaHa
+        ?? (activeField?.areaHectares ? String(activeField.areaHectares) : ""),
+  };
+  const hasWorkingPlan = (fieldId: string, crop: PreviewCrop) => !!planDrafts[`${fieldId}|${crop}`] || Object.entries(economics[`${fieldId}|${crop}`] ?? {}).some(([k, v]) => k !== "areaHa" && v !== "");
+  const hasPlanChanges = (plan: SavedPlan) => {
+    const context = planContextKey(plan);
+    const draft = planDrafts[context];
+    const calendarChanged = draft && ["coverCrop", "terminationDays", "plantingDate", "areaHa", "notes"].some(k => draft[k as keyof FieldPlan] !== plan[k as keyof FieldPlan]);
+    const budget = economics[context];
+    const budgetChanged = budget && Object.keys(emptyEconomics).some(k => {
+      if (k === "areaHa") return false;
+      return budget[k as keyof EconomicsDraft] !== (plan.budget?.[k as keyof EconomicsDraft] ?? "");
+    });
+    const field = fields.find(f => f.id === plan.location.fieldId);
+    const areaChanged = !!field?.boundary && Number(plan.areaHa) !== Number(field.areaHectares);
+    return !!calendarChanged || !!budgetChanged || areaChanged;
   };
   const updateEconomics = (draft: EconomicsDraft) => {
+    // Calendar and budget share one managed field area, in canonical hectares.
+    const areaHa = boundaryArea !== undefined ? String(boundaryArea) : draft.areaHa;
+    if ((storedDraft?.areaHa ?? savedPlan?.areaHa ?? "") !== areaHa) {
+      const nextDrafts = { ...planDrafts, [key]: { ...(storedDraft ?? savedPlan ?? emptyPlan), areaHa } };
+      setPlanDrafts(nextDrafts);
+      store(PLAN_DRAFTS_KEY, nextDrafts);
+    }
     const next = {
       ...economics,
       [key]: {
@@ -628,6 +710,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
     store(ECONOMICS_KEY, next);
   };
   const editField = () => {
+    setFieldActionNotice(null);
     if (!fieldDraft && activeField) {
       previousSelection.current = settings.selection;
       setFieldDraft({ ...activeField });
@@ -650,7 +733,7 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
       // groups exposed to users so every emitted key matches its payload.
       activeFieldId: settings.selection.fieldId,
       plans: Object.fromEntries(savedPlans.map(({ plan }) => [
-        `${plan.location.fieldId ?? plan.location.benchmarkId ?? plan.location.hexId ?? `${plan.location.latitude.toFixed(4)},${plan.location.longitude.toFixed(4)}`}|${plan.crop}`,
+        planStorageKey(plan),
         plan,
       ])),
       drafts: planDrafts, economics, unitSystem,
@@ -720,12 +803,17 @@ export function MeridianProvider({ children }: { children: React.ReactNode }) {
         updatePlanDraft,
         savePlan,
         savedPlans,
+        hasPlanChanges,
+        hasWorkingPlan,
         getPlanDraft,
         openSavedPlan,
         deleteSavedPlan,
         economicsDraft,
         updateEconomics,
         storageAvailable,
+        fieldActionNotice,
+        dismissFieldNotice: () => setFieldActionNotice(null),
+        getFieldDeletionImpact,
         question,
         setQuestion,
         fields,

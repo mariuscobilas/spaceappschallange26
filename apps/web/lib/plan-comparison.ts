@@ -1,3 +1,4 @@
+import { calculateEconomics, type EconomicsInputs } from "@/lib/economics";
 import { coverCrops, crops, type SavedPlan } from "@/lib/workspace";
 import type { UnitSystem } from "@/lib/units";
 import { formatArea } from "@/lib/units";
@@ -17,6 +18,8 @@ export function planComparisonText(left: SavedPlan, right: SavedPlan, unit: Unit
     const crop = crops.find((item) => item.value === plan.crop)?.label ?? plan.crop;
     return [
       `${field} — ${crop}`,
+      `Plan: ${plan.name || "Unnamed plan"}`,
+      `Budget: ${plan.budget ? (() => { const result = calculateEconomics(Object.fromEntries(Object.entries(plan.budget).map(([k, v]) => [k, Number(v)])) as unknown as EconomicsInputs); return result ? new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }).format(result.totalReturnAfterCoverCropCosts) + " whole-field estimated return after entered cover-crop costs; other production expenses excluded" : "Unavailable"; })() : "Not added"}`,
       `Field: ${field}`, `Cash crop: ${crop}`, `Cover crop: ${cover}`,
       `Planting date: ${plan.plantingDate || "Not set"}`,
       `Calculated termination date: ${planTerminationDate(plan)}`,

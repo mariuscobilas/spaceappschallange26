@@ -25,12 +25,11 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useUnitSystem } from "@/hooks/use-unit-system";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { calculateEconomics } from "@/lib/economics";
-import { economicsUnitLabel, fromCanonicalEconomicsValue, toCanonicalEconomicsValue, type EconomicsUnitKey, type UnitSystem } from "@/lib/units";
+import { economicsUnitLabel, formatArea, fromCanonicalEconomicsValue, toCanonicalEconomicsValue, type EconomicsUnitKey, type UnitSystem } from "@/lib/units";
 import { contextKey, type EconomicsDraft } from "@/lib/workspace";
 
 const fields: {
@@ -118,6 +117,7 @@ export default function EconomicsWorkspace() {
     savedPlan,
     storageAvailable,
     boundaryArea,
+    activeField,
   } = useMeridian();
   const polygonArea =
     boundaryArea === undefined ? undefined : String(boundaryArea);
@@ -132,7 +132,11 @@ export default function EconomicsWorkspace() {
       ? String(Number(fromCanonicalEconomicsValue(field.key as EconomicsUnitKey, value, unitSystem, crop).toPrecision(8)))
       : displayedDraft[field.key];
     const buffer = inputBuffers[`${contextKey(settings)}:${field.key}`];
-    return [field.key, buffer?.system === unitSystem ? buffer.value : converted];
+    // A measured polygon area is authoritative and read-only. A buffer from an
+    // earlier manual edit must never make the displayed acreage disagree with
+    // the canonical area used for the parcel total.
+    const polygonAreaIsAuthoritative = field.key === "areaHa" && polygonArea !== undefined;
+    return [field.key, !polygonAreaIsAuthoritative && buffer?.system === unitSystem ? buffer.value : converted];
   })) as unknown as EconomicsDraft;
   const parsed = Object.fromEntries(
     fields.map((field) => [field.key, numberValue(displayedDraft[field.key])]),
@@ -171,6 +175,12 @@ export default function EconomicsWorkspace() {
   const areaUnit = unitSystem === "us" ? "ac" : "ha";
   const perAreaMoney = (value: number) => money(fromCanonicalEconomicsValue("seedCost", value, unitSystem, crop));
 
+  if (ready && !activeField) return (
+    <section aria-label="Economics workspace" className="mx-auto max-w-3xl p-6">
+      <Empty><EmptyHeader><EmptyTitle>Choose a saved field first</EmptyTitle><EmptyDescription>Budget assumptions are attached to a field. Select or create one in the Field Planner to continue.</EmptyDescription></EmptyHeader><Button render={<Link href="/planner" />} nativeButton={false}>Open Field Planner</Button></Empty>
+    </section>
+  );
+
   return (
     <section
       aria-label="Economics workspace"
@@ -178,10 +188,10 @@ export default function EconomicsWorkspace() {
     >
       <header className="flex flex-col gap-2">
         <p className="text-sm font-medium text-muted-foreground">
-          Farm economics
+          Field Planner
         </p>
         <h1 className="text-3xl font-semibold tracking-tight">
-          Explore your assumptions
+          Budget
         </h1>
         <p className="max-w-2xl text-muted-foreground">
           Compare revenue and cover crop costs for the selected field.
@@ -210,7 +220,7 @@ export default function EconomicsWorkspace() {
             <CardDescription>
               {contextLabel}
               {savedPlan?.areaHa
-                ? ` · saved plan area ${savedPlan.areaHa} ha`
+                ? ` · saved plan area ${formatArea(Number(savedPlan.areaHa), unitSystem)}`
                 : ""}
             </CardDescription>
           </CardHeader>
@@ -281,7 +291,7 @@ export default function EconomicsWorkspace() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Scenario result</CardTitle>
+            <CardTitle>Estimated return</CardTitle>
             <CardDescription>
               Based only on the values entered here
             </CardDescription>
@@ -311,60 +321,19 @@ export default function EconomicsWorkspace() {
             ) : (
               <FieldGroup>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Net change per {unitSystem === "us" ? "acre" : "hectare"}
-                    </p>
-                    <p className="text-2xl font-semibold tabular-nums">
-                      {perAreaMoney(result.netChangePerHa)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {areaValid ? `Total for ${Number(displayValues.areaHa).toLocaleString()} ${unitSystem === "us" ? "ac" : "ha"}` : "Parcel total"}
-                    </p>
-                    <p className="text-2xl font-semibold tabular-nums">{areaValid ? money(result.totalNetChange) : "Enter a valid field area"}</p>
-                  </div>
+                  <div><p className="text-sm text-muted-foreground">Estimated return / {areaUnit}</p><p className="text-2xl font-semibold tabular-nums">{perAreaMoney(result.returnAfterCoverCropCostsPerHa)}</p></div>
+                  <div><p className="text-sm text-muted-foreground">Whole-field estimated return</p><p className="text-2xl font-semibold tabular-nums">{areaValid ? money(result.totalReturnAfterCoverCropCosts) : "Enter a valid field area"}</p></div>
                 </div>
-                <Separator />
-                <div className="flex flex-col gap-2 text-sm">
-                  <div className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">
-                      Baseline revenue / {areaUnit}
-                    </span>
-                    <span className="tabular-nums">
-                      {perAreaMoney(result.baselineRevenue)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">
-                      Revenue at assumed yield / {areaUnit}
-                    </span>
-                    <span className="tabular-nums">
-                      {perAreaMoney(result.assumedRevenue)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">
-                      Seed + termination cost / {areaUnit}
-                    </span>
-                    <span className="tabular-nums">
-                      {perAreaMoney(result.coverCropCost)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-4">
-                    <span className="text-muted-foreground">Subsidy / {areaUnit}</span>
-                    <span className="tabular-nums">
-                      {perAreaMoney(parsed.subsidy!)}
-                    </span>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Break-even yield change:{" "}
-                  {result.breakEvenYieldChange === null
-                    ? "Unavailable when baseline revenue is zero."
-                    : `${result.breakEvenYieldChange.toFixed(2)}%`}
-                </p>
+                <p className="text-xs text-muted-foreground">After entered seed and termination costs, including subsidy. Other production expenses excluded.</p>
+                <details className="border-t pt-3 text-sm">
+                  <summary className="cursor-pointer text-muted-foreground">Calculation details</summary>
+                  <dl className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2">
+                    <dt>Revenue at assumed yield / {areaUnit}</dt><dd className="tabular-nums">{perAreaMoney(result.assumedRevenue)}</dd>
+                    <dt>Seed + termination cost / {areaUnit}</dt><dd className="tabular-nums">{perAreaMoney(result.coverCropCost)}</dd>
+                    <dt>Subsidy / {areaUnit}</dt><dd className="tabular-nums">{perAreaMoney(parsed.subsidy!)}</dd>
+                  </dl>
+                  <p className="mt-3 text-xs text-muted-foreground">Totals use unrounded values and the managed field area.</p>
+                </details>
               </FieldGroup>
             )}
           </CardContent>
@@ -381,9 +350,7 @@ export default function EconomicsWorkspace() {
         </Alert>
       )}
       <nav aria-label="Next steps" className="flex flex-wrap gap-3">
-        <Button variant="outline" render={<Link href="/planner" />} nativeButton={false}>Edit field plan</Button>
-        <Button render={<Link href="/intel" />} nativeButton={false}>Prepare evidence request</Button>
-        <Button variant="ghost" render={<Link href="/" />} nativeButton={false}>Return to map</Button>
+        <Button render={<Link href="/planner/review" />} nativeButton={false}>Review plan</Button><Button variant="ghost" render={<Link href="/planner/review?budget=skip" />} nativeButton={false}>Continue without budget</Button>
       </nav>
     </section>
   );

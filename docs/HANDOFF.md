@@ -408,3 +408,120 @@ TypeScript and production build passed. The incoming real-inference test require
 `data/experiments/clovis_regression/latest.json` and associated model artifacts, which
 are not present locally; its missing-artifact failure was not concealed or repaired
 by training/modifying a model. Atlas data serving remains independent of that model.
+
+
+## Client usability fixes — 15 November 2026
+
+Visible field-card deletion now names the field and discloses related record counts.
+Inactive deletion preserves the active selection and another field's unsaved edits.
+Field save/delete notices distinguish browser persistence from session retention.
+Point and polygon create/edit/save/reload flows have regression coverage.
+
+Economics now belongs to Field Planner navigation, alongside calendar and saved
+plans, with shared context and an explicit Choose field starting action. Calendar
+confirmation and budget autosave still use separate storage; a combined versioned
+snapshot is the next structural improvement, not completed in this pass. Explore
+remains map/filter-only and has a dedicated scope regression.
+
+Fixed saved-plan U.S. area labels and authoritative boundary area display overriding
+stale manual buffers. Known −$85/ac × 100ac equals −$8,500 across unit switches.
+Sergiu provided no reproduction values, so his reported arithmetic mismatch remains
+unverified rather than marked resolved. See UX-PRIORITIES.md for retained issues,
+implementation status, and ordered next steps.
+
+Validation: the full browser run passed 102/104; both failures were outdated test
+assertions (sidebar destination and deletion notice text). Those checks passed in
+focused reruns; an additional drawn-boundary regression also passed after correcting
+its expected label order. Final field lifecycle run: 3/3; navigation run: 4/4.
+Production build including TypeScript, 23/23 JSON fixtures, and diff whitespace
+checks pass. No API, model or dataset changes. This usability work is local and
+uncommitted; the preceding Atlas integration was pushed as 4fb35a2.
+
+
+### Map controls and Planner navigation follow-up
+
+Explore's toolbar is transparent over the map, with the navigation toggle on the
+left and Map options on the right. Crop/context controls moved into Map options;
+its close control stays at the upper-right of the sheet. Removed Kansas preset
+choices from field selectors while retaining historical stored context compatibility.
+My fields is now inside Field Planner's local navigation, with the /fields route
+and existing data retained. Fixed a mobile Atlas button overlap found by testing.
+
+Validation: 11 focused navigation/field lifecycle checks passed across focused runs;
+all 11 map-preview/toolbar checks passed after the layout fix and updating an old
+pixel-hit assertion to exercise the actual crop selector. Final production build
+and TypeScript pass. Desktop layout inspected. Changes remain local/uncommitted.
+
+
+### Explore H3 selection restored
+
+Corrected Explore's use of field point-placement clicks. It now selects rendered
+H3 cells at their centre, highlights the cell without a point marker, and opens a
+read-only Hexagon information sheet with geography, observed conditions and soil
+horizons. Regional financial assessment is excluded from this geographic sheet.
+My fields keeps explicit point/boundary creation. Eight focused desktop/mobile
+hexagon, navigation and field-lifecycle regressions pass; production build and
+TypeScript pass. No model/API changes; changes remain local and uncommitted.
+
+
+## Field-first Planner redesign — 15 November 2026
+
+Implemented with three parallel Luna workers. /planner now opens a field library
+with create/resume status, Add first field, Manage/add fields and Saved plans.
+/planner/calendar is the guarded calendar editor: editable interval, calculated
+timeline, collapsed area/notes and conditions, desktop summary and phone action bar.
+Budget remains at /economics and is optional; /planner/review confirms a named
+calendar and optionally complete budget together. No default reference-location
+form is editable. Saved library records remain readable.
+
+Confirmed snapshots include canonical economic assumptions and managed area.
+Working changes do not alter confirmed values. Save as alternative creates an
+independent stable record; deleting it preserves the original. Explicit Restore
+saved version restores calendar and budget, with confirmation for newer drafts.
+Save updates the opened record; automatic revision history and season organization
+remain future work. Resume step and opened alternative are retained per field/crop.
+
+Legacy field/crop records are accepted and new optional metadata/alternative IDs
+round-trip through backup export/import. Field boundary edits do not rewrite new
+confirmed snapshots; working calendar and budget share the managed area. Explore
+keeps H3 inspection and now offers a deliberate handoff to choose/draw a field in
+that area, with no automatic draft/acreage substitution. First-click selection has
+a fallback limited to existing grid cells while rendered picking initializes.
+
+Final verification: 111/111 frontend regressions, production build/TypeScript,
+23/23 JSON fixtures and diff checks pass. Desktop/phone, 375px/landscape and larger
+text/dark layouts were checked. See PLANNER-REDESIGN.md for acceptance/status.
+No API/model changes, no commit or push in this turn. Existing unrelated PRD edits
+were preserved.
+
+
+## Map workspace layout cleanup — 15 November 2026
+
+Removed the second My fields header and duplicate floating drawing instructions.
+One responsive action bar owns Finish/Cancel and drawing guidance. Field creation
+focuses the side panel on the in-progress operation, clears old notices and makes
+messages dismissible; empty state and creation buttons return after drawing ends.
+MapDataStatus combines observation/date/source and drought status in normal flow
+below the viewport, independent of native attribution and zoom controls. Empty maps
+without status do not gain an empty footer. Explore H3 selection is retained.
+
+Verified 23 existing map/field/provider/imagery/drought regressions and 2 new
+layout/overlap tests. Production build and TypeScript pass. Desktop and phone
+screenshots inspected; see MAP-UX-CLEANUP.md. No model/API changes, no commit/push.
+
+## Budget controls and return-only summary
+
+Removed field/crop selectors from plan-editor headers; the header is read-only
+context, field switching uses the library, and next cash crop is edited in Calendar.
+Budget has only Review plan and Continue without budget as next actions. Its result
+shows estimated return per area and for the whole field after entered cover-crop
+costs/subsidy. The baseline-change block is removed; calculation details are
+collapsed. Review, saved plans and exported comparisons use the same return metric.
+Other production expenses are explicitly excluded. Existing budgets need no
+migration because their canonical input records are unchanged.
+
+Verified 37/37 focused economics, units, plan/save/restore, conditions and navigation
+regressions plus production build/TypeScript. The 100-acre, $4/bu, 150bu/ac, −10%
+yield and $25/ac cover-cost case displays $515/ac and $51,500 total in both unit
+systems. See PLANNER-REDESIGN.md for calculation scope and method references.
+No API/model changes or commit/push.

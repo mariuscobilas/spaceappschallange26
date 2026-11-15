@@ -5,11 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
-  Calculator,
   Compass,
   Leaf,
-  Globe,
-  MapPinned,
   MessageSquare,
   PanelLeftClose,
 } from "lucide-react";
@@ -35,26 +32,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMeridian } from "@/components/workspace/MeridianProvider";
 import { FieldGuards } from "@/components/workspace/FieldGuards";
-import { FieldContext } from "@/components/workspace/FieldContext";
+import { contextKey } from "@/lib/workspace";
 import { WorkspaceBackup } from "@/components/workspace/WorkspaceBackup";
 const MapPreview = dynamic(() => import("@/components/map/MapPreview"), {
   loading: () => <div role="status" className="flex h-full items-center justify-center text-sm text-muted-foreground">Opening map…</div>,
 });
 import { cn } from "@/lib/utils";
 
-const mapRoutes = new Set(["/", "/fields", "/atlas"]);
+const mapRoutes = new Set(["/", "/fields"]);
 const destinations = [
   { href: "/", title: "Explore", icon: Compass },
-  { href: "/fields", title: "My fields", icon: MapPinned },
-  { href: "/atlas", title: "Regional Atlas", icon: Globe },
   { href: "/planner", title: "Field Planner", icon: Leaf },
-  { href: "/economics", title: "Economics", icon: Calculator },
   { href: "/intel", title: "Ask Meridian", icon: MessageSquare },
 ];
 function AppNavigation() {
   const pathname = usePathname();
   const { setOpenMobile, isMobile } = useSidebar();
-  const { settings } = useMeridian();
   useEffect(() => {
     if (isMobile) setOpenMobile(false);
   }, [pathname, isMobile, setOpenMobile]);
@@ -103,8 +96,8 @@ function AppNavigation() {
             <SidebarMenu className="gap-1">
               {destinations.map(({ href, title, icon: Icon }) => {
                 const active = href === "/"
-                  ? pathname === "/" && settings.mode === "field"
-                  : pathname === href || pathname.startsWith(`${href}/`);
+                  ? pathname === "/"
+                  : pathname === href || pathname.startsWith(`${href}/`) || href === "/planner" && (pathname === "/economics" || pathname === "/fields");
                 return <SidebarMenuItem key={href}>
                   <SidebarMenuButton
                     size="lg"
@@ -128,23 +121,15 @@ function AppNavigation() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-3">
+      <SidebarFooter className="p-3 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:items-center">
         <WorkspaceBackup />
-        <div className="group-data-[collapsible=icon]:hidden">
-        <Separator />
-        <p className="pt-3 text-xs leading-relaxed text-muted-foreground">
-          Your workspace stays in this browser.
-          <br />
-          No account needed.
-        </p>
-        </div>
       </SidebarFooter>
     </Sidebar>
   );
 }
 function WorkspaceShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { ready, change } = useMeridian();
+  const { ready, change, settings, activeField } = useMeridian();
   const changeRef = useRef(change);
   changeRef.current = change;
   const [mapVisited, setMapVisited] = useState(mapRoutes.has(pathname));
@@ -152,8 +137,16 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
     if (mapRoutes.has(pathname)) setMapVisited(true);
     if (!ready) return;
     if (pathname === "/" || pathname === "/fields") changeRef.current("mode", "field");
-    else if (pathname === "/atlas") changeRef.current("mode", "atlas");
   }, [pathname, ready]);
+  const isPlanEditor = pathname === "/planner/calendar" || pathname === "/economics" || pathname === "/planner/review";
+  useEffect(() => {
+    if (!ready || !isPlanEditor || !activeField) return;
+    try {
+      window.localStorage.setItem(`meridian.planner-step.v1:${contextKey(settings)}`, pathname);
+    } catch {
+      // Local persistence can be unavailable; direct navigation still works.
+    }
+  }, [ready, activeField, isPlanEditor, pathname, settings]);
   const page = destinations.find((d) => d.href === pathname || (d.href !== "/" && pathname.startsWith(`${d.href}/`)));
   return (
     <>
@@ -161,13 +154,18 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
       <AppNavigation />
       <SidebarInset id="workspace-content" tabIndex={-1} className="h-dvh min-h-0 min-w-0 overflow-hidden">
         {!mapRoutes.has(pathname) && (
-          <header className="flex min-h-16 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3 md:px-6">
+          <header className={cn("flex shrink-0 flex-wrap items-center gap-3 border-b px-4 py-2 md:px-6", isPlanEditor ? "min-h-14" : "min-h-16")}>
             <SidebarTrigger aria-label="Toggle navigation" />
             <Separator orientation="vertical" className="my-4" />
-            <span className="mr-auto text-sm font-medium">
-              {page?.title ?? "Meridian"}
-            </span>
-            <FieldContext />
+            {isPlanEditor ? <>
+              <Link href="/planner" className={cn(buttonVariants({ variant: "ghost" }), "min-h-11 shrink-0")}>Back to fields</Link>
+              <nav aria-label="Plan editor" className="order-3 flex w-full min-w-0 flex-wrap gap-1 md:order-none md:ml-auto md:w-auto">
+                <Link className={cn(buttonVariants({ variant: pathname === "/planner/calendar" ? "secondary" : "ghost" }), "min-h-11")} href="/planner/calendar" aria-current={pathname === "/planner/calendar" ? "page" : undefined}>Calendar</Link>
+                <Link className={cn(buttonVariants({ variant: pathname === "/economics" ? "secondary" : "ghost" }), "min-h-11")} href="/economics" aria-current={pathname === "/economics" ? "page" : undefined}>Budget</Link>
+                <Link className={cn(buttonVariants({ variant: pathname === "/planner/review" ? "secondary" : "ghost" }), "min-h-11")} href="/planner/review" aria-current={pathname === "/planner/review" ? "page" : undefined}>Review</Link>
+              </nav>
+              {activeField && <p aria-label="Plan context" className="min-w-0 text-sm text-muted-foreground md:ml-3"><span className="font-medium text-foreground">{activeField.name}</span> · {settings.crop[0].toUpperCase() + settings.crop.slice(1)}</p>}
+            </> : <span className="mr-auto text-sm font-medium">{page?.title ?? "Meridian"}</span>}
           </header>
         )}
         <div className="relative min-h-0 flex-1">
@@ -187,10 +185,7 @@ function WorkspaceShell({ children }: { children: React.ReactNode }) {
               )}
               {!mapRoutes.has(pathname) && (
                 <div className="absolute inset-0 overflow-y-auto bg-background">
-                  {pathname.startsWith("/planner") && <nav aria-label="Field Planner pages" className="sticky top-0 z-10 flex gap-1 border-b bg-background px-5 py-2 md:px-10">
-                    <Link className={cn(buttonVariants({ variant: pathname === "/planner" ? "secondary" : "ghost" }), "min-h-11")} href="/planner" aria-current={pathname === "/planner" ? "page" : undefined}>Plan termination</Link>
-                    <Link className={cn(buttonVariants({ variant: pathname === "/planner/saved" ? "secondary" : "ghost" }), "min-h-11")} href="/planner/saved" aria-current={pathname === "/planner/saved" ? "page" : undefined}>Saved plans</Link>
-                  </nav>}
+
                   {children}
                 </div>
               )}

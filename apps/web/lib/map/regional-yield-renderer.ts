@@ -18,5 +18,5 @@ export function regionalYieldBounds(data: RegionalYieldDataset): [[number,number
   return Number.isFinite(west)?[[west,south],[east,north]]:null;
 }
 export function yieldColorExpression(): unknown[] {
-  return ["case",["==",["get","effect"],null],"#a8aaa4",["interpolate",["linear"],["get","effect"],-10,"#b91c1c",0,"#f4f0dc",10,"#16804a"]];
+  return ["case",["==",["get","effect"],null],"#9aa09a",["interpolate",["linear"],["get","effect"],-10,"#8c7aa8",0,"#f4f1eb",10,"#23877d"]];
 }
